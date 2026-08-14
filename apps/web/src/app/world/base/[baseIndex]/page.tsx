@@ -284,15 +284,15 @@ export default async function BaseInspectorPage({
                 href="/world"
                 className="rounded-xl border border-white/10 px-4 py-2.5 text-xs text-neutral-300 transition hover:bg-white/5 hover:text-white"
               >
-                World Overview
+                ← World Overview
               </Link>
 
-              <Link
+              <a
                 href="/pals"
                 className="rounded-xl bg-white px-4 py-2.5 text-xs font-medium text-black transition hover:bg-neutral-200"
               >
-                Pal Intelligence
-              </Link>
+                ← Pals
+              </a>
             </div>
           </div>
         </header>
@@ -1219,7 +1219,7 @@ function StrategyWorkGroup({
 
                 <span className="text-[9px] text-neutral-500">
                   {item.workers} workers
-                  {" · "}
+                  {" Â· "}
                   best Lv.
                   {item.highestLevel}
                 </span>
@@ -1544,7 +1544,7 @@ function ComparisonPal({
                     effect.passive.name
                   }
 
-                  {" · "}
+                  {" Â· "}
 
                   {
                     effect.summary
@@ -1867,7 +1867,7 @@ function WorkerCard({
                     {level}
 
                     {disabled
-                      ? " · Disabled"
+                      ? " Â· Disabled"
                       : ""}
                   </span>
                 );

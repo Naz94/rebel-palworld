@@ -441,12 +441,12 @@ export default function WorldPage() {
                 Servers
               </Link>
 
-              <Link
+              <a
                 href="/pals"
                 className="rounded-xl bg-white px-4 py-2.5 text-center text-xs font-medium text-black transition hover:bg-neutral-200"
               >
-                Pal Intelligence
-              </Link>
+                ← Pals
+              </a>
             </div>
           </div>
         </header>
@@ -553,8 +553,8 @@ export default function WorldPage() {
                     }
                     description={
                       base.count === 0
-                        ? `Base ${base.baseIndex} · No workers assigned`
-                        : `Base ${base.baseIndex} · Workers assigned`
+                        ? `Base ${base.baseIndex} Â· No workers assigned`
+                        : `Base ${base.baseIndex} Â· Workers assigned`
                     }
                     emphasized={
                       base.count === 0
@@ -666,12 +666,12 @@ export default function WorldPage() {
               />
             </div>
 
-            <Link
+            <a
               href="/pals"
               className="mt-6 block rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-center text-xs text-neutral-300 transition hover:bg-white/[0.06]"
             >
-              Open full Pal analysis →
-            </Link>
+              Open full Pal analysis â†’
+            </a>
           </div>
         </section>
 
@@ -717,7 +717,7 @@ function SyncStatusPanel({
             watcher.durationMs / 1000
           ).toFixed(1)}s`
         : `${watcher.durationMs}ms`
-      : "—";
+      : "â€”";
 
   return (
     <div
@@ -782,7 +782,7 @@ function SyncStatusPanel({
                 ? formatBytes(
                     watcher.saveSize,
                   )
-                : "—"
+                : "â€”"
             }
           />
         </div>
@@ -1081,7 +1081,7 @@ function LocationCard({
               </span>
 
               <span className="text-[10px] text-neutral-700 transition group-hover:translate-x-0.5 group-hover:text-neutral-400">
-                →
+                â†’
               </span>
             </Link>
           ) : (
@@ -1193,7 +1193,7 @@ function PalRow({
 
         <p className="mt-1 text-[10px] text-neutral-500">
           {pal.nickname
-            ? `${pal.species} · `
+            ? `${pal.species} Â· `
             : ""}
 
           {pal.level !== null
@@ -1201,14 +1201,14 @@ function PalRow({
             : "Level unknown"}
 
           {pal.gender
-            ? ` · ${pal.gender}`
+            ? ` Â· ${pal.gender}`
             : ""}
         </p>
       </div>
 
       <div className="text-right">
         <p className="text-xs text-neutral-300">
-          Slot {pal.slot ?? "—"}
+          Slot {pal.slot ?? "â€”"}
         </p>
 
         <p className="mt-1 text-[9px] uppercase tracking-[0.16em] text-neutral-600">
@@ -1269,7 +1269,7 @@ function formatTime(
   value: string | null,
 ) {
   if (!value) {
-    return "—";
+    return "â€”";
   }
 
   const date =
@@ -1280,7 +1280,7 @@ function formatTime(
       date.getTime(),
     )
   ) {
-    return "—";
+    return "â€”";
   }
 
   return new Intl.DateTimeFormat(

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import ownedPalsData from "@/lib/palworld/owned-pals.generated.json";
@@ -236,6 +237,19 @@ function Sidebar({
       </div>
 
       <nav className="mt-9 space-y-1">
+        <Link
+          href="/world"
+          className="mb-3 block w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-neutral-300 transition hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
+        >
+          <p className="text-sm font-medium">
+            World
+          </p>
+
+          <p className="mt-0.5 text-[10px] text-neutral-600">
+            Bases & world overview →
+          </p>
+        </Link>
+
         {items.map((item) => {
           const active =
             view === item.id;
@@ -3734,16 +3748,89 @@ function PalImage({
 }: {
   pal: RealOwnedPal;
 }) {
-  const speciesId =
-    pal.internalSpeciesId.replace(
-      /^BOSS_/,
+  const rawId =
+    pal.internalSpeciesId.trim();
+
+  const stripKnownPrefixes = (
+    value: string,
+  ) =>
+    value.replace(
+      /^(?:BOSS_|RAID_|GYM_|PREDATOR_|NPC_|SUMMON_)+/i,
       "",
     );
 
+  const stripKnownSuffixes = (
+    value: string,
+  ) =>
+    value.replace(
+      /_(?:BOSS|RAID|GYM|PREDATOR|NPC|SUMMON|ALPHA|OILRIG|TOWER)$/i,
+      "",
+    );
+
+  const baseId =
+    stripKnownPrefixes(
+      rawId,
+    );
+
+  const simplifiedId =
+    stripKnownSuffixes(
+      baseId,
+    );
+
+  const imageCandidates =
+    Array.from(
+      new Set(
+        [
+          baseId,
+          simplifiedId,
+          rawId,
+        ].filter(Boolean),
+      ),
+    ).map(
+      (speciesId) =>
+        `/pal-icons/T_${speciesId}_icon_normal.webp`,
+    );
+
+  imageCandidates.push(
+    "/pal-icons/T_dummy_icon.webp",
+  );
+
   return (
     <img
-      src={`/pal-icons/T_${speciesId}_icon_normal.webp`}
+      src={imageCandidates[0]}
       alt={pal.species}
+      data-image-index="0"
+      onError={(event) => {
+        const image =
+          event.currentTarget;
+
+        const currentIndex =
+          Number(
+            image.dataset
+              .imageIndex ??
+              "0",
+          );
+
+        const nextIndex =
+          currentIndex + 1;
+
+        if (
+          nextIndex >=
+          imageCandidates.length
+        ) {
+          return;
+        }
+
+        image.dataset.imageIndex =
+          String(
+            nextIndex,
+          );
+
+        image.src =
+          imageCandidates[
+            nextIndex
+          ];
+      }}
       className="h-full w-full object-contain"
     />
   );
