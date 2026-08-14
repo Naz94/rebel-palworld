@@ -4,6 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "pal:watch": "node ./tools/pal-save-import/watch-save.mjs",
+    "web:dev": "pnpm --filter web dev",
+    "web:build": "pnpm --filter web build",
+    "api:dev": "pnpm --filter api dev",
+    "rebel": "concurrently --kill-others-on-fail --names WEB,API,SAVE \"pnpm web:dev\" \"pnpm api:dev\" \"pnpm pal:watch\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,6 +16,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.15.0",
   "devDependencies": {
+    "concurrently": "^10.0.4",
     "supabase": "^2.114.0"
   }
 }

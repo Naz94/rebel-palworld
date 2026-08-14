@@ -1,6 +1,58 @@
+# Dependencies
 node_modules/
+
+# Next.js
 .next/
+out/
+
+# Environment files
 .env
 .env.*
 !.env.example
+
+# Local Palworld save data / backups
+dev-save-backup/
+
+tools/pal-save-import/level.json
+tools/pal-save-import/pals.json
+tools/pal-save-import/normalized-pals.json
+tools/pal-save-import/selected-world.json
+tools/pal-save-import/watcher-status.json
+
+# Generated/local Palworld preferences
+tools/pal-save-import/world-preferences.json
+
+# Supabase local state
 supabase/.temp/
+supabase/.branches/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Misc build/cache
+.cache/
+dist/
+coverage/
+# Palworld working save files
+tools/pal-save-import/working/
+
+# Third-party/local save tooling repositories
+tools/pal-save-import/pst-modern/
+tools/pal-save-import/save-tools/
+
+# Generated application data derived from local save
+apps/web/src/lib/palworld/owned-pals.generated.json
+apps/web/src/lib/palworld/watcher-status.generated.json
