@@ -113,11 +113,29 @@ export function auditPalCollection(
     const combat =
       score.combatIntelligenceV2;
 
+    const referenceIssues =
+      (
+        pal.dataQuality?.issues ??
+        []
+      ).filter(
+        (issue) =>
+          !(
+            issue ===
+              "Unresolved display name" &&
+            pal.species.trim().length >
+              0 &&
+            pal.species !==
+              pal.internalSpeciesId
+          ),
+      );
+
     if (
-      pal.dataQuality?.referenceStatus ===
-        "INCOMPLETE" ||
-      (pal.dataQuality?.issues.length ?? 0) >
-        0
+      (
+        pal.dataQuality?.referenceStatus ===
+          "INCOMPLETE" &&
+        referenceIssues.length > 0
+      ) ||
+      referenceIssues.length > 0
     ) {
       add(
         findings,
@@ -125,7 +143,7 @@ export function auditPalCollection(
         "ERROR",
         "REFERENCE_INCOMPLETE",
         "Incomplete reference data",
-        pal.dataQuality?.issues.join(" · ") ||
+        referenceIssues.join(" · ") ||
           "Reference data is incomplete.",
       );
     }
