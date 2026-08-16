@@ -73,6 +73,12 @@ const NEGATIVE_NAMES = new Set([
   "glutton",
 ]);
 
+const VERIFIED_DESCRIPTION_FALLBACKS:
+  Record<string, string> = {
+    artisan:
+      "Work Speed +50% (applies to this Pal).",
+  };
+
 function addUnique(values: string[], value: string): void {
   if (!values.includes(value)) values.push(value);
 }
@@ -82,7 +88,10 @@ export function getPassiveTraitIntelligence(
 ): PassiveTraitIntelligence {
   const name = passive.name || "Unknown Passive";
   const key = name.toLowerCase();
-  const description = passive.description?.trim() || "No effect description is available in the current reference data.";
+  const description =
+    passive.description?.trim() ||
+    VERIFIED_DESCRIPTION_FALLBACKS[key] ||
+    "No effect description is available in the current reference data.";
   const text = description.toLowerCase();
   const tier = passive.rank;
 
