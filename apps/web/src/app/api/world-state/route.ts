@@ -1,7 +1,8 @@
-import fs from "node:fs";
-import path from "node:path";
-
 import { NextResponse } from "next/server";
+
+import {
+  loadPalSnapshot,
+} from "@/lib/palworld/load-pal-snapshot";
 
 import {
   rankRealPals,
@@ -31,55 +32,19 @@ type WatcherFile = {
   updatedAt: string | null;
 };
 
-function readJson<T>(
-  filePath: string,
-): T {
-  return JSON.parse(
-    fs.readFileSync(
-      filePath,
-      "utf8",
-    ),
-  ) as T;
-}
-
 export async function GET() {
   try {
-    const webRoot =
-      process.cwd();
-
-    const projectRoot =
-      path.resolve(
-        webRoot,
-        "..",
-        "..",
-      );
-
-    const palsPath =
-      path.join(
-        webRoot,
-        "src",
-        "lib",
-        "palworld",
-        "owned-pals.generated.json",
-      );
-
-    const watcherPath =
-      path.join(
-        projectRoot,
-        "tools",
-        "pal-save-import",
-        "watcher-status.json",
-      );
+    const snapshot =
+      await loadPalSnapshot<
+        RealOwnedPal
+      >();
 
     const entities =
-      readJson<RealOwnedPal[]>(
-        palsPath,
-      );
+      snapshot.entities;
 
     const watcher =
-      readJson<WatcherFile>(
-        watcherPath,
-      );
+      snapshot.watcher as
+        unknown as WatcherFile;
 
     const heartbeatAgeMs =
       watcher.heartbeatAt
@@ -217,6 +182,14 @@ export async function GET() {
       {
         generatedAt:
           new Date().toISOString(),
+
+        snapshot: {
+          source:
+            snapshot.source,
+
+          syncedAt:
+            snapshot.syncedAt,
+        },
 
         watcher: {
           ...watcher,
