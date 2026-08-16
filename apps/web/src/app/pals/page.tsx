@@ -3693,7 +3693,7 @@ function PalDetailPanel({
         onClick={onClose}
       />
 
-      <aside className="relative z-10 h-full w-full max-w-lg overflow-y-auto border-l border-white/10 bg-[#11151a] shadow-2xl">
+      <aside className="relative z-10 h-full w-full max-w-3xl overflow-y-auto border-l border-white/10 bg-[#11151a] shadow-2xl">
         <div className="relative flex h-60 items-center justify-center bg-[#1a2027]">
           <div className="h-36 w-36">
             <PalImage
