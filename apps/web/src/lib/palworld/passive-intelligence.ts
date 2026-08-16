@@ -148,6 +148,10 @@ export function getPassiveTraitIntelligence(
   const categories: string[] = [];
   const bestFor: string[] = [];
 
+  const breedingFarm =
+    text.includes("breeding farm") ||
+    text.includes("breeding speed");
+
   const playerWorkBonus =
     text.includes("player work speed") ||
     text.includes("player's work speed");
@@ -275,6 +279,21 @@ export function getPassiveTraitIntelligence(
   if (survival) {
     addUnique(categories, "Survival");
     addUnique(bestFor, "Durable combat Pals");
+  }
+
+  if (breedingFarm) {
+    addUnique(categories, "Breeding");
+    addUnique(bestFor, "Breeding Farm pairs");
+  }
+
+  if (disposition === "CONDITIONAL") {
+    bestFor.splice(
+      0,
+      bestFor.length,
+      text.includes("attack +") && text.includes("defense -")
+        ? "Glass-cannon offensive builds"
+        : "Builds that deliberately accept the trade-off",
+    );
   }
 
   if (categories.length === 0) {
