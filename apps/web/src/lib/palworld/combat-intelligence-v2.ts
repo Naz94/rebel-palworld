@@ -55,6 +55,18 @@ const average = (
       ) / values.length
     : 0;
 
+const ELEMENTAL_COMBAT_PASSIVES: Record<string, string> = {
+  "earth emperor": "Ground",
+  "flame emperor": "Fire",
+  "lord of lightning": "Electric",
+  "lord of the sea": "Water",
+  "spirit emperor": "Grass",
+  "ice emperor": "Ice",
+  "divine dragon": "Dragon",
+  "lord of the underworld": "Dark",
+  "celestial emperor": "Neutral",
+};
+
 const getPassiveDescription = (
   passive: PalPassive,
 ) =>
@@ -113,8 +125,19 @@ function getPassiveFit(
       );
     const rank =
       passive.rank ?? 0;
+    const passiveElement =
+      ELEMENTAL_COMBAT_PASSIVES[name];
+    const matchingElement =
+      passiveElement
+        ? pal.elements.some(
+            (element) =>
+              element.toLowerCase() ===
+              passiveElement.toLowerCase(),
+          )
+        : false;
 
     const offense =
+      matchingElement ||
       description.includes(
         "attack",
       ) ||
@@ -173,7 +196,9 @@ function getPassiveFit(
             ? 9
             : 5;
       strengths.push(
-        `${passive.name} supports offense`,
+        matchingElement
+          ? `${passive.name} strengthens ${passiveElement} attacks`
+          : `${passive.name} supports offense`,
       );
     }
 
