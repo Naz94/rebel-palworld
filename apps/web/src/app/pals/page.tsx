@@ -4518,66 +4518,7 @@ function PalDetailPanel({
             </div>
           </div>
 
-          <div className="mt-6">
-            <PanelHeading>
-              Rebel Decision
-            </PanelHeading>
 
-            <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.04] p-4">
-              <div className="flex items-center justify-between gap-3">
-                <p className="font-semibold">
-                  {bucketLabel}
-                </p>
-
-                <span className="rounded-md bg-black/25 px-2 py-1 text-[9px] text-neutral-400">
-                  {humanizeAction(
-                    score.action,
-                  )}
-                </span>
-              </div>
-
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
-                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-600">
-                    Primary Use
-                  </p>
-                  <p className="mt-1 text-xs font-semibold text-neutral-200">
-                    {score.bestRole}
-                  </p>
-                </div>
-
-                <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
-                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-600">
-                    Strategic Value
-                  </p>
-                  <p className="mt-1 text-xs font-semibold text-neutral-200">
-                    {score.breeding >= 80
-                      ? "Excellent Breeding Stock"
-                      : score.breeding >= 65
-                        ? "Strong Breeding Stock"
-                        : score.breeding >= 50
-                          ? "Useful Breeding Stock"
-                          : "Limited Breeding Value"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-4 space-y-2">
-                {recommendationReasons
-                  .slice(0, 4)
-                  .map(
-                    (reason) => (
-                      <p
-                        key={reason}
-                        className="text-xs leading-relaxed text-neutral-300"
-                      >
-                        • {reason}
-                      </p>
-                    ),
-                  )}
-              </div>
-            </div>
-          </div>
 
           {bestCopy &&
             !isBestCopy && (
