@@ -8,6 +8,8 @@ import { useMemo, useState } from "react";
 
 import ownedPalsData from "@/lib/palworld/owned-pals.generated.json";
 
+import { getPassiveTraitIntelligence } from "@/lib/palworld/passive-intelligence";
+
 import {
   rankRealPals,
   type DecisionBucket,
@@ -4345,43 +4347,94 @@ function PalDetailPanel({
               </PanelHeading>
 
               <div className="mt-3 space-y-2">
-                {pal.passives.map(
-                  (
-                    passive,
-                    index,
-                  ) => (
+                {pal.passives.map((passive, index) => {
+                  const intelligence =
+                    getPassiveTraitIntelligence(passive);
+
+                  const dispositionStyle =
+                    intelligence.disposition === "GOOD"
+                      ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-200"
+                      : intelligence.disposition === "BAD"
+                        ? "border-red-400/25 bg-red-400/10 text-red-200"
+                        : intelligence.disposition === "CONDITIONAL"
+                          ? "border-amber-400/25 bg-amber-400/10 text-amber-200"
+                          : "border-white/10 bg-white/[0.04] text-neutral-300";
+
+                  return (
                     <div
                       key={`${passive.internalId}-${index}`}
                       className="rounded-xl border border-white/10 bg-white/[0.03] p-3"
                     >
-                      <div className="flex items-center justify-between gap-3">
-                        <p className="text-sm font-medium">
-                          {
-                            passive.name
-                          }
-                        </p>
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-medium">
+                            {intelligence.name}
+                          </p>
+                          <p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-neutral-500">
+                            {intelligence.categories.join(" · ")}
+                          </p>
+                        </div>
 
-                        {passive.rank !==
-                          null && (
-                          <span className="text-[10px] text-neutral-500">
-                            Trait Tier{" "}
-                            {
-                              passive.rank
-                            }
+                        <div className="flex shrink-0 flex-col items-end gap-1">
+                          <span className={`rounded-md border px-2 py-1 text-[9px] ${dispositionStyle}`}>
+                            {intelligence.disposition}
                           </span>
-                        )}
+                          {intelligence.tier !== null && (
+                            <span className="text-[9px] text-neutral-600">
+                              Trait Tier {intelligence.tier}
+                            </span>
+                          )}
+                        </div>
                       </div>
 
-                      {passive.description && (
-                        <p className="mt-1 text-xs leading-relaxed text-neutral-500">
-                          {
-                            passive.description
-                          }
+                      <p className="mt-2 text-xs leading-relaxed text-neutral-400">
+                        {intelligence.description}
+                      </p>
+
+                      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                        <div className="rounded-lg border border-white/10 bg-black/20 p-2.5">
+                          <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
+                            Best For
+                          </p>
+                          <div className="mt-1.5 space-y-1">
+                            {intelligence.bestFor.map((role) => (
+                              <p key={role} className="text-[10px] text-neutral-300">
+                                ✓ {role}
+                              </p>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="rounded-lg border border-white/10 bg-black/20 p-2.5">
+                          <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
+                            Rebel Score Category
+                          </p>
+                          <p className="mt-1.5 text-[10px] text-neutral-300">
+                            {intelligence.scoreCategory}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-2 rounded-lg border border-white/10 bg-black/20 p-2.5">
+                        <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
+                          Breeding Usefulness
                         </p>
-                      )}
+                        <p className="mt-1 text-[10px] leading-relaxed text-neutral-400">
+                          {intelligence.breedingUsefulness}
+                        </p>
+                      </div>
+
+                      <div className="mt-2 rounded-lg border border-white/10 bg-black/20 p-2.5">
+                        <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
+                          Rebel Interpretation
+                        </p>
+                        <p className="mt-1 text-[10px] leading-relaxed text-neutral-300">
+                          {intelligence.interpretation}
+                        </p>
+                      </div>
                     </div>
-                  ),
-                )}
+                  );
+                })}
               </div>
             </div>
           ) : (
