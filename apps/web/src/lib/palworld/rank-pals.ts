@@ -600,6 +600,23 @@ function getSoulInvestmentTotal(
   );
 }
 
+function getCombatSoulInvestmentTotal(
+  pal: RealOwnedPal,
+): number {
+  const souls =
+    pal.progression?.souls;
+
+  if (!souls) {
+    return 0;
+  }
+
+  return (
+    Math.max(0, souls.hp) +
+    Math.max(0, souls.attack) +
+    Math.max(0, souls.defense)
+  );
+}
+
 function getWorkUpgradeForRole(
   pal: RealOwnedPal,
   role: string,
@@ -4225,7 +4242,7 @@ function buildInvestmentPlan(
   const souls =
     combatInvestmentCandidate &&
     combatCeiling >= 65 &&
-    getSoulInvestmentTotal(pal) < 60;
+    getCombatSoulInvestmentTotal(pal) < 60;
 
   const workUpgrades =
     baseWinner &&
