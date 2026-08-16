@@ -3848,8 +3848,20 @@ function PalDetailPanel({
   const bestCopy =
     sameSpecies[0] ?? null;
 
+  const getPalIdentity = (
+    entry: RankedRealPal,
+  ) =>
+    entry.pal.id ??
+    [
+      entry.pal.internalSpeciesId,
+      entry.pal.location.containerId,
+      entry.pal.location.slotIndex,
+    ].join(":");
+
   const isBestCopy =
-    bestCopy === rankedPal;
+    bestCopy !== null &&
+    getPalIdentity(bestCopy) ===
+      getPalIdentity(rankedPal);
 
   const slotNumber =
     pal.location.displaySlot ??
