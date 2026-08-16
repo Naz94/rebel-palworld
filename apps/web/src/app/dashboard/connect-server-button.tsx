@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 
-import { createClient } from "@/lib/supabase/client";
-
 type ConnectServerButtonProps = {
   serverId: string;
 };
@@ -20,33 +18,11 @@ export default function ConnectServerButton({
     setError(null);
     setToken(null);
 
-    const supabase = createClient();
-
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-
-    if (sessionError || !session) {
-      setError("You are not signed in.");
-      setLoading(false);
-      return;
-    }
-
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-    if (!apiUrl) {
-      setError("Missing API configuration.");
-      setLoading(false);
-      return;
-    }
-
     const response = await fetch(
-      `${apiUrl}/connectors/provision`,
+      "/api/connectors/provision",
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
