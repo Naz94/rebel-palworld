@@ -4,9 +4,11 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-
-import ownedPalsData from "@/lib/palworld/owned-pals.generated.json";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import { getPassiveTraitIntelligence } from "@/lib/palworld/passive-intelligence";
 
@@ -19,8 +21,12 @@ import {
   type SpeciesGroup,
 } from "@/lib/palworld/rank-pals";
 
-const ownedPals =
-  ownedPalsData as RealOwnedPal[];
+type PalSnapshotResponse = {
+  source: "local" | "cloud";
+  entities: RealOwnedPal[];
+  syncedAt: string | null;
+  error?: string;
+};
 
 type View =
   | "overview"
@@ -64,9 +70,123 @@ const BASE_JOBS = [
 ];
 
 export default function PalsPage() {
-  const rankings = useMemo(
-    () => rankRealPals(ownedPals),
+  const [
+    ownedPals,
+    setOwnedPals,
+  ] =
+    useState<
+      RealOwnedPal[]
+    >([]);
+
+  const [
+    snapshotSource,
+    setSnapshotSource,
+  ] =
+    useState<
+      "local" |
+      "cloud" |
+      null
+    >(null);
+
+  const [
+    snapshotError,
+    setSnapshotError,
+  ] =
+    useState<
+      string |
+      null
+    >(null);
+
+  const [
+    snapshotLoading,
+    setSnapshotLoading,
+  ] =
+    useState(true);
+
+  useEffect(
+    () => {
+      let active =
+        true;
+
+      async function loadSnapshot() {
+        try {
+          const response =
+            await fetch(
+              "/api/pal-snapshot",
+              {
+                cache:
+                  "no-store",
+              },
+            );
+
+          const body =
+            (await response.json()) as
+              PalSnapshotResponse;
+
+          if (
+            !response.ok ||
+            !Array.isArray(
+              body.entities,
+            )
+          ) {
+            throw new Error(
+              body.error ??
+              "Could not load Pal snapshot",
+            );
+          }
+
+          if (!active) {
+            return;
+          }
+
+          setOwnedPals(
+            body.entities,
+          );
+
+          setSnapshotSource(
+            body.source,
+          );
+
+          setSnapshotError(
+            null,
+          );
+        } catch (error) {
+          if (!active) {
+            return;
+          }
+
+          setSnapshotError(
+            error instanceof Error
+              ? error.message
+              : String(error),
+          );
+        } finally {
+          if (active) {
+            setSnapshotLoading(
+              false,
+            );
+          }
+        }
+      }
+
+      void loadSnapshot();
+
+      return () => {
+        active =
+          false;
+      };
+    },
     [],
+  );
+
+  const rankings = useMemo(
+    () =>
+      rankRealPals(
+        ownedPals,
+      ),
+    [
+      ownedPals,
+    ],
   );
 
   const [view, setView] =
@@ -111,6 +231,20 @@ export default function PalsPage() {
                 .safeToReplace
             }
           />
+
+          {(snapshotLoading ||
+            snapshotError ||
+            snapshotSource) && (
+            <div className="border-b border-white/10 px-5 py-2 text-[10px] text-neutral-500 md:px-8 xl:px-10">
+              {snapshotLoading
+                ? "Loading Pal snapshot…"
+                : snapshotError
+                  ? `Snapshot unavailable: ${snapshotError}`
+                  : snapshotSource === "cloud"
+                    ? "Cloud snapshot · private authenticated data"
+                    : "Local live-save snapshot"}
+            </div>
+          )}
 
           <CollectionSearch
             query={searchQuery}

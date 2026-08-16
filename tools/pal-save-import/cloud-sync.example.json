@@ -1,0 +1,5 @@
+{
+  "endpoint": "https://YOUR-REBEL-DOMAIN/api/connectors/snapshot",
+  "serverId": "00000000-0000-0000-0000-000000000000",
+  "token": "PASTE-THE-ONE-TIME-CONNECTOR-TOKEN-HERE"
+}
