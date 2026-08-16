@@ -3646,10 +3646,18 @@ function getPartnerSkillDisplay(
       text.includes("explosion")
     );
 
+  const alphaEggUtility =
+    text.includes("alpha pal egg") ||
+    (
+      text.includes("pal eggs") &&
+      text.includes("alpha")
+    );
+
   const loot =
     text.includes("drop") ||
     text.includes("dig") ||
-    text.includes("items when defeated");
+    text.includes("items when defeated") ||
+    alphaEggUtility;
 
   let type =
     "Special Utility";
@@ -3657,6 +3665,12 @@ function getPartnerSkillDisplay(
   if (glider) {
     type =
       "Glider / Traversal Utility";
+  } else if (
+    mount &&
+    alphaEggUtility
+  ) {
+    type =
+      "Mount / Alpha Egg Utility";
   } else if (
     mount &&
     combat
@@ -3704,6 +3718,12 @@ function getPartnerSkillDisplay(
     );
   }
 
+  if (alphaEggUtility) {
+    bestUses.push(
+      "Finding Alpha Pal Eggs",
+    );
+  }
+
   if (combat) {
     bestUses.push(
       "Combat utility",
@@ -3728,7 +3748,10 @@ function getPartnerSkillDisplay(
     );
   }
 
-  if (loot) {
+  if (
+    loot &&
+    !alphaEggUtility
+  ) {
     bestUses.push(
       "Resource collection",
     );
