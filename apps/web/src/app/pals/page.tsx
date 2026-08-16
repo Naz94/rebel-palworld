@@ -3352,6 +3352,7 @@ function SectionIntro({
     </div>
   );
 }
+
 function getPartnerSkillDisplay(
   pal: RealOwnedPal,
 ) {
@@ -3361,166 +3362,59 @@ function getPartnerSkillDisplay(
     return null;
   }
 
-  const description =
-    skill.description ?? "";
-
-  const text =
-    description.toLowerCase();
-
+  const description = skill.description ?? "";
+  const text = description.toLowerCase();
   const tags = new Set(
-    skill.tags.map((tag) =>
-      tag.toLowerCase(),
-    ),
+    skill.tags.map((tag) => tag.toLowerCase()),
   );
 
-  const glider =
-    text.includes("glider") ||
-    text.includes("gliding");
-
-  const mount =
-    tags.has("mount") ||
-    text.includes("can be ridden");
-
-  const ranch =
-    tags.has("ranch") ||
-    text.includes(
-      "assigned to ranch",
-    );
-
-  const base =
-    tags.has("base") ||
-    text.includes(
-      "while at a base",
-    );
-
-  const healing =
-    text.includes("restore") ||
-    text.includes("heal");
-
+  const glider = text.includes("glider") || text.includes("gliding");
+  const mount = tags.has("mount") || text.includes("can be ridden");
+  const ranch = tags.has("ranch") || text.includes("assigned to ranch");
+  const base = tags.has("base") || text.includes("while at a base");
+  const healing = text.includes("restore") || text.includes("heal");
   const playerSupport =
-    text.includes(
-      "player's attack",
-    ) ||
-    text.includes(
-      "player attack",
-    ) ||
-    text.includes(
-      "carrying capacity",
-    ) ||
-    text.includes(
-      "player's defense",
-    ) ||
-    text.includes(
-      "player's health",
-    ) ||
+    text.includes("player's attack") ||
+    text.includes("player attack") ||
+    text.includes("carrying capacity") ||
+    text.includes("player's defense") ||
+    text.includes("player's health") ||
     healing;
-
   const combat =
     tags.has("active") &&
-    (
-      text.includes("enemy") ||
+    (text.includes("enemy") ||
       text.includes("attack") ||
       text.includes("damage") ||
       text.includes("gun") ||
       text.includes("weapon") ||
-      text.includes("explosion")
-    );
-
+      text.includes("explosion"));
   const loot =
     text.includes("drop") ||
     text.includes("dig") ||
     text.includes("items when defeated");
 
-  let type =
-    "Special Utility";
+  let type = "Special Utility";
 
-  if (glider) {
-    type =
-      "Glider / Traversal Utility";
-  } else if (
-    mount &&
-    combat
-  ) {
-    type =
-      "Mounted Combat / Traversal";
-  } else if (mount) {
-    type =
-      "Ground Mount / Traversal";
-  } else if (
-    playerSupport &&
-    combat
-  ) {
-    type =
-      "Player Combat Support";
-  } else if (playerSupport) {
-    type =
-      "Player / Party Support";
-  } else if (ranch) {
-    type =
-      "Ranch Production";
-  } else if (base) {
-    type =
-      "Base Utility";
-  } else if (combat) {
-    type =
-      "Active Combat Ability";
-  } else if (loot) {
-    type =
-      "Loot / Gathering Utility";
-  }
+  if (glider) type = "Glider / Traversal Utility";
+  else if (mount && combat) type = "Mounted Combat / Traversal";
+  else if (mount) type = "Ground Mount / Traversal";
+  else if (playerSupport && combat) type = "Player Combat Support";
+  else if (playerSupport) type = "Player / Party Support";
+  else if (ranch) type = "Ranch Production";
+  else if (base) type = "Base Utility";
+  else if (combat) type = "Active Combat Ability";
+  else if (loot) type = "Loot / Gathering Utility";
 
-  const bestUses: string[] =
-    [];
+  const bestUses: string[] = [];
 
-  if (glider || mount) {
-    bestUses.push(
-      "World traversal",
-    );
-  }
-
-  if (glider) {
-    bestUses.push(
-      "Gliding and fall protection",
-    );
-  }
-
-  if (combat) {
-    bestUses.push(
-      "Combat utility",
-    );
-  }
-
-  if (playerSupport) {
-    bestUses.push(
-      "Player or party support",
-    );
-  }
-
-  if (base) {
-    bestUses.push(
-      "Base workforce support",
-    );
-  }
-
-  if (ranch) {
-    bestUses.push(
-      "Ranch production",
-    );
-  }
-
-  if (loot) {
-    bestUses.push(
-      "Resource collection",
-    );
-  }
-
-  if (
-    bestUses.length === 0
-  ) {
-    bestUses.push(
-      "Specialised utility",
-    );
-  }
+  if (glider || mount) bestUses.push("World traversal");
+  if (glider) bestUses.push("Gliding and fall protection");
+  if (combat) bestUses.push("Combat utility");
+  if (playerSupport) bestUses.push("Player or party support");
+  if (base) bestUses.push("Base workforce support");
+  if (ranch) bestUses.push("Ranch production");
+  if (loot) bestUses.push("Resource collection");
+  if (bestUses.length === 0) bestUses.push("Specialised utility");
 
   let interpretation =
     `${skill.name ?? "This Partner Skill"} provides ${type.toLowerCase()}.`;
@@ -3528,9 +3422,7 @@ function getPartnerSkillDisplay(
   if (glider) {
     interpretation +=
       " It is traversal utility, not a player combat or stat-support effect.";
-  } else if (
-    playerSupport
-  ) {
+  } else if (playerSupport) {
     interpretation +=
       " It can justify keeping this Pal in the party even when it is not the primary fighter.";
   } else if (ranch) {
@@ -3545,43 +3437,25 @@ function getPartnerSkillDisplay(
   }
 
   return {
-    name:
-      skill.name ??
-      "Unknown Partner Skill",
-
-    description:
-      description ||
-      "Description unavailable.",
-
+    name: skill.name ?? "Unknown Partner Skill",
+    description: description || "Description unavailable.",
     tags: skill.tags,
-
     type,
-
     bestUses,
-
     affects: {
-      travel:
-        glider || mount,
+      travel: glider || mount,
       combat,
       playerSupport,
       base,
       farming: ranch,
       loot,
     },
-
-    rank:
-      (pal.progression
-        ?.condensation
-        ?.stars ?? 0) + 1,
-
-    scales:
-      description.includes(
-        "~",
-      ),
-
+    rank: (pal.progression?.condensation?.stars ?? 0) + 1,
+    scales: description.includes("~"),
     interpretation,
   };
 }
+
 function PalDetailPanel({
   rankedPal,
   allPals,
@@ -3597,6 +3471,9 @@ function PalDetailPanel({
 }) {
   const { pal, score } =
     rankedPal;
+
+  const partnerSkillDisplay =
+    getPartnerSkillDisplay(pal);
 
   const speciesKey =
     pal.internalSpeciesId
@@ -3904,23 +3781,35 @@ function PalDetailPanel({
               </div>
             )}
           </div>
-          {pal.partnerSkill && (
+          {partnerSkillDisplay && (
             <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
               <PanelHeading>
                 Partner Skill
               </PanelHeading>
 
-              <p className="mt-3 text-base font-semibold">
-                {pal.partnerSkill.name ?? "Unknown Partner Skill"}
-              </p>
+              <div className="mt-3 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-base font-semibold">
+                    {partnerSkillDisplay.name}
+                  </p>
+
+                  <p className="mt-1 text-[9px] uppercase tracking-[0.16em] text-cyan-300">
+                    {partnerSkillDisplay.type}
+                  </p>
+                </div>
+
+                <span className="rounded-md border border-white/10 bg-black/20 px-2 py-1 text-[9px] text-neutral-400">
+                  Rank {partnerSkillDisplay.rank}
+                </span>
+              </div>
 
               <p className="mt-2 text-xs leading-relaxed text-neutral-400">
-                {pal.partnerSkill.description ?? "Description unavailable."}
+                {partnerSkillDisplay.description}
               </p>
 
-              {pal.partnerSkill.tags.length > 0 && (
+              {partnerSkillDisplay.tags.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {pal.partnerSkill.tags.map((tag) => (
+                  {partnerSkillDisplay.tags.map((tag) => (
                     <span
                       key={tag}
                       className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[9px] uppercase tracking-wide text-neutral-300"
@@ -3931,16 +3820,60 @@ function PalDetailPanel({
                 </div>
               )}
 
-              <div className="mt-4 rounded-xl border border-white/10 bg-black/20 p-3">
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                    Best Used For
+                  </p>
+
+                  <div className="mt-2 space-y-1">
+                    {partnerSkillDisplay.bestUses.map((use) => (
+                      <p key={use} className="text-[10px] text-neutral-300">
+                        ✓ {use}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                    Affects
+                  </p>
+
+                  <div className="mt-2 space-y-1">
+                    {Object.entries(partnerSkillDisplay.affects).map(
+                      ([area, active]) => (
+                        <p
+                          key={area}
+                          className={active ? "text-[10px] text-neutral-200" : "text-[10px] text-neutral-600"}
+                        >
+                          {humanizeSkill(area)}: {active ? "YES" : "NO"}
+                        </p>
+                      ),
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
                 <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
-                  Partner Skill Rank
+                  Condensation Benefit
                 </p>
 
-                <p className="mt-1 text-xs text-neutral-300">
-                  Rank {(pal.progression?.condensation?.stars ?? 0) + 1}
-                  {pal.partnerSkill.description?.includes("~")
-                    ? " · Documented rank-scaled effect"
-                    : " · No documented numeric scaling"}
+                <p className="mt-1 text-[10px] leading-relaxed text-neutral-300">
+                  {partnerSkillDisplay.scales
+                    ? `The documented numeric effect improves with Partner Skill rank. Current rank: ${partnerSkillDisplay.rank}.`
+                    : "No rank-scaled numeric range is documented, so Rebel does not invent a condensation benefit."}
+                </p>
+              </div>
+
+              <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
+                <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                  Rebel Interpretation
+                </p>
+
+                <p className="mt-1 text-xs leading-relaxed text-neutral-300">
+                  {partnerSkillDisplay.interpretation}
                 </p>
               </div>
             </div>
