@@ -74,10 +74,30 @@ const NEGATIVE_NAMES = new Set([
   "glutton",
 ]);
 
+const ELEMENTAL_COMBAT_PASSIVES: Record<string, string> = {
+  "earth emperor": "Ground",
+  "flame emperor": "Fire",
+  "lord of lightning": "Electric",
+  "lord of the sea": "Water",
+  "spirit emperor": "Grass",
+  "ice emperor": "Ice",
+  "divine dragon": "Dragon",
+  "lord of the underworld": "Dark",
+  "celestial emperor": "Neutral",
+};
+
 const VERIFIED_DESCRIPTION_FALLBACKS:
   Record<string, string> = {
     artisan:
       "Work Speed +50% (applies to this Pal).",
+    ...Object.fromEntries(
+      Object.entries(ELEMENTAL_COMBAT_PASSIVES).map(
+        ([name, element]) => [
+          name,
+          "Increases " + element + " attack damage.",
+        ],
+      ),
+    ),
   };
 
 function addUnique(values: string[], value: string): void {
@@ -128,8 +148,12 @@ export function getPassiveTraitIntelligence(
     text.includes("health regeneration");
 
   const elemental =
+    key in ELEMENTAL_COMBAT_PASSIVES ||
     /(?:fire|water|grass|electric|ice|ground|dark|dragon|neutral) (?:attack )?damage/.test(text) ||
     /increase in (?:fire|water|grass|electric|ice|ground|dark|dragon|neutral) attack/.test(text);
+
+  const elementalRole =
+    ELEMENTAL_COMBAT_PASSIVES[key];
 
   const combat =
     COMBAT_NAMES.has(key) ||
@@ -173,7 +197,14 @@ export function getPassiveTraitIntelligence(
 
   if (combat) {
     addUnique(categories, elemental ? "Elemental Combat" : "Combat");
-    addUnique(bestFor, elemental ? "Matching-element combat builds" : "Combat builds");
+    addUnique(
+      bestFor,
+      elementalRole
+        ? elementalRole + " combat builds"
+        : elemental
+          ? "Matching-element combat builds"
+          : "Combat builds",
+    );
   }
 
   if (movement) {
