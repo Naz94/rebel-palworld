@@ -1054,8 +1054,13 @@ function hasPartnerSkillScalingEvidence(
       ?.description ??
     "";
 
-  return description.includes(
-    "~",
+  return (
+    /\([^)]*\d+(?:\.\d+)?\s*[~–-]\s*\d+(?:\.\d+)?[^)]*\)/.test(
+      description,
+    ) ||
+    /\+\(\d+(?:\.\d+)?\s*[~–-]\s*\d+(?:\.\d+)?\)%/.test(
+      description,
+    )
   );
 }
 
@@ -2760,9 +2765,11 @@ function getBestRole(
   pal: RealOwnedPal,
   combat: number,
   combatPotential: number,
+  combatCeiling: number,
   base: number,
   farming: number,
   support: number,
+  breeding: number,
   workRoles: PalRoleScore[],
 ): string {
   const combatUse =
@@ -2834,6 +2841,36 @@ function getBestRole(
       bestWorkRole ??
       "Base Work"
     );
+  }
+
+  if (combatCeiling < 50) {
+    const alternative =
+      Math.max(
+        base,
+        farming,
+        support,
+        breeding,
+      );
+
+    if (alternative === support) {
+      return "Player Support";
+    }
+
+    if (alternative === farming) {
+      return "Farming";
+    }
+
+    if (alternative === base) {
+      const bestWorkRole =
+        workRoles[0]?.role;
+
+      return (
+        bestWorkRole ??
+        "Base Work"
+      );
+    }
+
+    return "Breeding";
   }
 
   return "Combat";
@@ -3165,9 +3202,11 @@ function scorePal(
         pal,
         combat,
         combatPotential,
+        combatIntelligenceV2.generalCeiling,
         base,
         farming,
         support,
+        breeding,
         workRoles,
       ),
 
