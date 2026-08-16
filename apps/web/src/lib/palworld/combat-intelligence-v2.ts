@@ -1,3 +1,7 @@
+import {
+  getLoadoutIntelligence,
+  type ActiveSkillIntelligence,
+} from "./active-skill-intelligence";
 import type {
   PalPassive,
   RealOwnedPal,
@@ -8,6 +12,7 @@ export type CombatArchetype =
   | "Tank"
   | "Bruiser"
   | "Utility Fighter"
+  | "Low Combat Potential"
   | "Unscored";
 
 export type CombatConfidence =
@@ -15,7 +20,7 @@ export type CombatConfidence =
   | "LIMITED";
 
 export type PalCombatIntelligenceV2 = {
-  formulaVersion: "combat-v2-foundation";
+  formulaVersion: "combat-v2.1-data-backed";
   confidence: CombatConfidence;
   archetype: CombatArchetype;
   naturalOffense: number;
@@ -25,6 +30,9 @@ export type PalCombatIntelligenceV2 = {
   passiveFit: number;
   partnerCombatUtility: number;
   loadoutCompleteness: number;
+  loadoutQuality: number;
+  equippedSkills: ActiveSkillIntelligence[];
+  unknownSkillIds: string[];
   currentReadiness: number;
   generalCeiling: number;
   bestUsedFor: string[];
@@ -170,10 +178,17 @@ function getPassiveFit(
         "burly body",
       ].includes(name);
 
+    const incomingResistance =
+      description.includes("decrease in incoming") ||
+      description.includes("incoming damage reduction");
+
     const negative =
       rank < 0 ||
-      description.includes(
-        "decrease",
+      (
+        description.includes(
+          "decrease",
+        ) &&
+        !incomingResistance
       ) ||
       [
         "coward",
@@ -263,12 +278,11 @@ function getPartnerCombatUtility(
   if (
     tags.has("mount") &&
     (
-      description.includes(
-        "damage",
-      ) ||
-      description.includes(
-        "attack",
-      )
+      description.includes("damage") ||
+      description.includes("attack") ||
+      description.includes("gun") ||
+      description.includes("weapon") ||
+      description.includes("rapidly fire")
     )
   ) {
     score += 20;
@@ -339,6 +353,12 @@ function getArchetype(
   }
 
   if (
+    Math.max(offense, durability) < 45
+  ) {
+    return "Low Combat Potential";
+  }
+
+  if (
     offense >= durability + 12
   ) {
     return "Striker";
@@ -382,9 +402,19 @@ function getBestUses(
     uses.push(
       "Partner Skill-driven combat",
     );
+  } else if (
+    archetype ===
+    "Low Combat Potential"
+  ) {
+    uses.push(
+      "Utility, base work or breeding rather than frontline combat",
+    );
   }
 
-  if (elements.length > 0) {
+  const advantagedElements =
+    elements.flatMap(getElementAdvantages);
+
+  if (advantagedElements.length > 0) {
     uses.push(
       `${elements.join(
         " / ",
@@ -401,7 +431,7 @@ export function calculateCombatIntelligenceV2(
   if (!pal.combatStats) {
     return {
       formulaVersion:
-        "combat-v2-foundation",
+        "combat-v2.1-data-backed",
       confidence: "LIMITED",
       archetype: "Unscored",
       naturalOffense: 0,
@@ -411,6 +441,9 @@ export function calculateCombatIntelligenceV2(
       passiveFit: 0,
       partnerCombatUtility: 0,
       loadoutCompleteness: 0,
+      loadoutQuality: 0,
+      equippedSkills: [],
+      unknownSkillIds: [],
       currentReadiness: 0,
       generalCeiling: 0,
       bestUsedFor: [],
@@ -461,15 +494,20 @@ export function calculateCombatIntelligenceV2(
       pal,
     );
 
+  const equippedSkillIds =
+    pal.skills?.equipped ?? [];
+
+  const loadout =
+    getLoadoutIntelligence(
+      equippedSkillIds,
+      pal.elements,
+    );
+
   const equippedSkills =
-    pal.skills?.equipped
-      ?.length ?? 0;
+    equippedSkillIds.length;
 
   const loadoutCompleteness =
-    clamp(
-      (equippedSkills / 3) *
-        100,
-    );
+    loadout.completeness;
 
   const archetype =
     getArchetype(
@@ -480,11 +518,12 @@ export function calculateCombatIntelligenceV2(
 
   const generalCeiling =
     clamp(
-      individualOffense * 0.42 +
+      individualOffense * 0.36 +
         individualDurability *
-          0.34 +
-        passive.score * 0.16 +
-        partner.score * 0.08,
+          0.29 +
+        passive.score * 0.13 +
+        partner.score * 0.07 +
+        loadout.quality * 0.15,
     );
 
   const levelReadiness =
@@ -543,6 +582,12 @@ export function calculateCombatIntelligenceV2(
         (
           investmentReadiness /
           100
+        ) *
+        (
+          0.85 +
+          loadoutCompleteness /
+            100 *
+            0.15
         ),
     );
 
@@ -550,6 +595,31 @@ export function calculateCombatIntelligenceV2(
     ...passive.strengths,
     ...partner.reasons,
   ];
+
+  const strongestSkill =
+    [...loadout.skills].sort(
+      (a, b) =>
+        b.qualityScore -
+        a.qualityScore,
+    )[0];
+
+  if (strongestSkill) {
+    strengths.push(
+      `${strongestSkill.name}: ${strongestSkill.power} power / ${strongestSkill.cooldown}s cooldown`,
+    );
+  }
+
+  const sameElementSkills =
+    loadout.skills.filter(
+      (skill) =>
+        skill.sameElementBonus,
+    ).length;
+
+  if (sameElementSkills > 0) {
+    strengths.push(
+      `${sameElementSkills} equipped skill${sameElementSkills === 1 ? "" : "s"} match this Pal's element`,
+    );
+  }
 
   if (naturalOffense >= 85) {
     strengths.unshift(
@@ -567,8 +637,8 @@ export function calculateCombatIntelligenceV2(
 
   const limitations = [
     ...passive.limitations,
-    "Active-skill power, cooldown and same-element bonus are not yet included",
-    "Enemy-specific elemental advantage is not yet applied to the general score",
+    "Enemy-specific elemental advantage is not applied to the general score",
+    "Skill animation time, hit reliability and enemy movement are not available in the reference data",
   ];
 
   const strongAgainst =
@@ -587,7 +657,7 @@ export function calculateCombatIntelligenceV2(
 
   return {
     formulaVersion:
-      "combat-v2-foundation",
+      "combat-v2.1-data-backed",
     confidence:
       equippedSkills > 0
         ? "FOUNDATIONAL"
@@ -612,6 +682,12 @@ export function calculateCombatIntelligenceV2(
     partnerCombatUtility:
       partner.score,
     loadoutCompleteness,
+    loadoutQuality:
+      loadout.quality,
+    equippedSkills:
+      loadout.skills,
+    unknownSkillIds:
+      loadout.unknown,
     currentReadiness,
     generalCeiling,
     bestUsedFor:
