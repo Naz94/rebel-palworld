@@ -4292,7 +4292,9 @@ function PalDetailPanel({
 
               {partnerSkillDisplay.scales && (
                 <p className="mt-3 text-[10px] text-violet-200">
-                  ✓ Improves with condensation · Current rank {partnerSkillDisplay.rank}
+                  {score.investmentPlan.actions.condense
+                    ? `✓ Condensation recommended · Current rank ${partnerSkillDisplay.rank}`
+                    : `Rank scaling documented, but condensation is not recommended for this copy's ${score.primaryUse.toLowerCase()} role.`}
                 </p>
               )}
             </div>
@@ -4423,7 +4425,13 @@ function PalDetailPanel({
                     Rebel Recommendation
                   </p>
                   <div className="mt-2 space-y-1">
-                    {Object.entries(pal.speciesUtility.recommendations).map(
+                    {Object.entries({
+                      ...pal.speciesUtility.recommendations,
+                      playerSupport:
+                        partnerSkillDisplay?.affects.playerSupport
+                          ? "YES"
+                          : pal.speciesUtility.recommendations.playerSupport,
+                    }).map(
                       ([area, recommendation]) => (
                         <p
                           key={area}
@@ -4633,9 +4641,46 @@ function PalDetailPanel({
             </div>
           )}
 
-          <details className="mt-6 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+
+
+          {score.workRoles
+            .length > 0 && (
+            <div className="mt-6">
+              <PanelHeading>
+                Work Suitability
+              </PanelHeading>
+
+              <div className="mt-3 flex flex-wrap gap-2">
+                {score.workRoles.map(
+                  (role) => (
+                    <span
+                      key={
+                        role.role
+                      }
+                      className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs"
+                    >
+                      {
+                        role.role
+                      }{" "}
+                      Lv.{" "}
+                      {
+                        role.effectiveLevel
+                      }
+                      {role.effectiveLevel !== role.level
+                        ? ` (base ${role.level})`
+                        : ""}
+                      {" · "}
+                      {role.profile}
+                    </span>
+                  ),
+                )}
+              </div>
+            </div>
+          )}
+
+          <details className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-3">
             <summary className="cursor-pointer text-xs font-medium text-neutral-300">
-              More intelligence and technical details
+              More technical details
             </summary>
 
             <div className="mt-4">
@@ -4689,41 +4734,6 @@ function PalDetailPanel({
               )}
             </div>
           </details>
-
-          {score.workRoles
-            .length > 0 && (
-            <div className="mt-6">
-              <PanelHeading>
-                Work Suitability
-              </PanelHeading>
-
-              <div className="mt-3 flex flex-wrap gap-2">
-                {score.workRoles.map(
-                  (role) => (
-                    <span
-                      key={
-                        role.role
-                      }
-                      className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs"
-                    >
-                      {
-                        role.role
-                      }{" "}
-                      Lv.{" "}
-                      {
-                        role.effectiveLevel
-                      }
-                      {role.effectiveLevel !== role.level
-                        ? ` (base ${role.level})`
-                        : ""}
-                      {" · "}
-                      {role.profile}
-                    </span>
-                  ),
-                )}
-              </div>
-            </div>
-          )}
 
 
         </div>
