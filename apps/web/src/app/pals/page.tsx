@@ -4294,7 +4294,7 @@ function PalDetailPanel({
                 <p className="mt-3 text-[10px] text-violet-200">
                   {score.investmentPlan.actions.condense
                     ? `✓ Condensation recommended · Current rank ${partnerSkillDisplay.rank}`
-                    : `Rank scaling documented, but condensation is not recommended for this copy's ${score.primaryUse.toLowerCase()} role.`}
+                    : `Rank scaling documented, but condensation is not recommended for this copy's ${score.bestRole.toLowerCase()} role.`}
                 </p>
               )}
             </div>
