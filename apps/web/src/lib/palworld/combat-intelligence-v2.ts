@@ -28,6 +28,8 @@ export type PalCombatIntelligenceV2 = {
   currentReadiness: number;
   generalCeiling: number;
   bestUsedFor: string[];
+  strongAgainst: string[];
+  weakAgainst: string[];
   strengths: string[];
   limitations: string[];
 };
@@ -387,6 +389,8 @@ export function calculateCombatIntelligenceV2(
       currentReadiness: 0,
       generalCeiling: 0,
       bestUsedFor: [],
+      strongAgainst: [],
+      weakAgainst: [],
       strengths: [],
       limitations: [
         "Species combat reference data is missing",
@@ -542,6 +546,20 @@ export function calculateCombatIntelligenceV2(
     "Enemy-specific elemental advantage is not yet applied to the general score",
   ];
 
+  const strongAgainst =
+    Array.from(
+      new Set(
+        pal.elements.flatMap(
+          getElementAdvantages,
+        ),
+      ),
+    );
+
+  const weakAgainst =
+    getElementsStrongAgainst(
+      pal.elements,
+    );
+
   return {
     formulaVersion:
       "combat-v2-foundation",
@@ -576,6 +594,8 @@ export function calculateCombatIntelligenceV2(
         archetype,
         pal.elements,
       ),
+    strongAgainst,
+    weakAgainst,
     strengths:
       Array.from(
         new Set(strengths),
@@ -605,6 +625,34 @@ export function getElementAdvantages(
     advantages[
       attackingElement
     ] ?? []
+  );
+}
+
+export function getElementsStrongAgainst(
+  defendingElements: string[],
+): string[] {
+  const allElements = [
+    "Fire",
+    "Water",
+    "Electric",
+    "Grass",
+    "Ground",
+    "Ice",
+    "Dragon",
+    "Dark",
+    "Neutral",
+  ];
+
+  return allElements.filter(
+    (attackingElement) =>
+      getElementAdvantages(
+        attackingElement,
+      ).some(
+        (target) =>
+          defendingElements.includes(
+            target,
+          ),
+      ),
   );
 }
 
