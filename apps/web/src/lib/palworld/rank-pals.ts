@@ -71,6 +71,34 @@ export type PalPartnerSkill = {
   tags: string[];
 };
 
+export type PalSpeciesUtility = {
+  paldex: string | number | null;
+  code: string;
+  name: string;
+  elements: string[];
+  speciesRoles: string[];
+  primaryUtility: string;
+  bestUsedFor: string[];
+  workSuitability: Record<string, number>;
+  ranchDrops: string[];
+  partnerSkill: PalPartnerSkill | null;
+  combat: {
+    tier: string;
+    combatPercentile: number;
+    hp: number;
+    attack: number;
+    defense: number;
+    food: number;
+  } | null;
+  recommendations: {
+    base: "PRIMARY" | "VIABLE" | "LIMITED";
+    combat: "PRIMARY" | "VIABLE" | "LIMITED";
+    breeding: "VALUABLE" | "GENERAL";
+    playerSupport: "YES" | "NO";
+    traversal: "YES" | "NO";
+  };
+};
+
 export type RealOwnedPal = {
   id: string | null;
 
@@ -118,6 +146,8 @@ export type RealOwnedPal = {
   elements: string[];
 
   partnerSkill?: PalPartnerSkill | null;
+
+  speciesUtility?: PalSpeciesUtility | null;
 
   ivs: PalIVs;
 
