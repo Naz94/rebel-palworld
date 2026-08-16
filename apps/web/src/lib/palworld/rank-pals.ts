@@ -226,6 +226,26 @@ export type DecisionBucket =
   | "BORDERLINE_CLEANUP"
   | "SAFE_CLEANUP";
 
+export type PalInvestmentDecision =
+  | "INVEST_NOW"
+  | "TARGETED_INVESTMENT"
+  | "BREED_FIRST"
+  | "HOLD"
+  | "DO_NOT_INVEST";
+
+export type PalInvestmentPlan = {
+  decision: PalInvestmentDecision;
+  actions: {
+    level: boolean;
+    ivFruit: boolean;
+    condense: boolean;
+    souls: boolean;
+    workUpgrades: boolean;
+    breed: boolean;
+  };
+  reasons: string[];
+};
+
 export type RealPalScore = {
   overall: number;
 
@@ -271,6 +291,8 @@ export type RealPalScore = {
    * combat ceiling, current readiness, stars and partial progress.
    */
   investmentPriority: number;
+
+  investmentPlan: PalInvestmentPlan;
 
   combatReasons: string[];
   breedingReasons: string[];
@@ -3004,6 +3026,21 @@ function scorePal(
     expeditionFirepower,
     investmentPriority,
 
+    investmentPlan: {
+      decision: "HOLD",
+      actions: {
+        level: false,
+        ivFruit: false,
+        condense: false,
+        souls: false,
+        workUpgrades: false,
+        breed: breeding >= 65,
+      },
+      reasons: [
+        "Collection comparison pending",
+      ],
+    },
+
     combatReasons,
     breedingReasons,
     supportReasons,
@@ -3991,6 +4028,180 @@ function classifyReview(
   );
 }
 
+function buildInvestmentPlan(
+  entry: RankedRealPal,
+): PalInvestmentPlan {
+  const { pal, score } = entry;
+
+  if (
+    score.decisionBucket === "SAFE_CLEANUP" ||
+    score.action === "SAFE TO REPLACE"
+  ) {
+    return {
+      decision: "DO_NOT_INVEST",
+      actions: {
+        level: false,
+        ivFruit: false,
+        condense: false,
+        souls: false,
+        workUpgrades: false,
+        breed: false,
+      },
+      reasons: [
+        "A stronger same-species copy already covers this Pal's useful roles",
+        "Save levels, Souls, Potential fruit and condensation material for a protected copy",
+      ],
+    };
+  }
+
+  const reasons: string[] = [];
+  const combatGap = Math.max(
+    0,
+    score.combatPotential - score.currentPower,
+  );
+  const fruitNeeds = [
+    pal.ivs.hp,
+    pal.ivs.attack,
+    pal.ivs.defense,
+  ].filter(
+    (value) =>
+      typeof value === "number" &&
+      value < 90,
+  ).length;
+
+  const scalablePartner =
+    Boolean(pal.partnerSkill) &&
+    hasPartnerSkillScalingEvidence(pal);
+
+  const ranchCandidate =
+    (pal.ranchDrops?.length ?? 0) > 0 ||
+    getPartnerFarmingBonus(pal) > 0;
+
+  const combatWinner =
+    score.bestOfSpecies.combat &&
+    score.combatPotential >= 65;
+
+  const baseWinner =
+    score.bestOfSpecies.base &&
+    score.base >= 65;
+
+  const supportWinner =
+    score.support >= 50 &&
+    (score.bestOfSpecies.overall ||
+      score.bestRole === "Player Support");
+
+  const breedingCandidate =
+    score.breeding >= 65;
+
+  const level =
+    combatWinner &&
+    combatGap >= 8;
+
+  const ivFruit =
+    combatWinner &&
+    fruitNeeds > 0 &&
+    score.combatPotential >= 70;
+
+  const condense =
+    scalablePartner &&
+    (combatWinner ||
+      baseWinner ||
+      supportWinner ||
+      ranchCandidate);
+
+  const souls =
+    combatWinner &&
+    score.combatPotential >= 72;
+
+  const workUpgrades =
+    baseWinner &&
+    score.workRoles.some(
+      (role) =>
+        role.effectiveLevel >= 3,
+    );
+
+  if (level) {
+    reasons.push(
+      `Level investment can close a ${combatGap.toFixed(0)}-point combat-readiness gap`,
+    );
+  }
+
+  if (ivFruit) {
+    reasons.push(
+      `${fruitNeeds} combat IV stat${fruitNeeds === 1 ? "" : "s"} remain below 90`,
+    );
+  }
+
+  if (condense) {
+    reasons.push(
+      `${getPartnerSkillName(pal)} has documented rank scaling that benefits this Pal's recommended role`,
+    );
+  }
+
+  if (souls) {
+    reasons.push(
+      "This is a strong same-species combat winner with a worthwhile ceiling",
+    );
+  }
+
+  if (workUpgrades) {
+    reasons.push(
+      "This is the best owned base copy with high-level Work Suitability",
+    );
+  }
+
+  if (breedingCandidate) {
+    reasons.push(
+      "IVs and passive inheritance make this a useful breeding donor",
+    );
+  }
+
+  const directInvestment =
+    level ||
+    ivFruit ||
+    condense ||
+    souls ||
+    workUpgrades;
+
+  let decision: PalInvestmentDecision;
+
+  if (
+    directInvestment &&
+    score.investmentPriority >= 75
+  ) {
+    decision = "INVEST_NOW";
+  } else if (directInvestment) {
+    decision = "TARGETED_INVESTMENT";
+  } else if (breedingCandidate) {
+    decision = "BREED_FIRST";
+  } else if (
+    score.decisionBucket === "BORDERLINE_CLEANUP"
+  ) {
+    decision = "DO_NOT_INVEST";
+    reasons.push(
+      "This copy is too close to cleanup status for scarce investment resources",
+    );
+  } else {
+    decision = "HOLD";
+    reasons.push(
+      "Keep this copy, but no high-return investment action is currently identified",
+    );
+  }
+
+  return {
+    decision,
+    actions: {
+      level,
+      ivFruit,
+      condense,
+      souls,
+      workUpgrades,
+      breed: breedingCandidate,
+    },
+    reasons,
+  };
+}
+
 function applyCollectionIntelligence(
   scoredPals: RankedRealPal[],
 ): SpeciesGroup[] {
@@ -4563,6 +4774,16 @@ function applyCollectionIntelligence(
         score.decisionBucket =
           "USEFUL_BACKUP";
       }
+    }
+
+    for (
+      const rankedPal
+      of groupPals
+    ) {
+      rankedPal.score.investmentPlan =
+        buildInvestmentPlan(
+          rankedPal,
+        );
     }
 
     const sorted =
