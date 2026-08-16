@@ -3640,15 +3640,27 @@ function getPartnerSkillDisplay(
     ) ||
     healing;
 
+  const partyPalSupport =
+    text.includes("while in party") &&
+    (
+      /increases? (?:the )?(?:attack|defense) of .*pals/.test(text) ||
+      text.includes("pal team") ||
+      text.includes("party pals")
+    );
+
   const combat =
-    tags.has("active") &&
+    (
+      tags.has("active") ||
+      mount
+    ) &&
     (
       text.includes("enemy") ||
       text.includes("attack") ||
       text.includes("damage") ||
       text.includes("gun") ||
       text.includes("weapon") ||
-      text.includes("explosion")
+      text.includes("explosion") ||
+      text.includes("rapidly fire")
     );
 
   const alphaEggUtility =
@@ -3682,6 +3694,12 @@ function getPartnerSkillDisplay(
   ) {
     type =
       "Mounted Combat / Traversal";
+  } else if (
+    mount &&
+    partyPalSupport
+  ) {
+    type =
+      "Mount / Pal Team Support";
   } else if (mount) {
     type =
       "Ground Mount / Traversal";
@@ -3737,7 +3755,13 @@ function getPartnerSkillDisplay(
 
   if (playerSupport) {
     bestUses.push(
-      "Player or party support",
+      "Player support",
+    );
+  }
+
+  if (partyPalSupport) {
+    bestUses.push(
+      "Element-focused Pal teams",
     );
   }
 
@@ -3812,6 +3836,8 @@ function getPartnerSkillDisplay(
         glider || mount,
       combat,
       playerSupport,
+      partySupport:
+        partyPalSupport,
       base,
       farming: ranch,
       loot,
@@ -4470,6 +4496,9 @@ function PalDetailPanel({
                         partnerSkillDisplay?.affects.playerSupport
                           ? "YES"
                           : pal.speciesUtility.recommendations.playerSupport,
+                      ...(partnerSkillDisplay?.affects.partySupport
+                        ? { partySupport: "YES" }
+                        : {}),
                     }).map(
                       ([area, recommendation]) => (
                         <p
