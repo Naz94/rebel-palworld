@@ -3943,6 +3943,84 @@ function PalDetailPanel({
               </div>
             )}
           </div>
+          {pal.speciesUtility && (
+            <div className="mt-6 rounded-2xl border border-emerald-400/15 bg-emerald-400/[0.03] p-4">
+              <PanelHeading>
+                Species Intelligence
+              </PanelHeading>
+
+              <div className="mt-3">
+                <p className="text-[9px] uppercase tracking-[0.16em] text-emerald-300">
+                  Primary Utility
+                </p>
+                <p className="mt-1 text-sm font-semibold text-neutral-100">
+                  {pal.speciesUtility.primaryUtility}
+                </p>
+              </div>
+
+              {pal.speciesUtility.speciesRoles.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {pal.speciesUtility.speciesRoles.map((role) => (
+                    <span
+                      key={role}
+                      className="rounded-lg border border-emerald-400/15 bg-emerald-400/[0.06] px-2.5 py-1 text-[9px] text-emerald-100"
+                    >
+                      {role}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                    Best Used For
+                  </p>
+                  <div className="mt-2 space-y-1">
+                    {pal.speciesUtility.bestUsedFor.map((use) => (
+                      <p key={use} className="text-[10px] leading-relaxed text-neutral-300">
+                        ✓ {use}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                    Rebel Recommendation
+                  </p>
+                  <div className="mt-2 space-y-1">
+                    {Object.entries(pal.speciesUtility.recommendations).map(
+                      ([area, recommendation]) => (
+                        <p
+                          key={area}
+                          className="text-[10px] text-neutral-300"
+                        >
+                          {humanizeSkill(area)}: {recommendation}
+                        </p>
+                      ),
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {pal.speciesUtility.ranchDrops.length > 0 && (
+                <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
+                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                    Ranch Production
+                  </p>
+                  <p className="mt-1 text-[10px] text-neutral-300">
+                    {pal.speciesUtility.ranchDrops.join(" · ")}
+                  </p>
+                </div>
+              )}
+
+              <p className="mt-3 text-[9px] leading-relaxed text-neutral-600">
+                Species intelligence describes what every {pal.species} is naturally useful for. Individual IVs, passives and investment below determine how valuable this specific copy is.
+              </p>
+            </div>
+          )}
+
           {partnerSkillDisplay && (
             <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
               <PanelHeading>
