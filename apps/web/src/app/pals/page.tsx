@@ -3721,6 +3721,9 @@ function getPartnerSkillDisplay(
   ) {
     type =
       "Ranch Production / Pal Team Support";
+  } else if (partyPalSupport) {
+    type =
+      "Pal Team Support";
   } else if (
     mount &&
     alphaEggUtility
@@ -4029,6 +4032,26 @@ function PalDetailPanel({
         trait.disposition !== "BAD" &&
         trait.affects.playerSupport,
     );
+
+  const partyOnlySupport =
+    Boolean(partnerSkillDisplay?.affects.partySupport) &&
+    !partnerSkillDisplay?.affects.playerSupport &&
+    !individualPlayerSupport;
+
+  const displayedSpeciesPrimaryUtility =
+    partyOnlySupport &&
+    pal.speciesUtility?.primaryUtility === "Player / party support"
+      ? "Pal team support"
+      : pal.speciesUtility?.primaryUtility;
+
+  const displayedSpeciesBestUses =
+    pal.speciesUtility?.bestUsedFor.filter(
+      (use) =>
+        !(
+          pal.speciesUtility?.recommendations.base === "LIMITED" &&
+          use.endsWith("-focused bases")
+        ),
+    ) ?? [];
 
   const comparison =
     bestCopy &&
@@ -4535,7 +4558,7 @@ function PalDetailPanel({
                   Primary Utility
                 </p>
                 <p className="mt-1 text-[17px] font-semibold text-neutral-100">
-                  {pal.speciesUtility.primaryUtility}
+                  {displayedSpeciesPrimaryUtility}
                 </p>
               </div>
 
@@ -4558,7 +4581,7 @@ function PalDetailPanel({
                     Best Used For
                   </p>
                   <div className="mt-2 space-y-1">
-                    {pal.speciesUtility.bestUsedFor.map((use) => (
+                    {displayedSpeciesBestUses.map((use) => (
                       <p key={use} className="text-[17px] leading-relaxed text-neutral-300">
                         ✓ {use}
                       </p>
@@ -4577,7 +4600,9 @@ function PalDetailPanel({
                         partnerSkillDisplay?.affects.playerSupport ||
                         individualPlayerSupport
                           ? "YES"
-                          : pal.speciesUtility.recommendations.playerSupport,
+                          : partyOnlySupport
+                            ? "NO"
+                            : pal.speciesUtility.recommendations.playerSupport,
                       ...(partnerSkillDisplay?.affects.partySupport
                         ? { partySupport: "YES" }
                         : {}),
