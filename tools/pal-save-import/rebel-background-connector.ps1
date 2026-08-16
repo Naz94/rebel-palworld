@@ -50,13 +50,12 @@ function Assert-ConnectorSetup {
 }
 
 function Get-ConnectorProcesses {
-    $escapedScriptPath = [WildcardPattern]::Escape($ScriptPath)
     return @(
         Get-CimInstance Win32_Process -ErrorAction SilentlyContinue |
         Where-Object {
             $_.ProcessId -ne $PID -and
             $_.Name -match '^powershell(\.exe)?$' -and
-            $_.CommandLine -like "*$escapedScriptPath* Run*"
+            $_.CommandLine -like '*rebel-background-connector.ps1*Run*'
         }
     )
 }
