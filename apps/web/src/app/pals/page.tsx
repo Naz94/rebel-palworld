@@ -3875,6 +3875,40 @@ function PalDetailPanel({
               />
             </div>
 
+            <div className="mt-3 rounded-xl border border-violet-400/20 bg-violet-400/[0.04] p-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                  Investment Plan V2
+                </p>
+                <span className="rounded-md border border-violet-400/20 bg-violet-400/10 px-2 py-1 text-[9px] text-violet-200">
+                  {score.investmentPlan.decision.replaceAll("_", " ")}
+                </span>
+              </div>
+
+              <div className="mt-3 grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+                {Object.entries(score.investmentPlan.actions).map(([action, recommended]) => (
+                  <div
+                    key={action}
+                    className={recommended
+                      ? "rounded-lg border border-emerald-400/20 bg-emerald-400/[0.06] px-2 py-1.5"
+                      : "rounded-lg border border-white/5 bg-black/20 px-2 py-1.5"}
+                  >
+                    <p className={recommended ? "text-[9px] text-emerald-200" : "text-[9px] text-neutral-600"}>
+                      {humanizeSkill(action)}: {recommended ? "YES" : "NO"}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-3 space-y-1">
+                {score.investmentPlan.reasons.map((reason) => (
+                  <p key={reason} className="text-[10px] leading-relaxed text-neutral-400">
+                    • {reason}
+                  </p>
+                ))}
+              </div>
+            </div>
+
             {score.investmentReasons.length > 0 && (
               <div className="mt-3 space-y-1">
                 {score.investmentReasons.map((reason) => (
