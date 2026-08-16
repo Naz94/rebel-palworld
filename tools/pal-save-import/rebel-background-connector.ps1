@@ -169,12 +169,17 @@ function Run-Connector {
         while ($true) {
             Push-Location $ProjectRoot
             try {
+                $previousErrorPreference = $ErrorActionPreference
+                $ErrorActionPreference = "Continue"
                 & $nodePath $WatcherPath *>> $LogPath
                 $exitCode = $LASTEXITCODE
             } catch {
                 $exitCode = 1
                 Write-ConnectorLog "Watcher error: $($_.Exception.Message)"
-            } finally { Pop-Location }
+            } finally {
+                $ErrorActionPreference = $previousErrorPreference
+                Pop-Location
+            }
 
             Write-ConnectorLog "Watcher exited with code $exitCode. Restarting in 10 seconds."
             Start-Sleep -Seconds 10
