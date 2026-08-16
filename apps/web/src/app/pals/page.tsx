@@ -3695,11 +3695,18 @@ function getPartnerSkillDisplay(
     text.includes("meat cleaver") ||
     text.includes("butcher");
 
+  const resourceDetection =
+    text.includes("detect nearby") ||
+    text.includes("chromite acquisition") ||
+    text.includes("resource acquisition");
+
   const loot =
     text.includes("drop") ||
     text.includes("dig") ||
     text.includes("amount of items obtained") ||
+    text.includes("acquisition increases") ||
     butchering ||
+    resourceDetection ||
     text.includes("items when defeated") ||
     alphaEggUtility;
 
@@ -3709,6 +3716,9 @@ function getPartnerSkillDisplay(
   if (butchering) {
     type =
       "Butchering / Loot Utility";
+  } else if (resourceDetection) {
+    type =
+      "Resource Detection / Loot Utility";
   } else if (glider) {
     type =
       "Glider / Traversal Utility";
@@ -3757,6 +3767,9 @@ function getPartnerSkillDisplay(
   } else if (ranch) {
     type =
       "Ranch Production";
+  } else if (base && combat) {
+    type =
+      "Base Utility / Active Combat";
   } else if (base) {
     type =
       "Base Utility";
@@ -3795,6 +3808,14 @@ function getPartnerSkillDisplay(
     );
   }
 
+  if (resourceDetection) {
+    bestUses.push(
+      text.includes("chromite")
+        ? "Finding and farming Chromite"
+        : "Finding and farming resources",
+    );
+  }
+
   if (combat) {
     bestUses.push(
       "Combat utility",
@@ -3828,7 +3849,8 @@ function getPartnerSkillDisplay(
   if (
     loot &&
     !alphaEggUtility &&
-    !butchering
+    !butchering &&
+    !resourceDetection
   ) {
     bestUses.push(
       "Resource collection",
@@ -4036,7 +4058,7 @@ function PalDetailPanel({
   const partyOnlySupport =
     Boolean(partnerSkillDisplay?.affects.partySupport) &&
     !partnerSkillDisplay?.affects.playerSupport &&
-    !individualPlayerSupport;
+    true;
 
   const displayedSpeciesPrimaryUtility =
     partyOnlySupport &&
@@ -4481,6 +4503,20 @@ function PalDetailPanel({
                   const intelligence =
                     getPassiveTraitIntelligence(passive);
 
+                  const elementalMatch =
+                    intelligence.description.match(
+                      /(?:increase|increases).*?(Fire|Water|Grass|Electric|Ice|Ground|Dark|Dragon|Neutral) attack/i,
+                    );
+                  const mismatchedElement =
+                    elementalMatch?.[1] &&
+                    !pal.elements.some(
+                      (element) =>
+                        element.toLowerCase() ===
+                        elementalMatch[1].toLowerCase(),
+                    )
+                      ? elementalMatch[1]
+                      : null;
+
                   const dispositionStyle =
                     intelligence.disposition === "GOOD"
                       ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-200"
@@ -4520,6 +4556,15 @@ function PalDetailPanel({
                       <p className="mt-2 text-[17px] leading-relaxed text-neutral-400">
                         {intelligence.description}
                       </p>
+
+                      {mismatchedElement && (
+                        <p className="mt-2 text-[15px] leading-relaxed text-amber-300">
+                          ⚠ This boosts {mismatchedElement}, but this Pal is{" "}
+                          {pal.elements.join(" / ")}. It does not improve this
+                          copy's same-element attacks; keep it only as an
+                          inheritance option for a compatible offspring.
+                        </p>
+                      )}
 
                       {intelligence.bestFor.length > 0 && (
                         <div className="mt-3 flex flex-wrap gap-2">
@@ -4597,8 +4642,7 @@ function PalDetailPanel({
                     {Object.entries({
                       ...pal.speciesUtility.recommendations,
                       playerSupport:
-                        partnerSkillDisplay?.affects.playerSupport ||
-                        individualPlayerSupport
+                        partnerSkillDisplay?.affects.playerSupport
                           ? "YES"
                           : partyOnlySupport
                             ? "NO"
