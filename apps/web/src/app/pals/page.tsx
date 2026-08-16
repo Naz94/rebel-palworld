@@ -4275,51 +4275,26 @@ function PalDetailPanel({
                 </div>
               )}
 
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+              {partnerSkillDisplay.bestUses.length > 0 && (
+                <div className="mt-3">
                   <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
                     Best Used For
                   </p>
-                  <div className="mt-2 space-y-1">
+                  <div className="mt-2 flex flex-wrap gap-2">
                     {partnerSkillDisplay.bestUses.map((use) => (
-                      <p key={use} className="text-[10px] text-neutral-300">✓ {use}</p>
+                      <span key={use} className="rounded-lg border border-cyan-400/15 bg-cyan-400/[0.05] px-2.5 py-1 text-[9px] text-neutral-300">
+                        ✓ {use}
+                      </span>
                     ))}
                   </div>
                 </div>
+              )}
 
-                <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
-                    Affects
-                  </p>
-                  <div className="mt-2 space-y-1">
-                    {Object.entries(partnerSkillDisplay.affects).map(([area, active]) => (
-                      <p key={area} className={active ? "text-[10px] text-neutral-200" : "text-[10px] text-neutral-600"}>
-                        {humanizeSkill(area)}: {active ? "YES" : "NO"}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
-                <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
-                  Condensation Benefit
+              {partnerSkillDisplay.scales && (
+                <p className="mt-3 text-[10px] text-violet-200">
+                  ✓ Improves with condensation · Current rank {partnerSkillDisplay.rank}
                 </p>
-                <p className="mt-1 text-[10px] leading-relaxed text-neutral-300">
-                  {partnerSkillDisplay.scales
-                    ? `The documented numeric effect improves with Partner Skill rank. Current rank: ${partnerSkillDisplay.rank}.`
-                    : "No rank-scaled numeric range is documented, so Rebel does not invent a condensation benefit."}
-                </p>
-              </div>
-
-              <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
-                <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
-                  Rebel Interpretation
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-neutral-300">
-                  {partnerSkillDisplay.interpretation}
-                </p>
-              </div>
+              )}
             </div>
           )}
 
@@ -4375,47 +4350,15 @@ function PalDetailPanel({
                         {intelligence.description}
                       </p>
 
-                      <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                        <div className="rounded-lg border border-white/10 bg-black/20 p-2.5">
-                          <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
-                            Best For
-                          </p>
-                          <div className="mt-1.5 space-y-1">
-                            {intelligence.bestFor.map((role) => (
-                              <p key={role} className="text-[10px] text-neutral-300">
-                                ✓ {role}
-                              </p>
-                            ))}
-                          </div>
+                      {intelligence.bestFor.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {intelligence.bestFor.map((role) => (
+                            <span key={role} className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[9px] text-neutral-300">
+                              ✓ {role}
+                            </span>
+                          ))}
                         </div>
-
-                        <div className="rounded-lg border border-white/10 bg-black/20 p-2.5">
-                          <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
-                            Rebel Score Category
-                          </p>
-                          <p className="mt-1.5 text-[10px] text-neutral-300">
-                            {intelligence.scoreCategory}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="mt-2 rounded-lg border border-white/10 bg-black/20 p-2.5">
-                        <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
-                          Breeding Usefulness
-                        </p>
-                        <p className="mt-1 text-[10px] leading-relaxed text-neutral-400">
-                          {intelligence.breedingUsefulness}
-                        </p>
-                      </div>
-
-                      <div className="mt-2 rounded-lg border border-white/10 bg-black/20 p-2.5">
-                        <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
-                          Rebel Interpretation
-                        </p>
-                        <p className="mt-1 text-[10px] leading-relaxed text-neutral-300">
-                          {intelligence.interpretation}
-                        </p>
-                      </div>
+                      )}
                     </div>
                   );
                 })}
