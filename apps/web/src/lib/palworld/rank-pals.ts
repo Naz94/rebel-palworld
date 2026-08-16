@@ -1459,6 +1459,12 @@ function getPartnerCombatUtilityBonus(
         "attack damage",
       ) ||
       description.includes(
+        "increases attack by",
+      ) ||
+      description.includes(
+        "changes the player's attack type",
+      ) ||
+      description.includes(
         "increases damage player deals",
       ) ||
       description.includes(
@@ -4110,7 +4116,8 @@ function buildInvestmentPlan(
   const reasons: string[] = [];
   const combatGap = Math.max(
     0,
-    score.combatPotential - score.currentPower,
+    score.combatIntelligenceV2.generalCeiling -
+      score.combatIntelligenceV2.currentReadiness,
   );
   const fruitNeeds = [
     pal.ivs.hp,
@@ -4168,7 +4175,7 @@ function buildInvestmentPlan(
   const ivFruit =
     combatInvestmentCandidate &&
     fruitNeeds > 0 &&
-    score.combatPotential >= 70;
+    combatCeiling >= 70;
 
   const partnerSupportScaling =
     getPartnerSupportData(pal).score > 0;
