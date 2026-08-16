@@ -4014,6 +4014,12 @@ function PalDetailPanel({
       ? "Combat"
       : score.bestRole;
 
+  const tradeMatchups =
+    combatV2.strongAgainst.filter(
+      (element) =>
+        combatV2.weakAgainst.includes(element),
+    );
+
   const passiveIntelligence =
     pal.passives.map(getPassiveTraitIntelligence);
 
@@ -4265,6 +4271,19 @@ function PalDetailPanel({
                 </div>
               </div>
 
+              {tradeMatchups.length > 0 && (
+                <div className="mt-3 rounded-xl border border-amber-400/20 bg-amber-400/[0.05] p-3">
+                  <p className="text-[15px] uppercase tracking-[0.14em] text-amber-300">
+                    Two-way Type Matchup
+                  </p>
+                  <p className="mt-1 text-[17px] leading-relaxed text-neutral-300">
+                    Against {tradeMatchups.join(" · ")}, this dual-element Pal
+                    can deal advantageous damage but is also vulnerable to that
+                    element. Choose moves and positioning carefully.
+                  </p>
+                </div>
+              )}
+
               <p className="mt-3 text-[15px] leading-relaxed text-neutral-600">
                 Data-backed general score using species stats, IVs, passives, Partner Skill utility and the equipped skill loadout. Apply the displayed elemental matchup when choosing a fighter for a specific enemy.
               </p>
@@ -4508,7 +4527,7 @@ function PalDetailPanel({
           {pal.speciesUtility && (
             <div className="mt-6 rounded-2xl border border-emerald-400/15 bg-emerald-400/[0.03] p-4">
               <PanelHeading>
-                Species Intelligence
+                Natural Species Baseline
               </PanelHeading>
 
               <div className="mt-3">
@@ -4600,7 +4619,7 @@ function PalDetailPanel({
               )}
 
               <p className="mt-3 text-[15px] leading-relaxed text-neutral-600">
-                Species intelligence describes what every {pal.species} is naturally useful for. Individual IVs, passives and investment below determine how valuable this specific copy is.
+                This baseline describes what an ordinary {pal.species} is naturally useful for. The recommendation and Combat V2 sections above evaluate this specific copy using its IVs, passives, moves and investment.
               </p>
             </div>
           )}
