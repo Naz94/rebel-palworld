@@ -54,14 +54,16 @@ function Get-ConnectorProcesses {
         Get-CimInstance Win32_Process -ErrorAction SilentlyContinue |
         Where-Object {
             $_.ProcessId -ne $PID -and
-            $_.Name -match '^powershell(\.exe)?$' -and
-            $_.CommandLine -like '*rebel-background-connector.ps1*Run*'
+            (
+                $_.CommandLine -like '*rebel-background-connector.ps1*' -or
+                $_.CommandLine -like '*watch-save.mjs*'
+            )
         }
     )
 }
 
 function Start-ConnectorProcess {
-    if ((Get-ConnectorProcesses).Count -gt 0) { return }
+    if (@(Get-ConnectorProcesses).Count -gt 0) { return }
     $options = @{
         FilePath = Get-PowerShellPath
         ArgumentList = Get-RunArguments
@@ -77,7 +79,7 @@ function Show-ConnectorStatus {
     Write-Host "REBEL PALWORLD BACKGROUND CONNECTOR" -ForegroundColor Cyan
     Write-Host "===================================="
     Write-Host "Installed: $(if (Test-Path $StartupShortcutPath) { 'Yes' } else { 'No' })"
-    Write-Host "Running: $(if ($processes.Count -gt 0) { 'Yes' } else { 'No' })"
+    Write-Host "Running: $(if (@($processes).Count -gt 0) { 'Yes' } else { 'No' })"
     Write-Host "Cloud config: $(if (Test-Path $ConfigPath) { 'Present' } else { 'Missing' })"
     Write-Host "Startup shortcut: $StartupShortcutPath"
 
