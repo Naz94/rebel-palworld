@@ -78,8 +78,7 @@ function getSoulTotal(
   return souls
     ? souls.hp +
         souls.attack +
-        souls.defense +
-        souls.workSpeed
+        souls.defense
     : 0;
 }
 
