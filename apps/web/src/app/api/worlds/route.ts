@@ -135,6 +135,7 @@ async function discoverWorlds(): Promise<DiscoveryResult> {
 
   if (
     !fs.existsSync(
+      /* turbopackIgnore: true */
       discoveryScript,
     )
   ) {
