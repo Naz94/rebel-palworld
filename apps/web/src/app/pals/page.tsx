@@ -2855,9 +2855,6 @@ function CleanupDecisionRow({
   const { pal, score } =
     rankedPal;
 
-  const partnerSkillDisplay =
-    getPartnerSkillDisplay(pal);
-
   const reason =
     type === "review"
       ? score.reviewReasons[0] ??
@@ -3600,6 +3597,9 @@ function PalDetailPanel({
 }) {
   const { pal, score } =
     rankedPal;
+
+  const partnerSkillDisplay =
+    getPartnerSkillDisplay(pal);
 
   const speciesKey =
     pal.internalSpeciesId
