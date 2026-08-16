@@ -534,6 +534,10 @@ const appPals =
           pal.partnerSkill ??
           null,
 
+        speciesUtility:
+          pal.speciesUtility ??
+          null,
+
         ivs:
           pal.ivs,
 
