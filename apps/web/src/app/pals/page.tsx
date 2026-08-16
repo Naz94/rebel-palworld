@@ -1072,11 +1072,15 @@ function CombatView({
     );
 
   const currentPower = [...scoredPals].sort(
-    (a, b) => b.score.currentPower - a.score.currentPower,
+    (a, b) =>
+      b.score.combatIntelligenceV2.currentReadiness -
+      a.score.combatIntelligenceV2.currentReadiness,
   );
 
   const potential = [...scoredPals].sort(
-    (a, b) => b.score.combatPotential - a.score.combatPotential,
+    (a, b) =>
+      b.score.combatIntelligenceV2.generalCeiling -
+      a.score.combatIntelligenceV2.generalCeiling,
   );
 
   const attackMonsters = [...scoredPals]
@@ -1084,28 +1088,36 @@ function CombatView({
     .sort(
       (a, b) =>
         (b.pal.ivs.attack ?? 0) - (a.pal.ivs.attack ?? 0) ||
-        b.score.combatPotential - a.score.combatPotential,
+        b.score.combatIntelligenceV2.individualOffense -
+          a.score.combatIntelligenceV2.individualOffense,
     );
 
   const tanks = [...scoredPals]
     .filter(
       (entry) =>
-        (entry.pal.ivs.hp ?? 0) >= 80 ||
-        (entry.pal.ivs.defense ?? 0) >= 80,
+        entry.score.combatIntelligenceV2.individualDurability >= 60,
     )
-    .sort((a, b) => {
-      const aTank = (a.pal.ivs.hp ?? 0) * 0.55 + (a.pal.ivs.defense ?? 0) * 0.45;
-      const bTank = (b.pal.ivs.hp ?? 0) * 0.55 + (b.pal.ivs.defense ?? 0) * 0.45;
-      return bTank - aTank;
-    });
+    .sort(
+      (a, b) =>
+        b.score.combatIntelligenceV2.individualDurability -
+        a.score.combatIntelligenceV2.individualDurability,
+    );
 
   const alphaFighters = [...scoredPals]
     .filter((entry) => entry.pal.isAlpha)
-    .sort((a, b) => b.score.currentPower - a.score.currentPower);
+    .sort(
+      (a, b) =>
+        b.score.combatIntelligenceV2.currentReadiness -
+        a.score.combatIntelligenceV2.currentReadiness,
+    );
 
   const bestBySpecies = [...scoredPals]
     .filter((entry) => entry.score.bestOfSpecies.combat)
-    .sort((a, b) => b.score.combatPotential - a.score.combatPotential);
+    .sort(
+      (a, b) =>
+        b.score.combatIntelligenceV2.generalCeiling -
+        a.score.combatIntelligenceV2.generalCeiling,
+    );
 
   const elementGroups = getCombatElementGroups(scoredPals);
 
@@ -1186,7 +1198,7 @@ function CombatView({
                 key={`${element}-${pal.pal.id ?? pal.pal.internalSpeciesId}`}
                 rankedPal={pal}
                 metricLabel={element}
-                metricValue={pal.score.combatPotential}
+                metricValue={pal.score.combatIntelligenceV2.generalCeiling}
                 reasons={getTopCombatReasons(pal, element)}
                 onClick={() => onSelect(pal)}
               />
@@ -1274,12 +1286,14 @@ function CombatSection({
 
             if (metric === "currentPower") {
               metricLabel = "Current Power";
-              metricValue = entry.score.currentPower;
+              metricValue =
+                entry.score.combatIntelligenceV2.currentReadiness;
             }
 
             if (metric === "potential") {
               metricLabel = "Potential";
-              metricValue = entry.score.combatPotential;
+              metricValue =
+                entry.score.combatIntelligenceV2.generalCeiling;
             }
 
             if (metric === "farming") {
@@ -1292,12 +1306,10 @@ function CombatSection({
               "attack"
             ) {
               metricLabel =
-                "Attack IV";
+                "Offense";
 
               metricValue =
-                entry.pal.ivs
-                  .attack ??
-                0;
+                entry.score.combatIntelligenceV2.individualOffense;
             }
 
             if (
@@ -1305,17 +1317,10 @@ function CombatSection({
               "tank"
             ) {
               metricLabel =
-                "Tank IV";
+                "Durability";
 
               metricValue =
-                (entry.pal.ivs
-                  .hp ??
-                  0) *
-                  0.55 +
-                (entry.pal.ivs
-                  .defense ??
-                  0) *
-                  0.45;
+                entry.score.combatIntelligenceV2.individualDurability;
             }
 
             return (
@@ -4102,7 +4107,7 @@ function PalDetailPanel({
           </div>
 
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
-            <DetailMetric label="Overall" value={score.overall} />
+            <DetailMetric label="Collection Value" value={score.overall} />
             <DetailMetric
               label="Combat Now"
               value={pal.combatStats ? combatV2.currentReadiness : "N/A"}
@@ -4173,7 +4178,7 @@ function PalDetailPanel({
               </div>
 
               <p className="mt-3 text-[15px] leading-relaxed text-neutral-600">
-                General score only. Enemy matchup and active-skill power/cooldown will be added before Rebel treats cross-species rankings as authoritative.
+                Data-backed general score using species stats, IVs, passives, Partner Skill utility and the equipped skill loadout. Apply the displayed elemental matchup when choosing a fighter for a specific enemy.
               </p>
             </div>
           )}
@@ -4242,11 +4247,22 @@ function PalDetailPanel({
               <div className="mt-4">
                 <p className="text-[15px] uppercase tracking-[0.18em] text-neutral-500">Equipped Skills</p>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {pal.skills?.equipped.map((skill) => (
-                    <span key={skill} className="rounded-lg border border-white/10 bg-black/20 px-2 py-1 text-[15px] text-neutral-300">
-                      {humanizeSkill(skill)}
-                    </span>
-                  ))}
+                  {pal.skills?.equipped.map((skill) => {
+                    const skillInfo =
+                      combatV2.equippedSkills.find(
+                        (entry) =>
+                          entry.internalId === skill,
+                      );
+
+                    return (
+                      <span key={skill} className="rounded-lg border border-white/10 bg-black/20 px-2 py-1 text-[15px] text-neutral-300">
+                        {skillInfo?.name ?? humanizeSkill(skill)}
+                        {skillInfo
+                          ? ` · ${skillInfo.power} power · ${skillInfo.cooldown}s`
+                          : ""}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -5526,10 +5542,8 @@ function getCombatElementGroups(
 
       if (
         !existing ||
-        entry.score
-          .combat >
-          existing.score
-            .combat
+        entry.score.combatIntelligenceV2.generalCeiling >
+          existing.score.combatIntelligenceV2.generalCeiling
       ) {
         bestByElement.set(
           element,
@@ -5553,10 +5567,8 @@ function getCombatElementGroups(
     )
     .sort(
       (a, b) =>
-        b.pal.score
-          .combat -
-        a.pal.score
-          .combat,
+        b.pal.score.combatIntelligenceV2.generalCeiling -
+        a.pal.score.combatIntelligenceV2.generalCeiling,
     );
 }
 
@@ -5565,9 +5577,10 @@ function getTopCombatReasons(
     RankedRealPal,
   element?: string,
 ): string[] {
-  const source =
-    entry.score
-      .combatReasons;
+  const source = [
+    ...entry.score.combatIntelligenceV2.strengths,
+    ...entry.score.combatReasons,
+  ];
 
   const selected:
     string[] = [];
