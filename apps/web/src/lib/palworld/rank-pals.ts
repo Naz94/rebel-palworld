@@ -4204,7 +4204,8 @@ function buildInvestmentPlan(
 
   const souls =
     combatInvestmentCandidate &&
-    combatCeiling >= 65;
+    combatCeiling >= 65 &&
+    getSoulInvestmentTotal(pal) < 60;
 
   const workUpgrades =
     baseWinner &&
