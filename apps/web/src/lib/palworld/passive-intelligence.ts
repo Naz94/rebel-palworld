@@ -119,10 +119,19 @@ export function getPassiveTraitIntelligence(
   const categories: string[] = [];
   const bestFor: string[] = [];
 
+  const playerWorkBonus =
+    text.includes("player work speed") ||
+    text.includes("player's work speed");
+
   const work =
     WORK_NAMES.has(key) ||
-    text.includes("work speed") ||
-    text.includes("work efficiency");
+    (
+      !playerWorkBonus &&
+      (
+        text.includes("work speed") ||
+        text.includes("work efficiency")
+      )
+    );
 
   const movement =
     MOVEMENT_NAMES.has(key) ||
@@ -141,16 +150,24 @@ export function getPassiveTraitIntelligence(
     text.includes("mining efficiency") ||
     text.includes("logging efficiency");
 
+  const incomingDamageResistance =
+    /decrease in incoming .* damage/.test(text) ||
+    /incoming .* damage (?:is )?(?:decreased|reduced)/.test(text);
+
   const survival =
     text.includes("defense") ||
     text.includes("damage reduction") ||
+    incomingDamageResistance ||
     text.includes("max health") ||
     text.includes("health regeneration");
 
   const elemental =
-    key in ELEMENTAL_COMBAT_PASSIVES ||
-    /(?:fire|water|grass|electric|ice|ground|dark|dragon|neutral) (?:attack )?damage/.test(text) ||
-    /increase in (?:fire|water|grass|electric|ice|ground|dark|dragon|neutral) attack/.test(text);
+    !incomingDamageResistance &&
+    (
+      key in ELEMENTAL_COMBAT_PASSIVES ||
+      /(?:fire|water|grass|electric|ice|ground|dark|dragon|neutral) (?:attack )?damage/.test(text) ||
+      /increase in (?:fire|water|grass|electric|ice|ground|dark|dragon|neutral) attack/.test(text)
+    );
 
   const elementalRole =
     ELEMENTAL_COMBAT_PASSIVES[key];
@@ -170,7 +187,10 @@ export function getPassiveTraitIntelligence(
     NEGATIVE_NAMES.has(key) ||
     (tier ?? 0) < 0 ||
     /(?:attack|defense|work speed|movement speed)\s*-\s*\d/.test(text) ||
-    text.includes("decrease") ||
+    (
+      text.includes("decrease") &&
+      !incomingDamageResistance
+    ) ||
     text.includes("increased hunger") ||
     text.includes("san drops faster");
 
