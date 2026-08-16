@@ -18,12 +18,11 @@ Configure these in the Vercel project:
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
-NEXT_PUBLIC_API_URL=
 ```
 
 `SUPABASE_SERVICE_ROLE_KEY` is server-only. Never prefix it with `NEXT_PUBLIC_` and never place it in Git.
 
-For the first release, `NEXT_PUBLIC_API_URL` points to the existing Rebel API deployment used to provision connector tokens.
+Connector provisioning and snapshot uploads are hosted directly by the Next.js application, so no separate API deployment is required.
 
 ## Database
 
