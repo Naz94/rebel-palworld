@@ -3893,6 +3893,9 @@ function PalDetailPanel({
       rankedPal,
     );
 
+  const combatV2 =
+    score.combatIntelligenceV2;
+
   const comparison =
     bestCopy &&
     !isBestCopy
@@ -4036,44 +4039,85 @@ function PalDetailPanel({
             </p>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <div className="mt-6 rounded-2xl border border-cyan-400/20 bg-cyan-400/[0.04] p-4">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <PanelHeading>
+                  Rebel Recommendation
+                </PanelHeading>
+                <p className="mt-2 text-lg font-semibold">
+                  {bucketLabel}
+                </p>
+                <p className="mt-1 text-xs text-neutral-400">
+                  Primary use: {score.bestRole}
+                </p>
+              </div>
+              <span className="rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-3 py-1.5 text-[9px] uppercase tracking-wide text-cyan-100">
+                {humanizeAction(score.action)}
+              </span>
+            </div>
+
+            <div className="mt-3 space-y-1">
+              {recommendationReasons.slice(0, 3).map((reason) => (
+                <p key={reason} className="text-[10px] leading-relaxed text-neutral-300">
+                  ✓ {reason}
+                </p>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
             <DetailMetric label="Overall" value={score.overall} />
             <DetailMetric
-              label="Combat Readiness"
-              value={
-                pal.combatStats
-                  ? score.currentPower
-                  : "N/A"
-              }
+              label="Combat Now"
+              value={pal.combatStats ? combatV2.currentReadiness : "N/A"}
             />
             <DetailMetric
               label="Combat Ceiling"
-              value={
-                pal.combatStats
-                  ? score.combatPotential
-                  : "N/A"
-              }
+              value={pal.combatStats ? combatV2.generalCeiling : "N/A"}
             />
             <DetailMetric
-              label="Expedition"
-              value={
-                pal.combatStats
-                  ? score.expeditionFirepower
-                  : "N/A"
-              }
+              label="Offense"
+              value={pal.combatStats ? combatV2.individualOffense : "N/A"}
             />
-            <DetailMetric label="Base" value={score.base} />
-            <DetailMetric label="Farming" value={score.farming} />
-            <DetailMetric label="Support" value={score.support} />
-            <DetailMetric label="Breeding" value={score.breeding} />
-            <DetailMetric label="Invest Priority" value={score.investmentPriority} />
+            <DetailMetric
+              label="Durability"
+              value={pal.combatStats ? combatV2.individualDurability : "N/A"}
+            />
+            <DetailMetric
+              label="Combat Role"
+              value={combatV2.archetype}
+            />
           </div>
 
-          <p className="mt-2 text-[9px] leading-relaxed text-neutral-600">
-            {pal.combatStats
-              ? "Combat Readiness is a Rebel 0–100 readiness index. Combat Ceiling assumes fixable IV Potential can be raised to 100 with fruit while keeping this Pal's current passive set. Expedition is a priority index, not the exact in-game Firepower number."
-              : "Combat metrics are intentionally shown as N/A because Rebel does not yet have species combat reference data for this Pal. IV, breeding, base and farming intelligence remain valid."}
-          </p>
+          {pal.combatStats && (
+            <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <PanelHeading>
+                  Combat V2
+                </PanelHeading>
+                <span className="rounded-md border border-white/10 bg-black/20 px-2 py-1 text-[9px] text-neutral-400">
+                  {combatV2.confidence}
+                </span>
+              </div>
+
+              <p className="mt-2 text-sm font-semibold">
+                {combatV2.archetype}
+              </p>
+
+              <div className="mt-2 space-y-1">
+                {combatV2.bestUsedFor.map((use) => (
+                  <p key={use} className="text-[10px] text-neutral-300">
+                    ✓ {use}
+                  </p>
+                ))}
+              </div>
+
+              <p className="mt-3 text-[9px] leading-relaxed text-neutral-600">
+                General score only. Enemy matchup and active-skill power/cooldown will be added before Rebel treats cross-species rankings as authoritative.
+              </p>
+            </div>
+          )}
 
           <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
             <PanelHeading>Progression & Investment</PanelHeading>
@@ -4669,80 +4713,62 @@ function PalDetailPanel({
             </div>
           )}
 
-          {score.combatReasons
-            .length > 0 && (
-            <DetailReasonSection
-              title="Combat Intelligence"
-              reasons={
-                score.combatReasons
-              }
-            />
-          )}
+          <details className="mt-6 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            <summary className="cursor-pointer text-xs font-medium text-neutral-300">
+              More intelligence and technical details
+            </summary>
 
-          {score.supportReasons
-            .length > 0 && (
-            <DetailReasonSection
-              title="Player Support Intelligence"
-              reasons={
-                score.supportReasons
-              }
-            />
-          )}
-
-          {score.firepowerReasons
-            .length > 0 && (
-            <DetailReasonSection
-              title="Expedition Firepower Intelligence"
-              reasons={
-                score.firepowerReasons
-              }
-            />
-          )}
-
-          {score.breedingReasons
-            .length > 0 && (
-            <DetailReasonSection
-              title="Breeding Intelligence"
-              reasons={
-                score.breedingReasons
-              }
-            />
-          )}
-
-          {score.reviewCategory &&
-            score.reviewReasons
-              .length > 0 && (
-            <div className="mt-6">
-              <PanelHeading>
-                Decision Intelligence
-              </PanelHeading>
-
-              <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-                <ReviewCategoryBadge
-                  category={
-                    score.reviewCategory
-                  }
+            <div className="mt-4">
+              {score.combatReasons.length > 0 && (
+                <DetailReasonSection
+                  title="Combat Intelligence"
+                  reasons={score.combatReasons}
                 />
+              )}
 
-                <p className="mt-3 text-sm font-medium">
-                  Why Rebel assigned this decision
-                </p>
+              {score.supportReasons.length > 0 && (
+                <DetailReasonSection
+                  title="Player Support Intelligence"
+                  reasons={score.supportReasons}
+                />
+              )}
 
-                <div className="mt-3 space-y-2">
-                  {score.reviewReasons.map(
-                    (reason) => (
-                      <p
-                        key={reason}
-                        className="text-xs leading-relaxed text-neutral-400"
-                      >
-                        • {reason}
-                      </p>
-                    ),
-                  )}
-                </div>
-              </div>
+              {score.firepowerReasons.length > 0 && (
+                <DetailReasonSection
+                  title="Expedition Intelligence"
+                  reasons={score.firepowerReasons}
+                />
+              )}
+
+              {score.breedingReasons.length > 0 && (
+                <DetailReasonSection
+                  title="Breeding Intelligence"
+                  reasons={score.breedingReasons}
+                />
+              )}
+
+              {score.reviewCategory && score.reviewReasons.length > 0 && (
+                <DetailReasonSection
+                  title="Decision Intelligence"
+                  reasons={score.reviewReasons}
+                />
+              )}
+
+              {score.protectionReasons.length > 0 && (
+                <DetailReasonSection
+                  title="Why Keep It"
+                  reasons={score.protectionReasons}
+                />
+              )}
+
+              {score.redundantReasons.length > 0 && (
+                <DetailReasonSection
+                  title="Collection Notes"
+                  reasons={score.redundantReasons}
+                />
+              )}
             </div>
-          )}
+          </details>
 
           {score.workRoles
             .length > 0 && (
@@ -4779,25 +4805,7 @@ function PalDetailPanel({
             </div>
           )}
 
-          {score.protectionReasons
-            .length > 0 && (
-            <DetailReasonSection
-              title="Why Keep It"
-              reasons={
-                score.protectionReasons
-              }
-            />
-          )}
 
-          {score.redundantReasons
-            .length > 0 && (
-            <DetailReasonSection
-              title="Collection Notes"
-              reasons={
-                score.redundantReasons
-              }
-            />
-          )}
         </div>
       </aside>
     </div>
