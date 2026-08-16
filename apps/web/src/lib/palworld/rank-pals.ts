@@ -4863,34 +4863,18 @@ function applyCollectionIntelligence(
       rankedPal.score.investmentReasons =
         rankedPal.score.investmentReasons.filter(
           (reason) => {
-            if (
-              !investmentPlan.actions.level &&
+            const legacyForwardPrompt =
               reason.startsWith(
                 "Combat ceiling is ",
-              )
-            ) {
-              return false;
-            }
-
-            if (
-              !investmentPlan.actions.ivFruit &&
+              ) ||
               reason.includes(
                 "Potential fruit",
-              )
-            ) {
-              return false;
-            }
-
-            if (
-              !investmentPlan.actions.condense &&
+              ) ||
               reason.includes(
                 "rank-scaled effect worth investing in",
-              )
-            ) {
-              return false;
-            }
+              );
 
-            return true;
+            return !legacyForwardPrompt;
           },
         );
     }
