@@ -4847,9 +4847,51 @@ function applyCollectionIntelligence(
       const rankedPal
       of groupPals
     ) {
-      rankedPal.score.investmentPlan =
+      const investmentPlan =
         buildInvestmentPlan(
           rankedPal,
+        );
+
+      rankedPal.score.investmentPlan =
+        investmentPlan;
+
+      /*
+       * Investment V2 is authoritative. Keep factual notes about
+       * resources already spent, but hide older forward-looking
+       * prompts when the role-aware plan says not to spend them.
+       */
+      rankedPal.score.investmentReasons =
+        rankedPal.score.investmentReasons.filter(
+          (reason) => {
+            if (
+              !investmentPlan.actions.level &&
+              reason.startsWith(
+                "Combat ceiling is ",
+              )
+            ) {
+              return false;
+            }
+
+            if (
+              !investmentPlan.actions.ivFruit &&
+              reason.includes(
+                "Potential fruit",
+              )
+            ) {
+              return false;
+            }
+
+            if (
+              !investmentPlan.actions.condense &&
+              reason.includes(
+                "rank-scaled effect worth investing in",
+              )
+            ) {
+              return false;
+            }
+
+            return true;
+          },
         );
     }
 
