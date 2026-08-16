@@ -56,3 +56,6 @@ tools/pal-save-import/save-tools/
 # Generated application data derived from local save
 apps/web/src/lib/palworld/owned-pals.generated.json
 apps/web/src/lib/palworld/watcher-status.generated.json
+
+# Private cloud connector credentials
+tools/pal-save-import/cloud-sync.json
