@@ -188,8 +188,13 @@ export function getPassiveTraitIntelligence(
     /decrease in incoming .* damage/.test(text) ||
     /incoming .* damage (?:is )?(?:decreased|reduced)/.test(text);
 
+  const selfDefense =
+    text.includes("defense") &&
+    !text.includes("player defense") &&
+    !text.includes("player's defense");
+
   const survival =
-    text.includes("defense") ||
+    selfDefense ||
     text.includes("damage reduction") ||
     incomingDamageResistance ||
     text.includes("max health") ||
