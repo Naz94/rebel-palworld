@@ -11,6 +11,10 @@ import {
 } from "react";
 
 import { getPassiveTraitIntelligence } from "@/lib/palworld/passive-intelligence";
+import {
+  auditPalCollection,
+  type AuditSeverity,
+} from "@/lib/palworld/audit-pal-intelligence";
 
 import {
   rankRealPals,
@@ -37,7 +41,8 @@ type View =
   | "breeding"
   | "humans"
   | "special"
-  | "cleanup";
+  | "cleanup"
+  | "audit";
 
 type BaseWinnerGroup = {
   pal: RankedRealPal;
@@ -404,6 +409,13 @@ export default function PalsPage() {
                 onSelect={setSelectedPal}
               />
             )}
+
+            {view === "audit" && (
+              <AuditView
+                pals={rankings.all}
+                onSelect={setSelectedPal}
+              />
+            )}
           </div>
         </div>
 
@@ -419,6 +431,162 @@ export default function PalsPage() {
         )}
       </div>
     </main>
+  );
+}
+
+function AuditView({
+  pals,
+  onSelect,
+}: {
+  pals: RankedRealPal[];
+  onSelect: (pal: RankedRealPal) => void;
+}) {
+  const report =
+    useMemo(
+      () =>
+        auditPalCollection(pals),
+      [pals],
+    );
+
+  const severityOrder: AuditSeverity[] = [
+    "ERROR",
+    "WARNING",
+    "REVIEW",
+    "INFO",
+  ];
+
+  const copyReport = () => {
+    const lines = [
+      `REBEL COLLECTION AUDIT — ${report.scanned} PALS`,
+      `Errors: ${report.counts.ERROR} · Warnings: ${report.counts.WARNING} · Review: ${report.counts.REVIEW} · Info: ${report.counts.INFO}`,
+      "",
+      ...report.findings.map(
+        (finding) =>
+          `[${finding.severity}] ${finding.pal.pal.species} copy ${finding.pal.score.speciesRank ?? "?"}: ${finding.title} — ${finding.detail}`,
+      ),
+    ];
+
+    void navigator.clipboard.writeText(
+      lines.join("\n"),
+    );
+  };
+
+  return (
+    <div className="space-y-8">
+      <section className="rounded-2xl border border-cyan-400/20 bg-cyan-400/[0.04] p-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-[15px] uppercase tracking-[0.16em] text-cyan-300">
+              Full Collection Scan
+            </p>
+            <h3 className="mt-2 text-2xl font-semibold">
+              {report.scanned} Pals checked
+            </h3>
+            <p className="mt-2 max-w-3xl text-[17px] leading-relaxed text-neutral-400">
+              Errors are direct contradictions. Warnings need a rule review.
+              Information items explain valid but potentially confusing cases,
+              such as dual-element two-way matchups.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={copyReport}
+            className="rounded-xl border border-white/15 bg-white/[0.06] px-4 py-2.5 text-[17px] text-neutral-200 transition hover:bg-white/[0.1]"
+          >
+            Copy Full Report
+          </button>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-2 lg:grid-cols-4">
+          {severityOrder.map((severity) => (
+            <div
+              key={severity}
+              className="rounded-xl border border-white/10 bg-black/20 p-3"
+            >
+              <p className="text-[15px] uppercase tracking-wide text-neutral-500">
+                {severity}
+              </p>
+              <p className="mt-1 text-2xl font-semibold">
+                {report.counts[severity]}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {report.findings.length === 0 ? (
+        <section className="rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.05] p-5">
+          <p className="text-xl font-semibold text-emerald-200">
+            No audit contradictions found
+          </p>
+          <p className="mt-2 text-[17px] text-neutral-400">
+            Every loaded Pal passed the current automated checks.
+          </p>
+        </section>
+      ) : (
+        severityOrder.map((severity) => {
+          const findings =
+            report.findings.filter(
+              (finding) =>
+                finding.severity === severity,
+            );
+
+          if (findings.length === 0) {
+            return null;
+          }
+
+          return (
+            <section key={severity}>
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-xl font-semibold">
+                  {severity}
+                </h3>
+                <span className="text-[17px] text-neutral-500">
+                  {findings.length} findings
+                </span>
+              </div>
+              <div className="space-y-2">
+                {findings.map((finding) => (
+                  <button
+                    key={finding.id}
+                    type="button"
+                    onClick={() =>
+                      onSelect(finding.pal)
+                    }
+                    className="w-full rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-left transition hover:border-white/20 hover:bg-white/[0.06]"
+                  >
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                      <div>
+                        <p className="text-[17px] font-semibold">
+                          {finding.pal.pal.nickname ??
+                            finding.pal.pal.species}
+                        </p>
+                        <p className="mt-1 text-[15px] text-neutral-500">
+                          {finding.pal.pal.nickname
+                            ? `${finding.pal.pal.species} · `
+                            : ""}
+                          Copy {finding.pal.score.speciesRank ?? "?"} of{" "}
+                          {finding.pal.score.speciesCopyCount}
+                        </p>
+                      </div>
+                      <span className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[15px] text-neutral-400">
+                        {finding.code}
+                      </span>
+                    </div>
+                    <p className="mt-3 text-[17px] font-medium text-neutral-200">
+                      {finding.title}
+                    </p>
+                    <p className="mt-1 text-[17px] leading-relaxed text-neutral-400">
+                      {finding.detail}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </section>
+          );
+        })
+      )}
+    </div>
   );
 }
 
@@ -491,6 +659,12 @@ function Sidebar({
       label: "Cleanup",
       description:
         "Redundant copies",
+    },
+    {
+      id: "audit",
+      label: "Audit All Pals",
+      description:
+        "Find intelligence issues",
     },
   ];
 
@@ -633,6 +807,11 @@ function TopBar({
       title: "Collection Cleanup",
       description:
         "Species-by-species decisions showing what to keep, conditionally keep and safely remove.",
+    },
+    audit: {
+      title: "Collection Intelligence Audit",
+      description:
+        "Checks every loaded Pal for contradictory recommendations, incomplete data and classification problems.",
     },
   };
 
