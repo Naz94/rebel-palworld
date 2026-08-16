@@ -8,6 +8,8 @@ import { useMemo, useState } from "react";
 
 import ownedPalsData from "@/lib/palworld/owned-pals.generated.json";
 
+import { getPassiveTraitIntelligence } from "@/lib/palworld/passive-intelligence";
+
 import {
   rankRealPals,
   type DecisionBucket,
@@ -3598,6 +3600,9 @@ function PalDetailPanel({
   const { pal, score } =
     rankedPal;
 
+  const partnerSkillDisplay =
+    getPartnerSkillDisplay(pal);
+
   const speciesKey =
     pal.internalSpeciesId
       .replace(/^BOSS_/, "")
@@ -3688,7 +3693,7 @@ function PalDetailPanel({
         onClick={onClose}
       />
 
-      <aside className="relative z-10 h-full w-full max-w-lg overflow-y-auto border-l border-white/10 bg-[#11151a] shadow-2xl">
+      <aside className="relative z-10 h-full w-full max-w-3xl overflow-y-auto border-l border-white/10 bg-[#11151a] shadow-2xl">
         <div className="relative flex h-60 items-center justify-center bg-[#1a2027]">
           <div className="h-36 w-36">
             <PalImage
@@ -3870,6 +3875,40 @@ function PalDetailPanel({
               />
             </div>
 
+            <div className="mt-3 rounded-xl border border-violet-400/20 bg-violet-400/[0.04] p-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                  Investment Plan V2
+                </p>
+                <span className="rounded-md border border-violet-400/20 bg-violet-400/10 px-2 py-1 text-[9px] text-violet-200">
+                  {score.investmentPlan.decision.replaceAll("_", " ")}
+                </span>
+              </div>
+
+              <div className="mt-3 grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+                {Object.entries(score.investmentPlan.actions).map(([action, recommended]) => (
+                  <div
+                    key={action}
+                    className={recommended
+                      ? "rounded-lg border border-emerald-400/20 bg-emerald-400/[0.06] px-2 py-1.5"
+                      : "rounded-lg border border-white/5 bg-black/20 px-2 py-1.5"}
+                  >
+                    <p className={recommended ? "text-[9px] text-emerald-200" : "text-[9px] text-neutral-600"}>
+                      {humanizeSkill(action)}: {recommended ? "YES" : "NO"}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-3 space-y-1">
+                {score.investmentPlan.reasons.map((reason) => (
+                  <p key={reason} className="text-[10px] leading-relaxed text-neutral-400">
+                    • {reason}
+                  </p>
+                ))}
+              </div>
+            </div>
+
             {score.investmentReasons.length > 0 && (
               <div className="mt-3 space-y-1">
                 {score.investmentReasons.map((reason) => (
@@ -3904,47 +3943,276 @@ function PalDetailPanel({
               </div>
             )}
           </div>
-          {pal.partnerSkill && (
+          {partnerSkillDisplay && (
             <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
               <PanelHeading>
                 Partner Skill
               </PanelHeading>
 
-              <p className="mt-3 text-base font-semibold">
-                {pal.partnerSkill.name ?? "Unknown Partner Skill"}
-              </p>
+              <div className="mt-3 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-base font-semibold">
+                    {partnerSkillDisplay.name}
+                  </p>
+                  <p className="mt-1 text-[9px] uppercase tracking-[0.16em] text-cyan-300">
+                    {partnerSkillDisplay.type}
+                  </p>
+                </div>
+                <span className="rounded-md border border-white/10 bg-black/20 px-2 py-1 text-[9px] text-neutral-400">
+                  Rank {partnerSkillDisplay.rank}
+                </span>
+              </div>
 
               <p className="mt-2 text-xs leading-relaxed text-neutral-400">
-                {pal.partnerSkill.description ?? "Description unavailable."}
+                {partnerSkillDisplay.description}
               </p>
 
-              {pal.partnerSkill.tags.length > 0 && (
+              {partnerSkillDisplay.tags.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {pal.partnerSkill.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[9px] uppercase tracking-wide text-neutral-300"
-                    >
+                  {partnerSkillDisplay.tags.map((tag) => (
+                    <span key={tag} className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[9px] uppercase tracking-wide text-neutral-300">
                       {tag}
                     </span>
                   ))}
                 </div>
               )}
 
-              <div className="mt-4 rounded-xl border border-white/10 bg-black/20 p-3">
-                <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
-                  Partner Skill Rank
-                </p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                    Best Used For
+                  </p>
+                  <div className="mt-2 space-y-1">
+                    {partnerSkillDisplay.bestUses.map((use) => (
+                      <p key={use} className="text-[10px] text-neutral-300">✓ {use}</p>
+                    ))}
+                  </div>
+                </div>
 
-                <p className="mt-1 text-xs text-neutral-300">
-                  Rank {(pal.progression?.condensation?.stars ?? 0) + 1}
-                  {pal.partnerSkill.description?.includes("~")
-                    ? " · Documented rank-scaled effect"
-                    : " · No documented numeric scaling"}
+                <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                    Affects
+                  </p>
+                  <div className="mt-2 space-y-1">
+                    {Object.entries(partnerSkillDisplay.affects).map(([area, active]) => (
+                      <p key={area} className={active ? "text-[10px] text-neutral-200" : "text-[10px] text-neutral-600"}>
+                        {humanizeSkill(area)}: {active ? "YES" : "NO"}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
+                <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                  Condensation Benefit
+                </p>
+                <p className="mt-1 text-[10px] leading-relaxed text-neutral-300">
+                  {partnerSkillDisplay.scales
+                    ? `The documented numeric effect improves with Partner Skill rank. Current rank: ${partnerSkillDisplay.rank}.`
+                    : "No rank-scaled numeric range is documented, so Rebel does not invent a condensation benefit."}
+                </p>
+              </div>
+
+              <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
+                <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                  Rebel Interpretation
+                </p>
+                <p className="mt-1 text-xs leading-relaxed text-neutral-300">
+                  {partnerSkillDisplay.interpretation}
                 </p>
               </div>
             </div>
           )}
+
+          {pal.passives
+            .length > 0 ? (
+            <div className="mt-6">
+              <PanelHeading>
+                Passives
+              </PanelHeading>
+
+              <div className="mt-3 space-y-2">
+                {pal.passives.map((passive, index) => {
+                  const intelligence =
+                    getPassiveTraitIntelligence(passive);
+
+                  const dispositionStyle =
+                    intelligence.disposition === "GOOD"
+                      ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-200"
+                      : intelligence.disposition === "BAD"
+                        ? "border-red-400/25 bg-red-400/10 text-red-200"
+                        : intelligence.disposition === "CONDITIONAL"
+                          ? "border-amber-400/25 bg-amber-400/10 text-amber-200"
+                          : "border-white/10 bg-white/[0.04] text-neutral-300";
+
+                  return (
+                    <div
+                      key={`${passive.internalId}-${index}`}
+                      className="rounded-xl border border-white/10 bg-white/[0.03] p-3"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-medium">
+                            {intelligence.name}
+                          </p>
+                          <p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-neutral-500">
+                            {intelligence.categories.join(" · ")}
+                          </p>
+                        </div>
+
+                        <div className="flex shrink-0 flex-col items-end gap-1">
+                          <span className={`rounded-md border px-2 py-1 text-[9px] ${dispositionStyle}`}>
+                            {intelligence.disposition}
+                          </span>
+                          {intelligence.tier !== null && (
+                            <span className="text-[9px] text-neutral-600">
+                              Trait Tier {intelligence.tier}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <p className="mt-2 text-xs leading-relaxed text-neutral-400">
+                        {intelligence.description}
+                      </p>
+
+                      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                        <div className="rounded-lg border border-white/10 bg-black/20 p-2.5">
+                          <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
+                            Best For
+                          </p>
+                          <div className="mt-1.5 space-y-1">
+                            {intelligence.bestFor.map((role) => (
+                              <p key={role} className="text-[10px] text-neutral-300">
+                                ✓ {role}
+                              </p>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="rounded-lg border border-white/10 bg-black/20 p-2.5">
+                          <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
+                            Rebel Score Category
+                          </p>
+                          <p className="mt-1.5 text-[10px] text-neutral-300">
+                            {intelligence.scoreCategory}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-2 rounded-lg border border-white/10 bg-black/20 p-2.5">
+                        <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
+                          Breeding Usefulness
+                        </p>
+                        <p className="mt-1 text-[10px] leading-relaxed text-neutral-400">
+                          {intelligence.breedingUsefulness}
+                        </p>
+                      </div>
+
+                      <div className="mt-2 rounded-lg border border-white/10 bg-black/20 p-2.5">
+                        <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
+                          Rebel Interpretation
+                        </p>
+                        <p className="mt-1 text-[10px] leading-relaxed text-neutral-300">
+                          {intelligence.interpretation}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <div className="mt-6">
+              <PanelHeading>
+                Passives
+              </PanelHeading>
+
+              <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-neutral-500">
+                No passive skills recorded.
+              </div>
+            </div>
+          )}
+
+          {pal.speciesUtility && (
+            <div className="mt-6 rounded-2xl border border-emerald-400/15 bg-emerald-400/[0.03] p-4">
+              <PanelHeading>
+                Species Intelligence
+              </PanelHeading>
+
+              <div className="mt-3">
+                <p className="text-[9px] uppercase tracking-[0.16em] text-emerald-300">
+                  Primary Utility
+                </p>
+                <p className="mt-1 text-sm font-semibold text-neutral-100">
+                  {pal.speciesUtility.primaryUtility}
+                </p>
+              </div>
+
+              {pal.speciesUtility.speciesRoles.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {pal.speciesUtility.speciesRoles.map((role) => (
+                    <span
+                      key={role}
+                      className="rounded-lg border border-emerald-400/15 bg-emerald-400/[0.06] px-2.5 py-1 text-[9px] text-emerald-100"
+                    >
+                      {role}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                    Best Used For
+                  </p>
+                  <div className="mt-2 space-y-1">
+                    {pal.speciesUtility.bestUsedFor.map((use) => (
+                      <p key={use} className="text-[10px] leading-relaxed text-neutral-300">
+                        ✓ {use}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                    Rebel Recommendation
+                  </p>
+                  <div className="mt-2 space-y-1">
+                    {Object.entries(pal.speciesUtility.recommendations).map(
+                      ([area, recommendation]) => (
+                        <p
+                          key={area}
+                          className="text-[10px] text-neutral-300"
+                        >
+                          {humanizeSkill(area)}: {recommendation}
+                        </p>
+                      ),
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {pal.speciesUtility.ranchDrops.length > 0 && (
+                <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
+                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                    Ranch Production
+                  </p>
+                  <p className="mt-1 text-[10px] text-neutral-300">
+                    {pal.speciesUtility.ranchDrops.join(" · ")}
+                  </p>
+                </div>
+              )}
+
+              <p className="mt-3 text-[9px] leading-relaxed text-neutral-600">
+                Species intelligence describes what every {pal.species} is naturally useful for. Individual IVs, passives and investment below determine how valuable this specific copy is.
+              </p>
+            </div>
+          )}
+
           <div className="mt-6">
             <PanelHeading>
               Individual IVs
@@ -4289,65 +4557,6 @@ function PalDetailPanel({
                     </span>
                   ),
                 )}
-              </div>
-            </div>
-          )}
-
-          {pal.passives
-            .length > 0 ? (
-            <div className="mt-6">
-              <PanelHeading>
-                Passives
-              </PanelHeading>
-
-              <div className="mt-3 space-y-2">
-                {pal.passives.map(
-                  (
-                    passive,
-                    index,
-                  ) => (
-                    <div
-                      key={`${passive.internalId}-${index}`}
-                      className="rounded-xl border border-white/10 bg-white/[0.03] p-3"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <p className="text-sm font-medium">
-                          {
-                            passive.name
-                          }
-                        </p>
-
-                        {passive.rank !==
-                          null && (
-                          <span className="text-[10px] text-neutral-500">
-                            Trait Tier{" "}
-                            {
-                              passive.rank
-                            }
-                          </span>
-                        )}
-                      </div>
-
-                      {passive.description && (
-                        <p className="mt-1 text-xs leading-relaxed text-neutral-500">
-                          {
-                            passive.description
-                          }
-                        </p>
-                      )}
-                    </div>
-                  ),
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="mt-6">
-              <PanelHeading>
-                Passives
-              </PanelHeading>
-
-              <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-neutral-500">
-                No passive skills recorded.
               </div>
             </div>
           )}

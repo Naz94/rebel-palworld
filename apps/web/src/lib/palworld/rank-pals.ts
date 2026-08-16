@@ -71,6 +71,34 @@ export type PalPartnerSkill = {
   tags: string[];
 };
 
+export type PalSpeciesUtility = {
+  paldex: string | number | null;
+  code: string;
+  name: string;
+  elements: string[];
+  speciesRoles: string[];
+  primaryUtility: string;
+  bestUsedFor: string[];
+  workSuitability: Record<string, number>;
+  ranchDrops: string[];
+  partnerSkill: PalPartnerSkill | null;
+  combat: {
+    tier: string;
+    combatPercentile: number;
+    hp: number;
+    attack: number;
+    defense: number;
+    food: number;
+  } | null;
+  recommendations: {
+    base: "PRIMARY" | "VIABLE" | "LIMITED";
+    combat: "PRIMARY" | "VIABLE" | "LIMITED";
+    breeding: "VALUABLE" | "GENERAL";
+    playerSupport: "YES" | "NO";
+    traversal: "YES" | "NO";
+  };
+};
+
 export type RealOwnedPal = {
   id: string | null;
 
@@ -118,6 +146,8 @@ export type RealOwnedPal = {
   elements: string[];
 
   partnerSkill?: PalPartnerSkill | null;
+
+  speciesUtility?: PalSpeciesUtility | null;
 
   ivs: PalIVs;
 
@@ -226,6 +256,26 @@ export type DecisionBucket =
   | "BORDERLINE_CLEANUP"
   | "SAFE_CLEANUP";
 
+export type PalInvestmentDecision =
+  | "INVEST_NOW"
+  | "TARGETED_INVESTMENT"
+  | "BREED_FIRST"
+  | "HOLD"
+  | "DO_NOT_INVEST";
+
+export type PalInvestmentPlan = {
+  decision: PalInvestmentDecision;
+  actions: {
+    level: boolean;
+    ivFruit: boolean;
+    condense: boolean;
+    souls: boolean;
+    workUpgrades: boolean;
+    breed: boolean;
+  };
+  reasons: string[];
+};
+
 export type RealPalScore = {
   overall: number;
 
@@ -271,6 +321,8 @@ export type RealPalScore = {
    * combat ceiling, current readiness, stars and partial progress.
    */
   investmentPriority: number;
+
+  investmentPlan: PalInvestmentPlan;
 
   combatReasons: string[];
   breedingReasons: string[];
@@ -3004,6 +3056,21 @@ function scorePal(
     expeditionFirepower,
     investmentPriority,
 
+    investmentPlan: {
+      decision: "HOLD",
+      actions: {
+        level: false,
+        ivFruit: false,
+        condense: false,
+        souls: false,
+        workUpgrades: false,
+        breed: breeding >= 65,
+      },
+      reasons: [
+        "Collection comparison pending",
+      ],
+    },
+
     combatReasons,
     breedingReasons,
     supportReasons,
@@ -3991,6 +4058,217 @@ function classifyReview(
   );
 }
 
+function buildInvestmentPlan(
+  entry: RankedRealPal,
+): PalInvestmentPlan {
+  const { pal, score } = entry;
+
+  if (
+    score.decisionBucket === "SAFE_CLEANUP" ||
+    score.action === "SAFE TO REPLACE"
+  ) {
+    return {
+      decision: "DO_NOT_INVEST",
+      actions: {
+        level: false,
+        ivFruit: false,
+        condense: false,
+        souls: false,
+        workUpgrades: false,
+        breed: false,
+      },
+      reasons: [
+        "A stronger same-species copy already covers this Pal's useful roles",
+        "Save levels, Souls, Potential fruit and condensation material for a protected copy",
+      ],
+    };
+  }
+
+  const reasons: string[] = [];
+  const combatGap = Math.max(
+    0,
+    score.combatPotential - score.currentPower,
+  );
+  const fruitNeeds = [
+    pal.ivs.hp,
+    pal.ivs.attack,
+    pal.ivs.defense,
+  ].filter(
+    (value) =>
+      typeof value === "number" &&
+      value < 90,
+  ).length;
+
+  const scalablePartner =
+    Boolean(pal.partnerSkill) &&
+    hasPartnerSkillScalingEvidence(pal);
+
+  const ranchCandidate =
+    (pal.ranchDrops?.length ?? 0) > 0 ||
+    getPartnerFarmingBonus(pal) > 0;
+
+  const combatWinner =
+    score.bestOfSpecies.combat &&
+    score.combatPotential >= 65;
+
+  const combatInvestmentCandidate =
+    combatWinner &&
+    (
+      score.bestRole === "Combat" ||
+      score.combatPotential >= 85
+    );
+
+  const baseWinner =
+    score.bestOfSpecies.base &&
+    score.base >= 65;
+
+  const supportWinner =
+    score.support >= 50 &&
+    (score.bestOfSpecies.overall ||
+      score.bestRole === "Player Support");
+
+  const breedingCandidate =
+    score.breeding >= 65;
+
+  const level =
+    combatInvestmentCandidate &&
+    combatGap >= 8;
+
+  const ivFruit =
+    combatInvestmentCandidate &&
+    fruitNeeds > 0 &&
+    score.combatPotential >= 70;
+
+  const partnerSupportScaling =
+    getPartnerSupportData(pal).score > 0;
+
+  const partnerBaseScaling =
+    getPartnerBaseBonus(pal) > 0;
+
+  const partnerFarmingScaling =
+    getPartnerFarmingBonus(pal) > 0;
+
+  const partnerCombatScaling =
+    getPartnerCombatUtilityBonus(pal) > 0;
+
+  const condense =
+    scalablePartner &&
+    (
+      (supportWinner &&
+        partnerSupportScaling) ||
+      (baseWinner &&
+        partnerBaseScaling) ||
+      (ranchCandidate &&
+        partnerFarmingScaling) ||
+      (combatInvestmentCandidate &&
+        partnerCombatScaling)
+    );
+
+  const souls =
+    combatInvestmentCandidate &&
+    score.combatPotential >= 72;
+
+  const workUpgrades =
+    baseWinner &&
+    score.workRoles.some(
+      (role) =>
+        role.effectiveLevel >= 3,
+    );
+
+  if (level) {
+    reasons.push(
+      `Level investment can close a ${combatGap.toFixed(0)}-point combat-readiness gap`,
+    );
+  }
+
+  if (ivFruit) {
+    reasons.push(
+      `${fruitNeeds} combat IV stat${fruitNeeds === 1 ? "" : "s"} remain below 90`,
+    );
+  }
+
+  if (condense) {
+    const scalingRole =
+      supportWinner &&
+      partnerSupportScaling
+        ? "Player Support"
+        : baseWinner &&
+            partnerBaseScaling
+          ? "base work"
+          : ranchCandidate &&
+              partnerFarmingScaling
+            ? "ranch / farming"
+            : "combat";
+
+    reasons.push(
+      `${getPartnerSkillName(pal)} has documented rank scaling for this Pal's ${scalingRole} role`,
+    );
+  }
+
+  if (souls) {
+    reasons.push(
+      "This is a strong same-species combat winner with a worthwhile ceiling",
+    );
+  }
+
+  if (workUpgrades) {
+    reasons.push(
+      "This is the best owned base copy with high-level Work Suitability",
+    );
+  }
+
+  if (breedingCandidate) {
+    reasons.push(
+      "IVs and passive inheritance make this a useful breeding donor",
+    );
+  }
+
+  const directInvestment =
+    level ||
+    ivFruit ||
+    condense ||
+    souls ||
+    workUpgrades;
+
+  let decision: PalInvestmentDecision;
+
+  if (
+    directInvestment &&
+    score.investmentPriority >= 75
+  ) {
+    decision = "INVEST_NOW";
+  } else if (directInvestment) {
+    decision = "TARGETED_INVESTMENT";
+  } else if (breedingCandidate) {
+    decision = "BREED_FIRST";
+  } else if (
+    score.decisionBucket === "BORDERLINE_CLEANUP"
+  ) {
+    decision = "DO_NOT_INVEST";
+    reasons.push(
+      "This copy is too close to cleanup status for scarce investment resources",
+    );
+  } else {
+    decision = "HOLD";
+    reasons.push(
+      "Keep this copy, but no high-return investment action is currently identified",
+    );
+  }
+
+  return {
+    decision,
+    actions: {
+      level,
+      ivFruit,
+      condense,
+      souls,
+      workUpgrades,
+      breed: breedingCandidate,
+    },
+    reasons,
+  };
+}
+
 function applyCollectionIntelligence(
   scoredPals: RankedRealPal[],
 ): SpeciesGroup[] {
@@ -4563,6 +4841,42 @@ function applyCollectionIntelligence(
         score.decisionBucket =
           "USEFUL_BACKUP";
       }
+    }
+
+    for (
+      const rankedPal
+      of groupPals
+    ) {
+      const investmentPlan =
+        buildInvestmentPlan(
+          rankedPal,
+        );
+
+      rankedPal.score.investmentPlan =
+        investmentPlan;
+
+      /*
+       * Investment V2 is authoritative. Keep factual notes about
+       * resources already spent, but hide older forward-looking
+       * prompts when the role-aware plan says not to spend them.
+       */
+      rankedPal.score.investmentReasons =
+        rankedPal.score.investmentReasons.filter(
+          (reason) => {
+            const legacyForwardPrompt =
+              reason.startsWith(
+                "Combat ceiling is ",
+              ) ||
+              reason.includes(
+                "Potential fruit",
+              ) ||
+              reason.includes(
+                "rank-scaled effect worth investing in",
+              );
+
+            return !legacyForwardPrompt;
+          },
+        );
     }
 
     const sorted =

@@ -52,6 +52,13 @@ const partnerSkillData = JSON.parse(
   ),
 );
 
+const speciesUtilityData = JSON.parse(
+  fs.readFileSync(
+    `${base}\\data\\pal-utility-intelligence.json`,
+    "utf8",
+  ),
+);
+
 const palNames =
   palNamesData.names ?? {};
 
@@ -90,6 +97,13 @@ const partnerSkills =
   )
     ? partnerSkillData.pals
     : {};
+
+const speciesUtilities =
+  Array.isArray(
+    speciesUtilityData.pals,
+  )
+    ? speciesUtilityData.pals
+    : [];
 
 // ============================================================
 // HELPERS
@@ -556,6 +570,77 @@ function buildPartnerSkillIndex() {
 const partnerSkillIndex =
   buildPartnerSkillIndex();
 
+function buildSpeciesUtilityIndexes() {
+  const byCode =
+    new Map();
+
+  const byName =
+    new Map();
+
+  for (
+    const entry
+    of speciesUtilities
+  ) {
+    if (entry?.code) {
+      byCode.set(
+        normalizeKey(
+          entry.code,
+        ),
+        entry,
+      );
+    }
+
+    if (entry?.name) {
+      byName.set(
+        normalizeKey(
+          entry.name,
+        ),
+        entry,
+      );
+    }
+  }
+
+  return {
+    byCode,
+    byName,
+  };
+}
+
+const speciesUtilityIndexes =
+  buildSpeciesUtilityIndexes();
+
+function resolveSpeciesUtility(
+  rawId,
+  displayName,
+  entityType,
+) {
+  if (
+    entityType !==
+    "PAL"
+  ) {
+    return null;
+  }
+
+  const cleanId =
+    stripBossPrefix(
+      rawId,
+    );
+
+  return (
+    speciesUtilityIndexes.byCode.get(
+      normalizeKey(
+        cleanId,
+      ),
+    ) ??
+    speciesUtilityIndexes.byName.get(
+      normalizeKey(
+        displayName,
+      ),
+    ) ??
+    null
+  );
+}
+
 function resolvePartnerSkill(
   displayName,
   entityType,
@@ -635,6 +720,13 @@ const normalized =
 
       const partnerSkill =
         resolvePartnerSkill(
+          displayName,
+          entityType,
+        );
+
+      const speciesUtility =
+        resolveSpeciesUtility(
+          pal.species,
           displayName,
           entityType,
         );
@@ -752,6 +844,8 @@ const normalized =
           ),
 
         partnerSkill,
+
+        speciesUtility,
 
         passives:
           (
@@ -978,6 +1072,7 @@ const stats = {
   work: 0,
   combat: 0,
   partnerSkills: 0,
+  speciesUtilities: 0,
   translatedPassives: 0,
   totalPassives: 0,
   condensed: 0,
@@ -1063,6 +1158,14 @@ for (
     pal.partnerSkill
   ) {
     stats.partnerSkills++;
+  }
+
+  if (
+    pal.entityType ===
+      "PAL" &&
+    pal.speciesUtility
+  ) {
+    stats.speciesUtilities++;
   }
 
   if (
@@ -1169,6 +1272,9 @@ for (
 
     partnerSkill:
       pal.partnerSkill,
+
+    speciesUtility:
+      pal.speciesUtility,
 
     passives:
       pal.passives,
