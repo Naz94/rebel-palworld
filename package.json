@@ -9,7 +9,12 @@
     "web:build": "pnpm --filter web build",
     "api:dev": "pnpm --filter api dev",
     "rebel": "concurrently --kill-others-on-fail --names WEB,API,SAVE \"pnpm web:dev\" \"pnpm api:dev\" \"pnpm pal:watch\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "connector:install": "powershell -NoProfile -ExecutionPolicy Bypass -File ./tools/pal-save-import/rebel-background-connector.ps1 Install",
+    "connector:status": "powershell -NoProfile -ExecutionPolicy Bypass -File ./tools/pal-save-import/rebel-background-connector.ps1 Status",
+    "connector:start": "powershell -NoProfile -ExecutionPolicy Bypass -File ./tools/pal-save-import/rebel-background-connector.ps1 Start",
+    "connector:stop": "powershell -NoProfile -ExecutionPolicy Bypass -File ./tools/pal-save-import/rebel-background-connector.ps1 Stop",
+    "connector:uninstall": "powershell -NoProfile -ExecutionPolicy Bypass -File ./tools/pal-save-import/rebel-background-connector.ps1 Uninstall"
   },
   "keywords": [],
   "author": "",
