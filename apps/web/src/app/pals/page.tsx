@@ -3977,6 +3977,16 @@ function PalDetailPanel({
   const combatV2 =
     score.combatIntelligenceV2;
 
+  const passiveIntelligence =
+    pal.passives.map(getPassiveTraitIntelligence);
+
+  const individualPlayerSupport =
+    passiveIntelligence.some(
+      (trait) =>
+        trait.disposition !== "BAD" &&
+        trait.affects.playerSupport,
+    );
+
   const comparison =
     bestCopy &&
     !isBestCopy
@@ -4508,7 +4518,8 @@ function PalDetailPanel({
                     {Object.entries({
                       ...pal.speciesUtility.recommendations,
                       playerSupport:
-                        partnerSkillDisplay?.affects.playerSupport
+                        partnerSkillDisplay?.affects.playerSupport ||
+                        individualPlayerSupport
                           ? "YES"
                           : pal.speciesUtility.recommendations.playerSupport,
                       ...(partnerSkillDisplay?.affects.partySupport
