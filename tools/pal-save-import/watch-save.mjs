@@ -87,6 +87,18 @@ const buildScript =
     "build-app-data.mjs",
   );
 
+const cloudSyncScript =
+  path.join(
+    __dirname,
+    "sync-cloud-snapshot.mjs",
+  );
+
+const cloudSyncConfigPath =
+  path.join(
+    __dirname,
+    "cloud-sync.json",
+  );
+
 const generatedPalsPath =
   path.join(
     projectRoot,
@@ -916,6 +928,36 @@ async function syncSave(
         expectedSignature,
     });
 
+    if (
+      fs.existsSync(
+        cloudSyncConfigPath,
+      )
+    ) {
+      log(
+        "Uploading processed snapshot to Rebel Cloud...",
+      );
+
+      try {
+        await runNodeScript(
+          cloudSyncScript,
+        );
+      } catch (
+        cloudError
+      ) {
+        console.error(
+          `[${timestamp()}] CLOUD SNAPSHOT UPLOAD FAILED`,
+        );
+
+        console.error(
+          cloudError,
+        );
+
+        console.error(
+          "Local save processing succeeded and will continue normally.",
+        );
+      }
+    }
+
     const durationSeconds =
       (
         lastDurationMs /
@@ -1137,6 +1179,14 @@ function verifySetup() {
 
       value:
         buildScript,
+    },
+
+    {
+      label:
+        "sync-cloud-snapshot.mjs",
+
+      value:
+        cloudSyncScript,
     },
   ];
 
