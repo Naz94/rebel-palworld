@@ -103,16 +103,41 @@ export default function PalsPage() {
   ] =
     useState(true);
 
+  const [
+    snapshotSyncedAt,
+    setSnapshotSyncedAt,
+  ] =
+    useState<string | null>(
+      null,
+    );
+
   useEffect(
     () => {
       let active =
         true;
+      let requestInFlight =
+        false;
 
-      async function loadSnapshot() {
+      async function loadSnapshot(
+        initial = false,
+      ) {
+        if (requestInFlight) {
+          return;
+        }
+
+        requestInFlight =
+          true;
+
+        if (initial) {
+          setSnapshotLoading(
+            true,
+          );
+        }
+
         try {
           const response =
             await fetch(
-              "/api/pal-snapshot",
+              `/api/pal-snapshot?refresh=${Date.now()}`,
               {
                 cache:
                   "no-store",
@@ -147,6 +172,10 @@ export default function PalsPage() {
             body.source,
           );
 
+          setSnapshotSyncedAt(
+            body.syncedAt,
+          );
+
           setSnapshotError(
             null,
           );
@@ -161,7 +190,13 @@ export default function PalsPage() {
               : String(error),
           );
         } finally {
-          if (active) {
+          requestInFlight =
+            false;
+
+          if (
+            active &&
+            initial
+          ) {
             setSnapshotLoading(
               false,
             );
@@ -169,11 +204,60 @@ export default function PalsPage() {
         }
       }
 
-      void loadSnapshot();
+      const refreshWhenVisible =
+        () => {
+          if (
+            document.visibilityState ===
+            "visible"
+          ) {
+            void loadSnapshot();
+          }
+        };
+
+      void loadSnapshot(
+        true,
+      );
+
+      const refreshTimer =
+        window.setInterval(
+          () => {
+            if (
+              document.visibilityState ===
+              "visible"
+            ) {
+              void loadSnapshot();
+            }
+          },
+          15000,
+        );
+
+      window.addEventListener(
+        "focus",
+        refreshWhenVisible,
+      );
+
+      document.addEventListener(
+        "visibilitychange",
+        refreshWhenVisible,
+      );
 
       return () => {
         active =
           false;
+
+        window.clearInterval(
+          refreshTimer,
+        );
+
+        window.removeEventListener(
+          "focus",
+          refreshWhenVisible,
+        );
+
+        document.removeEventListener(
+          "visibilitychange",
+          refreshWhenVisible,
+        );
       };
     },
     [],
@@ -241,8 +325,8 @@ export default function PalsPage() {
                 : snapshotError
                   ? `Snapshot unavailable: ${snapshotError}`
                   : snapshotSource === "cloud"
-                    ? "Cloud snapshot · private authenticated data"
-                    : "Local live-save snapshot"}
+                    ? `Cloud snapshot · automatically refreshes every 15 seconds${snapshotSyncedAt ? ` · synced ${new Date(snapshotSyncedAt).toLocaleTimeString()}` : ""}`
+                    : "Local live-save snapshot · automatically refreshes every 15 seconds"}
             </div>
           )}
 

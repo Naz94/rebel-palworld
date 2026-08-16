@@ -55,8 +55,14 @@ function Get-ConnectorProcesses {
         Where-Object {
             $_.ProcessId -ne $PID -and
             (
-                $_.CommandLine -like '*rebel-background-connector.ps1*' -or
-                $_.CommandLine -like '*watch-save.mjs*'
+                (
+                    $_.Name -ieq "powershell.exe" -and
+                    $_.CommandLine -match 'rebel-background-connector\.ps1"?\s+Run(?:\s|$)'
+                ) -or
+                (
+                    $_.Name -ieq "node.exe" -and
+                    $_.CommandLine -match 'watch-save\.mjs'
+                )
             )
         }
     )
@@ -125,9 +131,18 @@ function Install-Connector {
 }
 
 function Stop-Connector {
-    foreach ($process in (Get-ConnectorProcesses)) {
-        & taskkill.exe /PID $process.ProcessId /T /F 2>$null | Out-Null
+    $processes = @(Get-ConnectorProcesses)
+    $wrapperProcesses = @($processes | Where-Object { $_.Name -ieq "powershell.exe" })
+    $watcherProcesses = @($processes | Where-Object { $_.Name -ieq "node.exe" })
+
+    foreach ($process in $wrapperProcesses) {
+        Stop-Process -Id $process.ProcessId -Force -ErrorAction SilentlyContinue
     }
+
+    foreach ($process in $watcherProcesses) {
+        Stop-Process -Id $process.ProcessId -Force -ErrorAction SilentlyContinue
+    }
+
     Write-Host "Rebel background connector stopped." -ForegroundColor Yellow
 }
 
