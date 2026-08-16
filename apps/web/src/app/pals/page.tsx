@@ -1084,12 +1084,14 @@ function CombatView({
   );
 
   const attackMonsters = [...scoredPals]
-    .filter((entry) => (entry.pal.ivs.attack ?? 0) >= 85)
+    .filter(
+      (entry) =>
+        entry.score.combatIntelligenceV2.individualOffense >= 60,
+    )
     .sort(
       (a, b) =>
-        (b.pal.ivs.attack ?? 0) - (a.pal.ivs.attack ?? 0) ||
         b.score.combatIntelligenceV2.individualOffense -
-          a.score.combatIntelligenceV2.individualOffense,
+        a.score.combatIntelligenceV2.individualOffense,
     );
 
   const tanks = [...scoredPals]
@@ -1111,13 +1113,26 @@ function CombatView({
         a.score.combatIntelligenceV2.currentReadiness,
     );
 
-  const bestBySpecies = [...scoredPals]
-    .filter((entry) => entry.score.bestOfSpecies.combat)
-    .sort(
-      (a, b) =>
-        b.score.combatIntelligenceV2.generalCeiling -
-        a.score.combatIntelligenceV2.generalCeiling,
-    );
+  const bestCombatBySpecies = new Map<string, RankedRealPal>();
+
+  for (const entry of scoredPals) {
+    const speciesKey = entry.pal.internalSpeciesId;
+    const current = bestCombatBySpecies.get(speciesKey);
+
+    if (
+      !current ||
+      entry.score.combatIntelligenceV2.generalCeiling >
+        current.score.combatIntelligenceV2.generalCeiling
+    ) {
+      bestCombatBySpecies.set(speciesKey, entry);
+    }
+  }
+
+  const bestBySpecies = [...bestCombatBySpecies.values()].sort(
+    (a, b) =>
+      b.score.combatIntelligenceV2.generalCeiling -
+      a.score.combatIntelligenceV2.generalCeiling,
+  );
 
   const elementGroups = getCombatElementGroups(scoredPals);
 
@@ -1593,7 +1608,7 @@ function FarmingView({
         <section>
           <SectionIntro
             title="Ranch Producers"
-            description="Owned Pals with ranch drops, ranked by farming value."
+            description="Owned Pals with documented possible Ranch drops, ranked by farming value."
             count={ranch.length}
           />
           <div className="mt-5 grid gap-3 xl:grid-cols-2">
@@ -1606,7 +1621,7 @@ function FarmingView({
                 metricValue={entry.score.farming}
                 detail={
                   entry.pal.ranchDrops?.length
-                    ? `Drops: ${entry.pal.ranchDrops.join(", ")}`
+                    ? `Possible drops: ${entry.pal.ranchDrops.join(", ")}`
                     : "Ranch producer"
                 }
                 onClick={() => onSelect(entry)}
@@ -4499,6 +4514,9 @@ function PalDetailPanel({
                       ...(partnerSkillDisplay?.affects.partySupport
                         ? { partySupport: "YES" }
                         : {}),
+                      ...(pal.speciesUtility.ranchDrops.length > 0
+                        ? { farming: "PRIMARY" }
+                        : {}),
                     }).map(
                       ([area, recommendation]) => (
                         <p
@@ -4516,10 +4534,15 @@ function PalDetailPanel({
               {pal.speciesUtility.ranchDrops.length > 0 && (
                 <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
                   <p className="text-[15px] uppercase tracking-[0.16em] text-neutral-500">
-                    Ranch Production
+                    Potential Ranch Production
                   </p>
                   <p className="mt-1 text-[17px] text-neutral-300">
                     {pal.speciesUtility.ranchDrops.join(" · ")}
+                  </p>
+                  <p className="mt-2 text-[15px] leading-relaxed text-neutral-500">
+                    These are documented possible drops across Partner Skill ranks.
+                    Rebel does not yet claim that every item is available at the
+                    current Rank {pal.partnerSkill?.rank ?? 1}.
                   </p>
                 </div>
               )}
