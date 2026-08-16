@@ -3691,16 +3691,25 @@ function getPartnerSkillDisplay(
       text.includes("alpha")
     );
 
+  const butchering =
+    text.includes("meat cleaver") ||
+    text.includes("butcher");
+
   const loot =
     text.includes("drop") ||
     text.includes("dig") ||
+    text.includes("amount of items obtained") ||
+    butchering ||
     text.includes("items when defeated") ||
     alphaEggUtility;
 
   let type =
     "Special Utility";
 
-  if (glider) {
+  if (butchering) {
+    type =
+      "Butchering / Loot Utility";
+  } else if (glider) {
     type =
       "Glider / Traversal Utility";
   } else if (playerMobility) {
@@ -3777,6 +3786,12 @@ function getPartnerSkillDisplay(
     );
   }
 
+  if (butchering) {
+    bestUses.push(
+      "Increasing Meat Cleaver item yields",
+    );
+  }
+
   if (combat) {
     bestUses.push(
       "Combat utility",
@@ -3809,7 +3824,8 @@ function getPartnerSkillDisplay(
 
   if (
     loot &&
-    !alphaEggUtility
+    !alphaEggUtility &&
+    !butchering
   ) {
     bestUses.push(
       "Resource collection",
