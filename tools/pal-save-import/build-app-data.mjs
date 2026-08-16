@@ -39,32 +39,38 @@ function getCharacterContainers(
       ?.CharacterContainerSaveData
       ?.value;
 
-  if (!Array.isArray(raw)) {
+  if (
+    !Array.isArray(
+      raw,
+    )
+  ) {
     return [];
   }
 
   return raw
-    .map((entry) => {
-      const containerId =
-        entry?.key?.ID
-          ?.value ?? null;
+    .map(
+      (entry) => {
+        const containerId =
+          entry?.key?.ID
+            ?.value ?? null;
 
-      const capacity =
-        entry?.value
-          ?.SlotNum
-          ?.value ?? null;
+        const capacity =
+          entry?.value
+            ?.SlotNum
+            ?.value ?? null;
 
-      const reference =
-        entry?.value
-          ?.bReferenceSlot
-          ?.value ?? false;
+        const reference =
+          entry?.value
+            ?.bReferenceSlot
+            ?.value ?? false;
 
-      return {
-        containerId,
-        capacity,
-        reference,
-      };
-    })
+        return {
+          containerId,
+          capacity,
+          reference,
+        };
+      },
+    )
     .filter(
       (entry) =>
         typeof entry.containerId ===
@@ -80,13 +86,20 @@ function getBaseContainers(
       ?.BaseCampSaveData
       ?.value;
 
-  if (!Array.isArray(raw)) {
+  if (
+    !Array.isArray(
+      raw,
+    )
+  ) {
     return [];
   }
 
   return raw
     .map(
-      (entry, index) => {
+      (
+        entry,
+        index,
+      ) => {
         const rawData =
           entry?.value
             ?.WorkerDirector
@@ -111,6 +124,7 @@ function getBaseContainers(
         return {
           baseId,
           containerId,
+
           baseIndex:
             index + 1,
 
@@ -214,11 +228,14 @@ function buildContainerMap(
         container.containerId,
       );
 
-    if (base) {
+    if (
+      base
+    ) {
       map.set(
         container.containerId,
         {
-          type: "BASE",
+          type:
+            "BASE",
 
           containerId:
             container.containerId,
@@ -248,7 +265,8 @@ function buildContainerMap(
       map.set(
         container.containerId,
         {
-          type: "PARTY",
+          type:
+            "PARTY",
 
           containerId:
             container.containerId,
@@ -256,9 +274,14 @@ function buildContainerMap(
           capacity:
             container.capacity,
 
-          baseId: null,
-          baseIndex: null,
-          coordinates: null,
+          baseId:
+            null,
+
+          baseIndex:
+            null,
+
+          coordinates:
+            null,
         },
       );
 
@@ -273,7 +296,8 @@ function buildContainerMap(
       map.set(
         container.containerId,
         {
-          type: "PALBOX",
+          type:
+            "PALBOX",
 
           containerId:
             container.containerId,
@@ -281,9 +305,14 @@ function buildContainerMap(
           capacity:
             container.capacity,
 
-          baseId: null,
-          baseIndex: null,
-          coordinates: null,
+          baseId:
+            null,
+
+          baseIndex:
+            null,
+
+          coordinates:
+            null,
         },
       );
 
@@ -293,7 +322,8 @@ function buildContainerMap(
     map.set(
       container.containerId,
       {
-        type: "OTHER",
+        type:
+          "OTHER",
 
         containerId:
           container.containerId,
@@ -301,9 +331,14 @@ function buildContainerMap(
         capacity:
           container.capacity,
 
-        baseId: null,
-        baseIndex: null,
-        coordinates: null,
+        baseId:
+          null,
+
+        baseIndex:
+          null,
+
+        coordinates:
+          null,
       },
     );
   }
@@ -322,19 +357,27 @@ function resolveLocation(
   containerMap,
 ) {
   const containerId =
-    pal?.slot?.containerId ??
+    pal?.slot
+      ?.containerId ??
     null;
 
   const slotIndex =
-    pal?.slot?.slotIndex ??
+    pal?.slot
+      ?.slotIndex ??
     null;
 
-  if (!containerId) {
+  if (
+    !containerId
+  ) {
     return {
-      type: "UNKNOWN",
+      type:
+        "UNKNOWN",
 
-      containerId: null,
-      capacity: null,
+      containerId:
+        null,
+
+      capacity:
+        null,
 
       slotIndex,
 
@@ -344,9 +387,14 @@ function resolveLocation(
           ? slotIndex + 1
           : null,
 
-      baseId: null,
-      baseIndex: null,
-      coordinates: null,
+      baseId:
+        null,
+
+      baseIndex:
+        null,
+
+      coordinates:
+        null,
     };
   }
 
@@ -355,13 +403,17 @@ function resolveLocation(
       containerId,
     );
 
-  if (!container) {
+  if (
+    !container
+  ) {
     return {
-      type: "UNKNOWN",
+      type:
+        "UNKNOWN",
 
       containerId,
 
-      capacity: null,
+      capacity:
+        null,
 
       slotIndex,
 
@@ -371,9 +423,14 @@ function resolveLocation(
           ? slotIndex + 1
           : null,
 
-      baseId: null,
-      baseIndex: null,
-      coordinates: null,
+      baseId:
+        null,
+
+      baseIndex:
+        null,
+
+      coordinates:
+        null,
     };
   }
 
@@ -391,22 +448,32 @@ function resolveLocation(
 }
 
 const pals =
-  readJson(inputPath);
+  readJson(
+    inputPath,
+  );
 
 const level =
-  readJson(levelPath);
+  readJson(
+    levelPath,
+  );
 
 const world =
-  getWorldSaveData(level);
+  getWorldSaveData(
+    level,
+  );
 
-if (!world) {
+if (
+  !world
+) {
   throw new Error(
     "Could not find worldSaveData in level.json.",
   );
 }
 
 const {
-  map: containerMap,
+  map:
+    containerMap,
+
   containers,
   bases,
   partyCandidate,
@@ -417,69 +484,207 @@ const {
   );
 
 const appPals =
-  pals.map((pal) => {
-    const location =
-      resolveLocation(
-        pal,
-        containerMap,
-      );
+  pals.map(
+    (pal) => {
+      const location =
+        resolveLocation(
+          pal,
+          containerMap,
+        );
 
-    return {
-      id:
-        pal.instanceId,
+      return {
+        id:
+          pal.instanceId,
 
-      species:
-        pal.displayName,
+        entityType:
+          pal.entityType ??
+          "PAL",
 
-      internalSpeciesId:
-        pal.internalSpeciesId,
-
-      nickname:
-        pal.nickname,
-
-      level:
-        pal.level,
-
-      gender:
-        pal.gender,
-
-      isAlpha:
-        pal.isAlpha,
-
-      elements:
-        pal.elements,
-
-      ivs:
-        pal.ivs,
-
-      passives:
-        pal.passives,
-
-      workSuitability:
-        pal.workSuitability,
-
-      combatStats:
-        pal.combatStats,
-
-      slot: {
-        containerId:
-          pal.slot
-            ?.containerId ??
+        dataQuality:
+          pal.dataQuality ??
           null,
 
-        slotIndex:
-          pal.slot
-            ?.slotIndex ??
+        referenceIdentity:
+          pal.referenceIdentity ??
           null,
-      },
 
-      location,
+        species:
+          pal.displayName,
 
-      disabledWorkSuitabilities:
-        pal.disabledWorkSuitabilities ??
-        [],
-    };
-  });
+        internalSpeciesId:
+          pal.internalSpeciesId,
+
+        nickname:
+          pal.nickname,
+
+        level:
+          pal.level,
+
+        gender:
+          pal.gender,
+
+        isAlpha:
+          pal.isAlpha,
+
+        elements:
+          pal.elements ??
+          [],
+
+        partnerSkill:
+          pal.partnerSkill ??
+          null,
+
+        ivs:
+          pal.ivs,
+
+        passives:
+          pal.passives ??
+          [],
+
+        skills: {
+          equipped:
+            pal.skills
+              ?.equipped ??
+            [],
+
+          learned:
+            pal.skills
+              ?.learned ??
+            [],
+        },
+
+        progression: {
+          condensation: {
+            rank:
+              pal.progression
+                ?.condensation
+                ?.rank ??
+              1,
+
+            stars:
+              pal.progression
+                ?.condensation
+                ?.stars ??
+              0,
+
+            rankUpExp:
+              pal.progression
+                ?.condensation
+                ?.rankUpExp ??
+              0,
+          },
+
+          souls: {
+            hp:
+              pal.progression
+                ?.souls
+                ?.hp ??
+              0,
+
+            attack:
+              pal.progression
+                ?.souls
+                ?.attack ??
+              0,
+
+            defense:
+              pal.progression
+                ?.souls
+                ?.defense ??
+              0,
+
+            workSpeed:
+              pal.progression
+                ?.souls
+                ?.workSpeed ??
+              0,
+          },
+
+          workSuitabilityUpgrades:
+            pal.progression
+              ?.workSuitabilityUpgrades ??
+            [],
+
+          friendship: {
+            points:
+              pal.progression
+                ?.friendship
+                ?.points ??
+              0,
+
+            activePartySeconds:
+              pal.progression
+                ?.friendship
+                ?.activePartySeconds ??
+              0,
+
+            partySeconds:
+              pal.progression
+                ?.friendship
+                ?.partySeconds ??
+              0,
+
+            baseSeconds:
+              pal.progression
+                ?.friendship
+                ?.baseSeconds ??
+              0,
+          },
+        },
+
+        currentState: {
+          workSuitability:
+            pal.currentState
+              ?.workSuitability ??
+            null,
+
+          fullStomach:
+            pal.currentState
+              ?.fullStomach ??
+            null,
+
+          sanity:
+            pal.currentState
+              ?.sanity ??
+            null,
+        },
+
+        workSuitability:
+          pal.workSuitability ??
+          {},
+
+        ranchDrops:
+          pal.ranchDrops ??
+          [],
+
+        combatStats:
+          pal.combatStats ??
+          null,
+
+        slot: {
+          containerId:
+            pal.slot
+              ?.containerId ??
+            null,
+
+          slotIndex:
+            pal.slot
+              ?.slotIndex ??
+            null,
+        },
+
+        location,
+
+        disabledWorkSuitabilities:
+          pal.disabledWorkSuitabilities ??
+          [],
+
+        isRarePal:
+          pal.isRarePal ??
+          false,
+      };
+    },
+  );
 
 fs.writeFileSync(
   outputPath,
@@ -491,13 +696,134 @@ fs.writeFileSync(
   "utf8",
 );
 
+const palEntities =
+  appPals.filter(
+    (pal) =>
+      pal.entityType ===
+      "PAL",
+  );
+
+const humanEntities =
+  appPals.filter(
+    (pal) =>
+      pal.entityType ===
+      "HUMAN",
+  );
+
+const unknownEntities =
+  appPals.filter(
+    (pal) =>
+      pal.entityType ===
+      "UNKNOWN",
+  );
+
 console.log(
-  `Built app data for ${appPals.length} Pals.`,
+  `Built app data for ${appPals.length} owned entities.`,
+);
+
+console.log(
+  `Pals: ${palEntities.length}`,
+);
+
+console.log(
+  `Captured humans: ${humanEntities.length}`,
+);
+
+console.log(
+  `Unknown entities: ${unknownEntities.length}`,
 );
 
 console.log(
   `Saved to: ${outputPath}`,
 );
+
+console.log(
+  "\n=== APP DATA V5 ===",
+);
+
+console.log({
+  totalEntities:
+    appPals.length,
+
+  pals:
+    palEntities.length,
+
+  humans:
+    humanEntities.length,
+
+  unknown:
+    unknownEntities.length,
+
+  partnerSkills:
+    palEntities.filter(
+      (pal) =>
+        Boolean(
+          pal.partnerSkill,
+        ),
+    ).length,
+
+  condensed:
+    palEntities.filter(
+      (pal) =>
+        (
+          pal.progression
+            ?.condensation
+            ?.stars ??
+          0
+        ) > 0,
+    ).length,
+
+  partialCondensation:
+    palEntities.filter(
+      (pal) =>
+        (
+          pal.progression
+            ?.condensation
+            ?.rankUpExp ??
+          0
+        ) > 0,
+    ).length,
+
+  learnedSkills:
+    palEntities.filter(
+      (pal) =>
+        (
+          pal.skills
+            ?.learned
+            ?.length ??
+          0
+        ) > 0,
+    ).length,
+
+  workUpgrades:
+    palEntities.filter(
+      (pal) =>
+        (
+          pal.progression
+            ?.workSuitabilityUpgrades
+            ?.length ??
+          0
+        ) > 0,
+    ).length,
+
+  ranchPals:
+    palEntities.filter(
+      (pal) =>
+        (
+          pal.ranchDrops
+            ?.length ??
+          0
+        ) > 0,
+    ).length,
+
+  incompleteReferences:
+    palEntities.filter(
+      (pal) =>
+        pal.dataQuality
+          ?.referenceStatus ===
+        "INCOMPLETE",
+    ).length,
+});
 
 console.log(
   "\nResolved character containers:",
@@ -538,10 +864,12 @@ console.log(
   partyCandidate
     ? {
         containerId:
-          partyCandidate.containerId,
+          partyCandidate
+            .containerId,
 
         capacity:
-          partyCandidate.capacity,
+          partyCandidate
+            .capacity,
       }
     : null,
 );
@@ -551,10 +879,12 @@ console.log(
   palboxCandidate
     ? {
         containerId:
-          palboxCandidate.containerId,
+          palboxCandidate
+            .containerId,
 
         capacity:
-          palboxCandidate.capacity,
+          palboxCandidate
+            .capacity,
       }
     : null,
 );

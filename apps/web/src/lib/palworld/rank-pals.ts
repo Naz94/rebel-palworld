@@ -1,3 +1,4 @@
+// PARTNER_CLASSIFICATION_V2_SAFE
 export type PalPassive = {
   internalId: string;
   name: string;
@@ -25,11 +26,88 @@ export type PalCombatStats = {
   food: number;
 };
 
+export type PalCondensation = {
+  rank: number;
+  stars: number;
+  rankUpExp: number;
+};
+
+export type PalSoulInvestment = {
+  hp: number;
+  attack: number;
+  defense: number;
+  workSpeed: number;
+};
+
+export type PalWorkSuitabilityUpgrade = {
+  workSuitability: string;
+  rank: number;
+};
+
+export type PalProgression = {
+  condensation: PalCondensation;
+
+  souls: PalSoulInvestment;
+
+  workSuitabilityUpgrades:
+    PalWorkSuitabilityUpgrade[];
+
+  friendship: {
+    points: number;
+    activePartySeconds: number;
+    partySeconds: number;
+    baseSeconds: number;
+  };
+};
+
+export type PalSkills = {
+  equipped: string[];
+  learned: string[];
+};
+
+export type PalPartnerSkill = {
+  name: string | null;
+  description: string | null;
+  tags: string[];
+};
+
 export type RealOwnedPal = {
   id: string | null;
 
   species: string;
   internalSpeciesId: string;
+
+  entityType?:
+    | "PAL"
+    | "HUMAN"
+    | "UNKNOWN";
+
+  dataQuality?: {
+    referenceStatus:
+      | "COMPLETE"
+      | "INCOMPLETE"
+      | "NOT_APPLICABLE";
+    issues: string[];
+  } | null;
+
+  referenceIdentity?: {
+    paldex:
+      | string
+      | number
+      | null;
+    canonicalCode:
+      | string
+      | null;
+    canonicalName:
+      | string
+      | null;
+
+    source?: string | null;
+    gameVersion?: string | null;
+    workSource?: string | null;
+    combatSource?: string | null;
+    partnerSkillSource?: string | null;
+  } | null;
 
   nickname: string | null;
   level: number | null;
@@ -39,14 +117,28 @@ export type RealOwnedPal = {
 
   elements: string[];
 
+  partnerSkill?: PalPartnerSkill | null;
+
   ivs: PalIVs;
 
   passives: PalPassive[];
+
+  skills?: PalSkills;
+
+  progression?: PalProgression;
+
+  currentState?: {
+    workSuitability: string | null;
+    fullStomach: number | null;
+    sanity: number | null;
+  };
 
   workSuitability: Record<
     string,
     number | undefined
   >;
+
+  ranchDrops?: string[];
 
   combatStats: PalCombatStats | null;
 
@@ -82,10 +174,32 @@ export type RealOwnedPal = {
   disabledWorkSuitabilities: string[];
 };
 
+export type PalRoleProfile =
+  | "Powerhouse"
+  | "Efficient"
+  | "Specialist"
+  | "Versatile"
+  | "Balanced";
+
 export type PalRoleScore = {
   role: string;
+
+  /**
+   * Species/reference work level.
+   */
   level: number;
+
+  /**
+   * Effective level after permanent work-affinity upgrades
+   * exposed by the save.
+   */
+  effectiveLevel: number;
+
   score: number;
+
+  foodEfficiency: number;
+
+  profile: PalRoleProfile;
 };
 
 export type PalAction =
@@ -115,18 +229,66 @@ export type DecisionBucket =
 export type RealPalScore = {
   overall: number;
 
+  /**
+   * Backwards-compatible combat score.
+   * This is the Pal's CURRENT combat usefulness.
+   */
   combat: number;
+
+  /**
+   * Natural/future combat ceiling.
+   * Investment such as level/stars is intentionally reduced here.
+   */
+  combatPotential: number;
+
+  /**
+   * Current investment-aware strength.
+   */
+  currentPower: number;
+
   base: number;
+
+  farming: number;
+
   breeding: number;
+
+  /**
+   * Party/player support value from passives such as
+   * Vanguard and Stronghold Strategist.
+   */
+  support: number;
+
+  /**
+   * Rebel expedition-firepower priority index.
+   * This is NOT the exact in-game Firepower number because
+   * the save pipeline does not yet expose all displayed
+   * current HP/ATK/DEF values needed for the official formula.
+   */
+  expeditionFirepower: number;
+
+  /**
+   * How worthwhile further investment is, considering
+   * combat ceiling, current readiness, stars and partial progress.
+   */
+  investmentPriority: number;
 
   combatReasons: string[];
   breedingReasons: string[];
+  supportReasons: string[];
+  firepowerReasons: string[];
+  investmentReasons: string[];
 
   ivQuality: number;
 
   combatGrade: string;
+  combatPotentialGrade: string;
+  currentPowerGrade: string;
   baseGrade: string;
+  farmingGrade: string;
   breedingGrade: string;
+  supportGrade: string;
+  expeditionFirepowerGrade: string;
+  investmentPriorityGrade: string;
 
   bestRole: string;
 
@@ -309,100 +471,1460 @@ function hasValuablePositivePassive(
   );
 }
 
-function calculatePassiveCombatBonus(
+
+const WORK_UPGRADE_ROLE_MAP:
+  Record<string, string> = {
+    EmitFlame: "Kindling",
+    Watering: "Watering",
+    Seeding: "Planting",
+    GenerateElectricity:
+      "Generating Electricity",
+    Handcraft: "Handiwork",
+    Collection: "Gathering",
+    Deforest: "Lumbering",
+    Mining: "Mining",
+    ProductMedicine:
+      "Medicine Production",
+    Cool: "Cooling",
+    Transport: "Transporting",
+    MonsterFarm: "Farming",
+  };
+
+const WORK_SPEED_PASSIVES =
+  new Set([
+    "artisan",
+    "serious",
+    "work slave",
+    "remarkable craftsmanship",
+    "heart of the immovable king",
+  ]);
+
+const MOVEMENT_PASSIVES =
+  new Set([
+    "swift",
+    "runner",
+    "nimble",
+    "legend",
+    "infinite stamina",
+  ]);
+
+function getCondensationStars(
   pal: RealOwnedPal,
+): number {
+  return clamp(
+    pal.progression
+      ?.condensation?.stars ?? 0,
+    0,
+    4,
+  );
+}
+
+function getSoulInvestmentTotal(
+  pal: RealOwnedPal,
+): number {
+  const souls =
+    pal.progression?.souls;
+
+  if (!souls) {
+    return 0;
+  }
+
+  return (
+    Math.max(0, souls.hp) +
+    Math.max(0, souls.attack) +
+    Math.max(0, souls.defense) +
+    Math.max(0, souls.workSpeed)
+  );
+}
+
+function getWorkUpgradeForRole(
+  pal: RealOwnedPal,
+  role: string,
+): number {
+  const upgrades =
+    pal.progression
+      ?.workSuitabilityUpgrades ??
+    [];
+
+  let total = 0;
+
+  for (const upgrade of upgrades) {
+    const mappedRole =
+      WORK_UPGRADE_ROLE_MAP[
+        upgrade.workSuitability
+      ] ??
+      upgrade.workSuitability;
+
+    if (
+      mappedRole.toLowerCase() ===
+      role.toLowerCase()
+    ) {
+      total +=
+        Math.max(
+          0,
+          upgrade.rank,
+        );
+    }
+  }
+
+  return total;
+}
+
+function getFoodDemand(
+  pal: RealOwnedPal,
+): number {
+  return Math.max(
+    0,
+    pal.combatStats?.food ?? 0,
+  );
+}
+
+function getFoodEfficiencyScore(
+  pal: RealOwnedPal,
+): number {
+  const food =
+    getFoodDemand(pal);
+
+  if (food <= 0) {
+    return 65;
+  }
+
+  /*
+   * Current species data commonly ranges from roughly
+   * 100 to 600 food. Lower is more base-efficient.
+   */
+  return clamp(
+    100 -
+      ((food - 100) / 500) * 70,
+    25,
+    100,
+  );
+}
+
+function getWorkPassiveBonus(
+  pal: RealOwnedPal,
+  role: string,
 ): number {
   let bonus = 0;
 
-  for (
-    const passive
-    of pal.passives
-  ) {
-    const description =
-      passive.description?.toLowerCase() ??
-      "";
-
+  for (const passive of pal.passives) {
     const name =
       passive.name.toLowerCase();
+
+    const description =
+      passive.description
+        ?.toLowerCase() ?? "";
 
     const rank =
       passive.rank ?? 0;
 
     if (
-      description.includes("attack") ||
-      description.includes("damage")
+      WORK_SPEED_PASSIVES.has(name) ||
+      description.includes(
+        "work speed",
+      )
     ) {
       if (rank >= 4) {
-        bonus += 7;
-      } else if (rank >= 2) {
-        bonus += 4;
-      } else if (rank > 0) {
-        bonus += 2;
+        bonus += 12;
+      } else if (rank >= 3) {
+        bonus += 9;
+      } else if (rank >= 1) {
+        bonus += 5;
       } else if (rank < 0) {
-        bonus -= 5;
+        bonus -= 8;
       }
     }
 
     if (
-      name === "legend" ||
-      name === "musclehead" ||
-      name === "ferocious"
+      role.toLowerCase() ===
+        "transporting" &&
+      (
+        MOVEMENT_PASSIVES.has(name) ||
+        description.includes(
+          "movement speed",
+        )
+      )
     ) {
-      bonus += 6;
+      if (rank >= 4) {
+        bonus += 8;
+      } else if (rank >= 2) {
+        bonus += 5;
+      } else if (rank > 0) {
+        bonus += 3;
+      }
     }
 
-    if (name === "coward") {
-      bonus -= 8;
+    /*
+     * Musclehead is excellent for combat but bad for work.
+     */
+    if (name === "musclehead") {
+      bonus -= 10;
     }
   }
+
+  const soulWork =
+    pal.progression
+      ?.souls?.workSpeed ?? 0;
+
+  bonus +=
+    Math.min(
+      10,
+      Math.max(0, soulWork) * 0.5,
+    );
 
   return bonus;
 }
 
-function calculateCombat(
-  pal: RealOwnedPal,
-  ivQuality: number,
-): number {
-  if (!pal.combatStats) {
-    return clamp(ivQuality);
+function classifyWorkProfile(
+  roleCount: number,
+  effectiveLevel: number,
+  foodEfficiency: number,
+): PalRoleProfile {
+  if (
+    effectiveLevel >= 4 &&
+    foodEfficiency < 55
+  ) {
+    return "Powerhouse";
   }
 
-  const speciesStrength =
-    pal.combatStats.combatPercentile;
+  if (
+    foodEfficiency >= 78 &&
+    effectiveLevel >= 2
+  ) {
+    return "Efficient";
+  }
 
-  const attackIV =
+  if (
+    roleCount <= 2 &&
+    effectiveLevel >= 2
+  ) {
+    return "Specialist";
+  }
+
+  if (roleCount >= 4) {
+    return "Versatile";
+  }
+
+  return "Balanced";
+}
+
+function getEquippedSkillCount(
+  pal: RealOwnedPal,
+): number {
+  return (
+    pal.skills?.equipped?.length ??
+    0
+  );
+}
+
+
+const PLAYER_SUPPORT_PASSIVE_NAMES =
+  new Set([
+    "vanguard",
+    "stronghold strategist",
+    "motivational leader",
+    "mine foreman",
+    "logging foreman",
+  ]);
+
+const SELF_COMBAT_PASSIVE_NAMES =
+  new Set([
+    "legend",
+    "musclehead",
+    "ferocious",
+    "demon god",
+    "serenity",
+    "impatient",
+    "burly body",
+    "otherworldly cells",
+    "savior",
+  ]);
+
+function isPlayerSupportPassive(
+  passive: PalPassive,
+): boolean {
+  const name =
+    passive.name.toLowerCase();
+
+  const description =
+    passive.description
+      ?.toLowerCase() ?? "";
+
+  return (
+    PLAYER_SUPPORT_PASSIVE_NAMES.has(
+      name,
+    ) ||
+    description.includes(
+      "player attack",
+    ) ||
+    description.includes(
+      "player defense",
+    ) ||
+    description.includes(
+      "player work speed",
+    ) ||
+    description.includes(
+      "player movement speed",
+    )
+  );
+}
+
+function isWorkPassive(
+  passive: PalPassive,
+): boolean {
+  const name =
+    passive.name.toLowerCase();
+
+  const description =
+    passive.description
+      ?.toLowerCase() ?? "";
+
+  return (
+    WORK_SPEED_PASSIVES.has(name) ||
+    description.includes(
+      "work speed",
+    ) ||
+    name === "ranch master" ||
+    name === "philanthropist"
+  );
+}
+
+function isSelfCombatPassive(
+  passive: PalPassive,
+): boolean {
+  if (
+    isPlayerSupportPassive(
+      passive,
+    )
+  ) {
+    return false;
+  }
+
+  const name =
+    passive.name.toLowerCase();
+
+  const description =
+    passive.description
+      ?.toLowerCase() ?? "";
+
+  if (
+    SELF_COMBAT_PASSIVE_NAMES.has(
+      name,
+    )
+  ) {
+    return true;
+  }
+
+  return (
+    description.includes(
+      "attack damage",
+    ) ||
+    description.includes(
+      "increase in attack",
+    ) ||
+    description.includes(
+      "attack +",
+    ) ||
+    description.includes(
+      "defense +",
+    ) ||
+    description.includes(
+      "incoming",
+    ) ||
+    description.includes(
+      "active skill cooldown",
+    )
+  );
+}
+
+function getTrustReadiness(
+  pal: RealOwnedPal,
+): number {
+  /*
+   * Trust reaches its current maximum at 200,000 points.
+   * This is a readiness input, not a direct stat multiplier.
+   */
+  const points =
+    Math.max(
+      0,
+      pal.progression
+        ?.friendship?.points ?? 0,
+    );
+
+  return clamp(
+    (points / 200000) * 100,
+  );
+}
+
+function getSoulReadiness(
+  pal: RealOwnedPal,
+): number {
+  /*
+   * Current Pal Enhancement supports 20 levels in each
+   * of HP / Attack / Defense / Work Speed = 80 total levels.
+   */
+  return clamp(
+    (
+      getSoulInvestmentTotal(
+        pal,
+      ) / 80
+    ) * 100,
+  );
+}
+
+function getLevelReadiness(
+  pal: RealOwnedPal,
+): number {
+  /*
+   * Current endgame progression reaches level 70.
+   */
+  return clamp(
+    ((pal.level ?? 1) / 70) *
+      100,
+  );
+}
+
+function getCondensationReadiness(
+  pal: RealOwnedPal,
+): number {
+  return clamp(
+    (
+      getCondensationStars(
+        pal,
+      ) / 4
+    ) * 100,
+  );
+}
+
+function getWeightedCombatIV(
+  pal: RealOwnedPal,
+  perfect = false,
+): number {
+  if (perfect) {
+    return 100;
+  }
+
+  const attack =
     pal.ivs.attack ?? 50;
 
-  const hpIV =
+  const hp =
     pal.ivs.hp ?? 50;
 
-  const defenseIV =
+  const defense =
     pal.ivs.defense ?? 50;
 
-  const individualCombatIV =
-    attackIV * 0.5 +
-    hpIV * 0.25 +
-    defenseIV * 0.25;
+  return (
+    attack * 0.45 +
+    hp * 0.275 +
+    defense * 0.275
+  );
+}
 
-  const passiveBonus =
-    calculatePassiveCombatBonus(
+function getPartnerSkillRank(
+  pal: RealOwnedPal,
+): number {
+  return (
+    getCondensationStars(
+      pal,
+    ) + 1
+  );
+}
+
+function getPartnerSkillTags(
+  pal: RealOwnedPal,
+): Set<string> {
+  return new Set(
+    (
+      pal.partnerSkill
+        ?.tags ??
+      []
+    ).map(
+      (tag) =>
+        tag.toLowerCase(),
+    ),
+  );
+}
+
+function getPartnerSkillDescription(
+  pal: RealOwnedPal,
+): string {
+  return (
+    pal.partnerSkill
+      ?.description
+      ?.toLowerCase() ??
+    ""
+  );
+}
+
+function getPartnerSkillName(
+  pal: RealOwnedPal,
+): string {
+  return (
+    pal.partnerSkill
+      ?.name ??
+    "Partner Skill"
+  );
+}
+
+function hasPartnerSkillScalingEvidence(
+  pal: RealOwnedPal,
+): boolean {
+  const description =
+    pal.partnerSkill
+      ?.description ??
+    "";
+
+  return description.includes(
+    "~",
+  );
+}
+
+function getPartnerSkillScalingBonus(
+  pal: RealOwnedPal,
+): number {
+  if (
+    !hasPartnerSkillScalingEvidence(
+      pal,
+    )
+  ) {
+    return 0;
+  }
+
+  return (
+    getCondensationStars(
+      pal,
+    ) * 3
+  );
+}
+
+function getPartnerSupportData(
+  pal: RealOwnedPal,
+): {
+  score: number;
+  reasons: string[];
+} {
+  const partner =
+    pal.partnerSkill;
+
+  if (
+    !partner
+  ) {
+    return {
+      score: 0,
+      reasons: [],
+    };
+  }
+
+  const tags =
+    getPartnerSkillTags(
       pal,
     );
 
-  const alphaBonus =
-    pal.isAlpha ? 2 : 0;
+  const description =
+    getPartnerSkillDescription(
+      pal,
+    );
+
+  const reasons:
+    string[] = [];
+
+  const playerEffect =
+    description.includes(
+      "player's attack",
+    ) ||
+    description.includes(
+      "player attack",
+    ) ||
+    description.includes(
+      "player's defense",
+    ) ||
+    description.includes(
+      "player defense",
+    ) ||
+    description.includes(
+      "player's health",
+    ) ||
+    description.includes(
+      "player health",
+    ) ||
+    description.includes(
+      "player's stamina",
+    ) ||
+    description.includes(
+      "player stamina",
+    ) ||
+    description.includes(
+      "player's work speed",
+    ) ||
+    description.includes(
+      "player work speed",
+    ) ||
+    description.includes(
+      "carrying capacity",
+    ) ||
+    description.includes(
+      "carry weight",
+    );
+
+  const partyPalEffect =
+    tags.has(
+      "party",
+    ) &&
+    (
+      description.includes(
+        "pals",
+      ) ||
+      description.includes(
+        "pal's",
+      )
+    );
+
+  const healingEffect =
+    tags.has(
+      "party",
+    ) &&
+    (
+      description.includes(
+        "restore",
+      ) ||
+      description.includes(
+        "heal",
+      )
+    );
+
+  const genuinePartySupport =
+    tags.has(
+      "party",
+    ) &&
+    (
+      playerEffect ||
+      partyPalEffect ||
+      healingEffect
+    );
+
+  if (
+    !genuinePartySupport
+  ) {
+    return {
+      score: 0,
+      reasons: [],
+    };
+  }
+
+  let score = 34;
+
+  reasons.push(
+    getPartnerSkillName(
+      pal,
+    ) +
+      ": party support",
+  );
+
+  if (
+    playerEffect
+  ) {
+    score += 18;
+
+    reasons.push(
+      getPartnerSkillName(
+        pal,
+      ) +
+        ": directly supports the player",
+    );
+  }
+
+  if (
+    partyPalEffect
+  ) {
+    score += 12;
+
+    reasons.push(
+      getPartnerSkillName(
+        pal,
+      ) +
+        ": boosts party Pals",
+    );
+  }
+
+  if (
+    healingEffect
+  ) {
+    score += 8;
+
+    reasons.push(
+      getPartnerSkillName(
+        pal,
+      ) +
+        ": survival / healing utility",
+    );
+  }
+
+  if (
+    hasPartnerSkillScalingEvidence(
+      pal,
+    )
+  ) {
+    score +=
+      getPartnerSkillScalingBonus(
+        pal,
+      );
+
+    reasons.push(
+      getPartnerSkillName(
+        pal,
+      ) +
+        ": rank-scaled support effect",
+    );
+  }
+
+  return {
+    score:
+      clamp(
+        score,
+      ),
+
+    reasons,
+  };
+}
+
+function getPartnerBaseBonus(
+  pal: RealOwnedPal,
+): number {
+  if (
+    !pal.partnerSkill
+  ) {
+    return 0;
+  }
+
+  const tags =
+    getPartnerSkillTags(
+      pal,
+    );
+
+  const description =
+    getPartnerSkillDescription(
+      pal,
+    );
+
+  if (
+    !tags.has(
+      "base",
+    ) &&
+    !description.includes(
+      "while at a base",
+    )
+  ) {
+    return 0;
+  }
+
+  let bonus = 16;
+
+  if (
+    description.includes(
+      "all other base pals",
+    ) ||
+    description.includes(
+      "all base pals",
+    )
+  ) {
+    bonus += 10;
+  }
+
+  if (
+    description.includes(
+      "work suitability",
+    )
+  ) {
+    bonus += 8;
+  }
+
+  if (
+    description.includes(
+      "work speed",
+    )
+  ) {
+    bonus += 6;
+  }
+
+  bonus +=
+    getPartnerSkillScalingBonus(
+      pal,
+    );
+
+  return Math.min(
+    34,
+    bonus,
+  );
+}
+
+function getPartnerFarmingBonus(
+  pal: RealOwnedPal,
+): number {
+  if (
+    !pal.partnerSkill
+  ) {
+    return 0;
+  }
+
+  const tags =
+    getPartnerSkillTags(
+      pal,
+    );
+
+  const description =
+    getPartnerSkillDescription(
+      pal,
+    );
+
+  let bonus = 0;
+
+  if (
+    tags.has(
+      "ranch",
+    )
+  ) {
+    bonus += 22;
+  }
+
+  if (
+    description.includes(
+      "ranch",
+    )
+  ) {
+    bonus += 8;
+  }
+
+  const productionKeywords = [
+    "farming",
+    "planting",
+    "watering",
+    "gathering",
+    "crop",
+    "harvest",
+  ];
+
+  const affectsProduction =
+    productionKeywords.some(
+      (keyword) =>
+        description.includes(
+          keyword,
+        ),
+    );
+
+  if (
+    tags.has(
+      "base",
+    ) &&
+    affectsProduction
+  ) {
+    bonus += 14;
+  }
+
+  if (
+    bonus > 0
+  ) {
+    bonus +=
+      getPartnerSkillScalingBonus(
+        pal,
+      );
+  }
+
+  return Math.min(
+    38,
+    bonus,
+  );
+}
+
+function getPartnerCombatUtilityBonus(
+  pal: RealOwnedPal,
+): number {
+  if (
+    !pal.partnerSkill
+  ) {
+    return 0;
+  }
+
+  const tags =
+    getPartnerSkillTags(
+      pal,
+    );
+
+  const description =
+    getPartnerSkillDescription(
+      pal,
+    );
+
+  let bonus = 0;
+
+  if (
+    tags.has(
+      "active",
+    )
+  ) {
+    bonus += 4;
+  }
+
+  if (
+    description.includes(
+      "damage multiplier",
+    ) ||
+    description.includes(
+      "attacks targeted enemy",
+    ) ||
+    description.includes(
+      "explosion",
+    ) ||
+    description.includes(
+      "fires",
+    )
+  ) {
+    bonus += 3;
+  }
+
+  if (
+    tags.has(
+      "mount",
+    ) &&
+    (
+      description.includes(
+        "damage multiplier",
+      ) ||
+      description.includes(
+        "damage dealt",
+      ) ||
+      description.includes(
+        "attack damage",
+      )
+    )
+  ) {
+    bonus += 2;
+  }
+
+  if (
+    bonus > 0 &&
+    hasPartnerSkillScalingEvidence(
+      pal,
+    )
+  ) {
+    bonus +=
+      Math.min(
+        2,
+        getCondensationStars(
+          pal,
+        ) * 0.5,
+      );
+  }
+
+  return Math.min(
+    10,
+    bonus,
+  );
+}
+
+function calculateSupport(
+  pal: RealOwnedPal,
+): {
+  score: number;
+  reasons: string[];
+} {
+  const supportPassives =
+    pal.passives.filter(
+      isPlayerSupportPassive,
+    );
+
+  const partnerSupport =
+    getPartnerSupportData(
+      pal,
+    );
+
+  let score = 0;
+
+  const reasons:
+    string[] = [];
+
+  if (
+    supportPassives.length >
+    0
+  ) {
+    score = 35;
+
+    for (
+      const passive
+      of supportPassives
+    ) {
+      const rank =
+        passive.rank ?? 0;
+
+      if (
+        rank >= 4
+      ) {
+        score += 28;
+      } else if (
+        rank >= 3
+      ) {
+        score += 23;
+      } else if (
+        rank >= 2
+      ) {
+        score += 18;
+      } else if (
+        rank >= 1
+      ) {
+        score += 13;
+      } else if (
+        rank < 0
+      ) {
+        score -= 15;
+      }
+
+      const description =
+        passive.description ??
+        "Player-support effect";
+
+      reasons.push(
+        passive.name +
+          ": " +
+          description,
+      );
+    }
+
+    if (
+      supportPassives.length >=
+      2
+    ) {
+      score += 10;
+
+      reasons.push(
+        "Multiple player-support traits",
+      );
+    }
+  }
+
+  if (
+    partnerSupport.score >
+    0
+  ) {
+    if (
+      score > 0
+    ) {
+      score =
+        score * 0.58 +
+        partnerSupport.score *
+          0.62;
+    } else {
+      score =
+        partnerSupport.score;
+    }
+
+    for (
+      const reason
+      of partnerSupport.reasons
+    ) {
+      pushUnique(
+        reasons,
+        reason,
+      );
+    }
+  }
+
+  return {
+    score:
+      clamp(
+        score,
+      ),
+
+    reasons,
+  };
+}
+
+function calculateExpeditionFirepower(
+  pal: RealOwnedPal,
+): {
+  score: number;
+  reasons: string[];
+} {
+  if (!pal.combatStats) {
+    return {
+      score: 0,
+      reasons: [
+        "No species combat reference data available",
+      ],
+    };
+  }
+
+  const speciesProxy =
+    pal.combatStats
+      .attackPercentile *
+      0.4 +
+    pal.combatStats
+      .defensePercentile *
+      0.3 +
+    pal.combatStats
+      .hpPercentile *
+      0.3;
+
+  const ivProxy =
+    getWeightedCombatIV(pal);
+
+  const level =
+    getLevelReadiness(pal);
+
+  const souls =
+    getSoulReadiness(pal);
+
+  const trust =
+    getTrustReadiness(pal);
+
+  const stars =
+    getCondensationStars(pal);
+
+  /*
+   * Official expedition Firepower applies condensation
+   * rank squared. Convert rank^2 (1,4,9,16,25) to a
+   * normalized 0-100 contribution without pretending
+   * this is the exact displayed Firepower number.
+   */
+  const rank =
+    stars + 1;
+
+  const rankSquaredScore =
+    ((rank * rank) / 25) *
+    100;
+
+  const score =
+    clamp(
+      speciesProxy * 0.38 +
+      ivProxy * 0.17 +
+      level * 0.10 +
+      souls * 0.08 +
+      trust * 0.07 +
+      rankSquaredScore * 0.20,
+    );
+
+  const reasons: string[] = [
+    `Condensation ${stars}★ gives rank² expedition weighting`,
+  ];
+
+  if (
+    speciesProxy >= 80
+  ) {
+    reasons.push(
+      "Strong species stat profile for expeditions",
+    );
+  }
+
+  if (ivProxy >= 85) {
+    reasons.push(
+      "Strong combat IV contribution",
+    );
+  }
+
+  if (stars >= 3) {
+    reasons.push(
+      "High condensation strongly boosts expedition priority",
+    );
+  }
+
+  return {
+    score,
+    reasons,
+  };
+}
+
+function calculateInvestmentPriority(
+  pal: RealOwnedPal,
+  combatPotential: number,
+  currentPower: number,
+  base: number,
+  farming: number,
+  support: number,
+): number {
+  const usefulCeiling =
+    Math.max(
+      combatPotential,
+      base,
+      farming,
+      support,
+    );
+
+  const combatGap =
+    Math.max(
+      0,
+      combatPotential -
+        currentPower,
+    );
+
+  const stars =
+    getCondensationStars(pal);
+
+  const partial =
+    pal.progression
+      ?.condensation?.rankUpExp ?? 0;
+
+  const alreadyInvestedBonus =
+    stars > 0
+      ? 3 + stars
+      : 0;
+
+  const partialBonus =
+    partial > 0 ? 3 : 0;
 
   return clamp(
-    speciesStrength * 0.55 +
-      individualCombatIV * 0.45 +
-      passiveBonus +
-      alphaBonus,
+    usefulCeiling * 0.62 +
+      Math.min(
+        25,
+        combatGap * 0.9,
+      ) +
+      alreadyInvestedBonus +
+      partialBonus,
+  );
+}
+
+function calculateCombatPassiveValue(
+  pal: RealOwnedPal,
+): number {
+  let value = 50;
+
+  for (
+    const passive
+    of pal.passives
+  ) {
+    if (
+      isPlayerSupportPassive(
+        passive,
+      )
+    ) {
+      continue;
+    }
+
+    const name =
+      passive.name.toLowerCase();
+
+    const description =
+      passive.description
+        ?.toLowerCase() ?? "";
+
+    const rank =
+      passive.rank ?? 0;
+
+    const ownAttackOrDamage =
+      isSelfCombatPassive(
+        passive,
+      ) &&
+      (
+        description.includes(
+          "attack",
+        ) ||
+        description.includes(
+          "damage",
+        ) ||
+        name === "legend" ||
+        name === "musclehead" ||
+        name === "ferocious" ||
+        name === "demon god" ||
+        name === "serenity" ||
+        name === "impatient" ||
+        name === "otherworldly cells" ||
+        name === "savior"
+      );
+
+    const defensive =
+      isSelfCombatPassive(
+        passive,
+      ) &&
+      (
+        description.includes(
+          "incoming",
+        ) ||
+        description.includes(
+          "defense",
+        ) ||
+        name === "burly body" ||
+        name === "legend"
+      );
+
+    if (ownAttackOrDamage) {
+      if (rank >= 4) {
+        value += 16;
+      } else if (rank >= 3) {
+        value += 12;
+      } else if (rank >= 1) {
+        value += 7;
+      } else if (rank < 0) {
+        value -= 12;
+      }
+    }
+
+    if (defensive) {
+      if (rank >= 4) {
+        value += 8;
+      } else if (rank >= 2) {
+        value += 5;
+      } else if (rank > 0) {
+        value += 3;
+      }
+    }
+
+    if (
+      name === "coward" ||
+      name === "pacifist" ||
+      description.includes(
+        "decrease in attack",
+      )
+    ) {
+      value -= 18;
+    }
+  }
+
+  return clamp(value);
+}
+
+function calculatePassiveCombatBonus(
+  pal: RealOwnedPal,
+): number {
+  return (
+    calculateCombatPassiveValue(pal) -
+    50
+  ) * 0.35;
+}
+
+function calculateCombatPotential(
+  pal: RealOwnedPal,
+): number {
+  if (!pal.combatStats) {
+    /*
+     * We cannot honestly calculate a species-aware combat
+     * ceiling without the species combat reference record.
+     * Returning zero keeps this Pal OUT of authoritative combat
+     * rankings until the reference-data gap is filled.
+     *
+     * IVs are still preserved and scored for breeding.
+     */
+    return 0;
+  }
+
+  const speciesStrength =
+    pal.combatStats
+      .combatPercentile;
+
+  const perfectIvCeiling =
+    getWeightedCombatIV(
+      pal,
+      true,
+    );
+
+  const passiveValue =
+    calculateCombatPassiveValue(
+      pal,
+    );
+
+  /*
+   * "Combat Potential" now means the reachable combat
+   * ceiling of THIS species + THIS passive set after
+   * fixable IV Potential is maxed with fruits.
+   *
+   * Level, stars, Souls and Trust are deliberately not
+   * penalties here because they are investment state.
+   */
+  const partnerUtility =
+    getPartnerCombatUtilityBonus(
+      pal,
+    );
+
+  return clamp(
+    speciesStrength * 0.48 +
+      perfectIvCeiling * 0.25 +
+      passiveValue * 0.27 +
+      partnerUtility,
+  );
+}
+
+function calculateCurrentPower(
+  pal: RealOwnedPal,
+): number {
+  if (!pal.combatStats) {
+    /*
+     * Do not turn IV quality into fake "current combat power".
+     * Missing combat reference data means combat readiness is
+     * currently unscored, not weak.
+     */
+    return 0;
+  }
+
+  const speciesStrength =
+    pal.combatStats
+      .combatPercentile;
+
+  const currentIv =
+    getWeightedCombatIV(pal);
+
+  const passiveValue =
+    calculateCombatPassiveValue(
+      pal,
+    );
+
+  const partnerUtility =
+    getPartnerCombatUtilityBonus(
+      pal,
+    );
+
+  const naturalQuality =
+    clamp(
+      speciesStrength * 0.48 +
+        currentIv * 0.25 +
+        passiveValue * 0.27 +
+        partnerUtility,
+    );
+
+  /*
+   * Current readiness is a fraction of the Pal's current
+   * natural quality. At max level + 4★ + max Souls +
+   * max Trust, readiness reaches 100%.
+   *
+   * This guarantees Current <= Ceiling when IVs are
+   * fixable to 100, which matches the meaning of "ceiling".
+   */
+  const readinessFactor =
+    clamp(
+      55 +
+        getLevelReadiness(pal) *
+          0.20 +
+        getCondensationReadiness(
+          pal,
+        ) *
+          0.10 +
+        getSoulReadiness(pal) *
+          0.10 +
+        getTrustReadiness(pal) *
+          0.05,
+      0,
+      100,
+    ) / 100;
+
+  return clamp(
+    naturalQuality *
+      readinessFactor,
+  );
+}
+
+function calculateCombat(
+  pal: RealOwnedPal,
+  _ivQuality: number,
+): number {
+  return calculateCurrentPower(
+    pal,
   );
 }
 
 function getCombatReasons(
   pal: RealOwnedPal,
 ): string[] {
+  if (!pal.combatStats) {
+    return [
+      "Species combat reference data unavailable — combat ranking withheld",
+    ];
+  }
+
   const reasons: string[] = [];
 
   const hp =
@@ -458,15 +1980,15 @@ function getCombatReasons(
 
   if (pal.combatStats) {
     if (
-      pal.combatStats.combatPercentile >=
-      90
+      pal.combatStats
+        .combatPercentile >= 90
     ) {
       reasons.push(
         "Elite combat species",
       );
     } else if (
-      pal.combatStats.combatPercentile >=
-      75
+      pal.combatStats
+        .combatPercentile >= 75
     ) {
       reasons.push(
         "Strong combat species",
@@ -474,8 +1996,8 @@ function getCombatReasons(
     }
 
     if (
-      pal.combatStats.attackPercentile >=
-      90
+      pal.combatStats
+        .attackPercentile >= 90
     ) {
       reasons.push(
         "High species attack",
@@ -483,8 +2005,8 @@ function getCombatReasons(
     }
 
     if (
-      pal.combatStats.hpPercentile >=
-      90
+      pal.combatStats
+        .hpPercentile >= 90
     ) {
       reasons.push(
         "Excellent species HP",
@@ -492,8 +2014,8 @@ function getCombatReasons(
     }
 
     if (
-      pal.combatStats.defensePercentile >=
-      90
+      pal.combatStats
+        .defensePercentile >= 90
     ) {
       reasons.push(
         "Excellent species defense",
@@ -511,36 +2033,82 @@ function getCombatReasons(
     const passive
     of pal.passives
   ) {
-    const name =
-      passive.name.toLowerCase();
-
-    const description =
-      passive.description?.toLowerCase() ??
-      "";
-
     if (
-      IMPORTANT_PASSIVE_NAMES.has(
-        name,
+      isPlayerSupportPassive(
+        passive,
       )
     ) {
-      reasons.push(
-        `Combat trait: ${passive.name}`,
-      );
-
       continue;
     }
 
+    const description =
+      passive.description
+        ?.toLowerCase() ?? "";
+
     if (
-      (passive.rank ?? 0) > 0 &&
-      (
-        description.includes("attack") ||
-        description.includes("damage")
+      isSelfCombatPassive(
+        passive,
       )
     ) {
-      reasons.push(
-        `Damage passive: ${passive.name}`,
-      );
+      const offensive =
+        description.includes(
+          "attack",
+        ) ||
+        description.includes(
+          "damage",
+        );
+
+      const defensive =
+        description.includes(
+          "defense",
+        ) ||
+        description.includes(
+          "incoming",
+        ) ||
+        description.includes(
+          "resist",
+        ) ||
+        passive.name
+          .toLowerCase() ===
+          "burly body";
+
+      if (
+        offensive &&
+        !defensive
+      ) {
+        reasons.push(
+          `Offensive passive: ${passive.name}`,
+        );
+      } else if (
+        defensive &&
+        !offensive
+      ) {
+        reasons.push(
+          `Defensive passive: ${passive.name}`,
+        );
+      } else {
+        reasons.push(
+          `Combat utility passive: ${passive.name}`,
+        );
+      }
     }
+  }
+
+  const partnerCombatUtility =
+    getPartnerCombatUtilityBonus(
+      pal,
+    );
+
+  if (
+    partnerCombatUtility > 0 &&
+    pal.partnerSkill
+  ) {
+    reasons.push(
+      "Partner Skill combat utility: " +
+        getPartnerSkillName(
+          pal,
+        ),
+    );
   }
 
   if (
@@ -557,7 +2125,7 @@ function getCombatReasons(
     reasons.length === 0
   ) {
     reasons.push(
-      "Solid general combat option",
+      "No major self-combat bonus detected",
     );
   }
 
@@ -568,6 +2136,18 @@ function calculateWorkRoles(
   pal: RealOwnedPal,
 ): PalRoleScore[] {
   const roles: PalRoleScore[] = [];
+
+  const roleCount =
+    Object.values(
+      pal.workSuitability,
+    ).filter(
+      (value) =>
+        typeof value === "number" &&
+        value > 0,
+    ).length;
+
+  const foodEfficiency =
+    getFoodEfficiencyScore(pal);
 
   for (
     const [
@@ -592,60 +2172,258 @@ function calculateWorkRoles(
           role.toLowerCase(),
       );
 
-    const hpBonus =
-      (pal.ivs.hp ?? 50) *
-      0.05;
+    const permanentUpgrade =
+      getWorkUpgradeForRole(
+        pal,
+        role,
+      );
 
-    const defenseBonus =
-      (pal.ivs.defense ?? 50) *
-      0.03;
+    const condensationWorkBonus =
+      getCondensationStars(
+        pal,
+      ) >= 4
+        ? 1
+        : 0;
+
+    const effectiveLevel =
+      Math.max(
+        0,
+        rawLevel +
+          permanentUpgrade +
+          condensationWorkBonus,
+      );
 
     const disabledPenalty =
-      disabled ? 30 : 0;
+      disabled ? 45 : 0;
+
+    /*
+     * Work level is intentionally the dominant factor.
+     * Higher suitability levels represent huge real
+     * throughput differences in Palworld.
+     */
+    const levelScore =
+      Math.min(
+        82,
+        effectiveLevel * 17,
+      );
+
+    const passiveBonus =
+      getWorkPassiveBonus(
+        pal,
+        role,
+      );
+
+    const foodBonus =
+      foodEfficiency * 0.12;
+
+    /*
+     * A tiny versatility bonus keeps multi-role workers
+     * relevant without allowing them to beat a true
+     * specialist simply because they can do many jobs.
+     */
+    const versatilityBonus =
+      Math.min(
+        5,
+        Math.max(
+          0,
+          roleCount - 1,
+        ) * 1.25,
+      );
 
     const score = clamp(
-      rawLevel * 12 +
-        hpBonus +
-        defenseBonus -
+      levelScore +
+        passiveBonus +
+        foodBonus +
+        versatilityBonus -
         disabledPenalty,
     );
 
     roles.push({
       role,
       level: rawLevel,
+      effectiveLevel,
       score,
+      foodEfficiency,
+      profile:
+        classifyWorkProfile(
+          roleCount,
+          effectiveLevel,
+          foodEfficiency,
+        ),
     });
   }
 
   return roles.sort(
     (a, b) =>
-      b.score - a.score,
+      b.score - a.score ||
+      b.effectiveLevel -
+        a.effectiveLevel ||
+      b.foodEfficiency -
+        a.foodEfficiency,
   );
 }
 
 function calculateBase(
+  pal: RealOwnedPal,
   workRoles: PalRoleScore[],
 ): number {
+  const partnerBonus =
+    getPartnerBaseBonus(
+      pal,
+    );
+
   if (
     workRoles.length === 0
+  ) {
+    return clamp(
+      partnerBonus,
+    );
+  }
+
+  const best =
+    workRoles[0]
+      ?.score ?? 0;
+
+  const second =
+    workRoles[1]
+      ?.score ?? 0;
+
+  const third =
+    workRoles[2]
+      ?.score ?? 0;
+
+  return clamp(
+    best * 0.72 +
+      second * 0.20 +
+      third * 0.08 +
+      partnerBonus,
+  );
+}
+
+function calculateFarming(
+  pal: RealOwnedPal,
+  workRoles: PalRoleScore[],
+): number {
+  /*
+   * Farming is intentionally limited to direct production.
+   * Transporting is valuable BASE LOGISTICS, but it must not
+   * make a dedicated transporter look like a farming Pal.
+   */
+  const farmingRoles =
+    new Set([
+      "Farming",
+      "Planting",
+      "Watering",
+      "Gathering",
+    ]);
+
+  const relevant =
+    workRoles.filter(
+      (role) =>
+        farmingRoles.has(
+          role.role,
+        ),
+    );
+
+  const ranchDropCount =
+    pal.ranchDrops?.length ??
+    0;
+
+  const best =
+    relevant[0]?.score ?? 0;
+
+  const second =
+    relevant[1]?.score ?? 0;
+
+  const stars =
+    getCondensationStars(pal);
+
+  const ranchMaster =
+    pal.passives.some(
+      (passive) =>
+        passive.name
+          .toLowerCase() ===
+        "ranch master",
+    );
+
+  /*
+   * Ranch output is primarily Partner-Skill/condensation
+   * driven. Ranch Master adds +2 Farming suitability.
+   */
+  const ranchValue =
+    ranchDropCount > 0
+      ? Math.min(
+          55,
+          20 +
+            ranchDropCount * 6 +
+            stars * 6 +
+            (ranchMaster
+              ? 14
+              : 0),
+        )
+      : 0;
+
+  const partnerFarmingBonus =
+    getPartnerFarmingBonus(
+      pal,
+    );
+
+  if (
+    relevant.length === 0 &&
+    ranchDropCount === 0 &&
+    partnerFarmingBonus === 0
   ) {
     return 0;
   }
 
-  const best =
-    workRoles[0]?.score ?? 0;
-
-  const second =
-    workRoles[1]?.score ?? 0;
-
-  const third =
-    workRoles[2]?.score ?? 0;
-
   return clamp(
-    best * 0.75 +
-      second * 0.18 +
-      third * 0.07,
+    best * 0.55 +
+      second * 0.15 +
+      ranchValue +
+      partnerFarmingBonus,
   );
+}
+
+function getPassiveBreedingValue(
+  passive: PalPassive,
+): number {
+  const rank =
+    passive.rank ?? 0;
+
+  if (rank < 0) {
+    return 10;
+  }
+
+  let value =
+    rank >= 4
+      ? 95
+      : rank === 3
+        ? 78
+        : rank === 2
+          ? 62
+          : rank === 1
+            ? 48
+            : 35;
+
+  if (
+    isPlayerSupportPassive(
+      passive,
+    )
+  ) {
+    value += 8;
+  } else if (
+    isSelfCombatPassive(
+      passive,
+    )
+  ) {
+    value += 10;
+  } else if (
+    isWorkPassive(passive)
+  ) {
+    value += 10;
+  }
+
+  return clamp(value);
 }
 
 function calculatePassiveBreedingValue(
@@ -657,41 +2435,53 @@ function calculatePassiveBreedingValue(
     return 30;
   }
 
-  let total = 0;
-
-  for (
-    const passive
-    of pal.passives
-  ) {
-    const rank =
-      passive.rank ?? 0;
-
-    if (rank >= 4) {
-      total += 100;
-    } else if (rank === 3) {
-      total += 80;
-    } else if (rank === 2) {
-      total += 65;
-    } else if (rank === 1) {
-      total += 50;
-    } else if (rank === 0) {
-      total += 40;
-    } else {
-      total += 15;
-    }
-
-    if (
-      IMPORTANT_PASSIVE_NAMES.has(
-        passive.name.toLowerCase(),
-      )
-    ) {
-      total += 25;
-    }
-  }
+  const values =
+    pal.passives.map(
+      getPassiveBreedingValue,
+    );
 
   return clamp(
-    total /
-      pal.passives.length,
+    values.reduce(
+      (sum, value) =>
+        sum + value,
+      0,
+    ) / values.length,
+  );
+}
+
+function describePassiveDonor(
+  passive: PalPassive,
+): string {
+  if (
+    isPlayerSupportPassive(
+      passive,
+    )
+  ) {
+    return (
+      `Player-support passive donor: ${passive.name}`
+    );
+  }
+
+  if (
+    isSelfCombatPassive(
+      passive,
+    )
+  ) {
+    return (
+      `Combat passive donor: ${passive.name}`
+    );
+  }
+
+  if (
+    isWorkPassive(passive)
+  ) {
+    return (
+      `Work passive donor: ${passive.name}`
+    );
+  }
+
+  return (
+    `Utility passive donor: ${passive.name}`
   );
 }
 
@@ -774,70 +2564,44 @@ function getBreedingReasons(
     );
   }
 
+  const positivePassives =
+    pal.passives.filter(
+      (passive) =>
+        (passive.rank ?? 0) >
+        0,
+    );
+
   const valuablePassives =
-    pal.passives.filter(
-      (passive) =>
-        (passive.rank ?? 0) >=
-          3 ||
-        IMPORTANT_PASSIVE_NAMES.has(
-          passive.name.toLowerCase(),
-        ),
-    );
-
-  const elitePassives =
-    pal.passives.filter(
-      (passive) =>
-        (passive.rank ?? 0) >=
-          4 ||
-        IMPORTANT_PASSIVE_NAMES.has(
-          passive.name.toLowerCase(),
-        ),
-    );
-
-  if (
-    elitePassives.length >=
-    2
-  ) {
-    reasons.push(
-      "Multiple elite passive traits",
-    );
-  } else if (
-    elitePassives.length ===
-    1
-  ) {
-    reasons.push(
-      `Elite passive donor: ${elitePassives[0].name}`,
-    );
-  } else if (
-    valuablePassives.length >=
-    2
-  ) {
-    reasons.push(
-      "Multiple valuable passive traits",
-    );
-  } else if (
-    valuablePassives.length ===
-    1
-  ) {
-    reasons.push(
-      `Valuable passive donor: ${valuablePassives[0].name}`,
-    );
-  }
+    positivePassives
+      .filter(
+        (passive) =>
+          getPassiveBreedingValue(
+            passive,
+          ) >= 65,
+      )
+      .sort(
+        (a, b) =>
+          getPassiveBreedingValue(
+            b,
+          ) -
+          getPassiveBreedingValue(
+            a,
+          ),
+      );
 
   for (
     const passive
-    of pal.passives
+    of valuablePassives.slice(
+      0,
+      3,
+    )
   ) {
-    if (
-      IMPORTANT_PASSIVE_NAMES.has(
-        passive.name.toLowerCase(),
-      )
-    ) {
-      pushUnique(
-        reasons,
-        `Useful inheritance trait: ${passive.name}`,
-      );
-    }
+    pushUnique(
+      reasons,
+      describePassiveDonor(
+        passive,
+      ),
+    );
   }
 
   const negativePassives =
@@ -901,30 +2665,82 @@ function calculateBreeding(
 }
 
 function getBestRole(
+  pal: RealOwnedPal,
   combat: number,
+  combatPotential: number,
   base: number,
-  breeding: number,
+  farming: number,
+  support: number,
   workRoles: PalRoleScore[],
 ): string {
-  const highest =
+  const combatUse =
     Math.max(
       combat,
-      base,
-      breeding,
+      combatPotential * 0.85,
+    );
+
+  const baseSupport =
+    getPartnerBaseBonus(
+      pal,
     );
 
   if (
-    highest === breeding
+    support > 0 &&
+    support >=
+      combatUse - 5 &&
+    support >=
+      farming - 5 &&
+    support >=
+      base - 5
   ) {
-    return "Breeding";
+    return "Player Support";
+  }
+
+  if (
+    baseSupport > 0 &&
+    base >= combatUse &&
+    base >= farming &&
+    base >= support
+  ) {
+    return "Base Support";
+  }
+
+  const highest =
+    Math.max(
+      combatUse,
+      base,
+      farming,
+      support,
+    );
+
+  if (
+    highest === support
+  ) {
+    return "Player Support";
+  }
+
+  if (
+    highest === farming
+  ) {
+    return "Farming";
   }
 
   if (
     highest === base
   ) {
+    const bestWorkRole =
+      workRoles[0]?.role;
+
+    if (
+      bestWorkRole ===
+      "Transporting"
+    ) {
+      return "Base Logistics";
+    }
+
     return (
-      workRoles[0]?.role ??
-      "Base"
+      bestWorkRole ??
+      "Base Work"
     );
   }
 
@@ -969,11 +2785,21 @@ function scorePal(
   const ivQuality =
     calculateIVQuality(pal);
 
-  const combat =
-    calculateCombat(
+  const combatPotential =
+    calculateCombatPotential(
       pal,
-      ivQuality,
     );
+
+  const currentPower =
+    Math.min(
+      combatPotential,
+      calculateCurrentPower(
+        pal,
+      ),
+    );
+
+  const combat =
+    currentPower;
 
   const combatReasons =
     getCombatReasons(pal);
@@ -983,6 +2809,13 @@ function scorePal(
 
   const base =
     calculateBase(
+      pal,
+      workRoles,
+    );
+
+  const farming =
+    calculateFarming(
+      pal,
       workRoles,
     );
 
@@ -998,39 +2831,230 @@ function scorePal(
       ivQuality,
     );
 
+  const supportData =
+    calculateSupport(pal);
+
+  const support =
+    supportData.score;
+
+  const supportReasons =
+    supportData.reasons;
+
+  const firepowerData =
+    calculateExpeditionFirepower(
+      pal,
+    );
+
+  const expeditionFirepower =
+    firepowerData.score;
+
+  const firepowerReasons =
+    firepowerData.reasons;
+
+  const investmentReasons:
+    string[] = [];
+
+  const stars =
+    getCondensationStars(pal);
+
+  if (
+    pal.partnerSkill &&
+    hasPartnerSkillScalingEvidence(
+      pal,
+    ) &&
+    (
+      getPartnerSupportData(
+        pal,
+      ).score > 0 ||
+      getPartnerBaseBonus(
+        pal,
+      ) > 0 ||
+      getPartnerFarmingBonus(
+        pal,
+      ) > 0 ||
+      getPartnerCombatUtilityBonus(
+        pal,
+      ) > 0
+    )
+  ) {
+    investmentReasons.push(
+      getPartnerSkillName(
+        pal,
+      ) +
+        " has a rank-scaled effect worth investing in",
+    );
+  }
+
+  if (stars > 0) {
+    investmentReasons.push(
+      `${stars}★ condensed`,
+    );
+  }
+
+  const partialProgress =
+    pal.progression
+      ?.condensation
+      ?.rankUpExp ?? 0;
+
+  if (partialProgress > 0) {
+    investmentReasons.push(
+      `Condensation progress: ${partialProgress}`,
+    );
+  }
+
+  if (
+    getSoulInvestmentTotal(pal) >
+    0
+  ) {
+    investmentReasons.push(
+      "Pal Soul investment detected",
+    );
+  }
+
+  const workUpgrades =
+    pal.progression
+      ?.workSuitabilityUpgrades ??
+    [];
+
+  for (
+    const upgrade
+    of workUpgrades
+  ) {
+    const role =
+      WORK_UPGRADE_ROLE_MAP[
+        upgrade.workSuitability
+      ] ??
+      upgrade.workSuitability;
+
+    investmentReasons.push(
+      `${role} +${upgrade.rank}`,
+    );
+  }
+
+  const ceilingGap =
+    Math.max(
+      0,
+      combatPotential -
+        currentPower,
+    );
+
+  if (
+    ceilingGap >= 10
+  ) {
+    investmentReasons.push(
+      `Combat ceiling is ${ceilingGap.toFixed(
+        0,
+      )} points above current readiness`,
+    );
+  }
+
+  const fruitNeeds = [
+    pal.ivs.hp,
+    pal.ivs.attack,
+    pal.ivs.defense,
+  ].filter(
+    (value) =>
+      typeof value === "number" &&
+      value < 100,
+  ).length;
+
+  if (
+    combatPotential >= 65 &&
+    fruitNeeds > 0
+  ) {
+    investmentReasons.push(
+      `${fruitNeeds} IV stat${
+        fruitNeeds === 1
+          ? ""
+          : "s"
+      } can still be improved with Potential fruit`,
+    );
+  }
+
+  const investmentPriority =
+    calculateInvestmentPriority(
+      pal,
+      combatPotential,
+      currentPower,
+      base,
+      farming,
+      support,
+    );
+
   const overall =
     Math.max(
       combat,
+      combatPotential,
       base,
+      farming,
       breeding,
+      support,
     );
 
   return {
     overall,
 
     combat,
+    combatPotential,
+    currentPower,
     base,
+    farming,
     breeding,
+    support,
+    expeditionFirepower,
+    investmentPriority,
 
     combatReasons,
     breedingReasons,
+    supportReasons,
+    firepowerReasons,
+    investmentReasons,
 
     ivQuality,
 
     combatGrade:
       grade(combat),
 
+    combatPotentialGrade:
+      grade(
+        combatPotential,
+      ),
+
+    currentPowerGrade:
+      grade(
+        currentPower,
+      ),
+
     baseGrade:
       grade(base),
+
+    farmingGrade:
+      grade(farming),
 
     breedingGrade:
       grade(breeding),
 
+    supportGrade:
+      grade(support),
+
+    expeditionFirepowerGrade:
+      grade(
+        expeditionFirepower,
+      ),
+
+    investmentPriorityGrade:
+      grade(
+        investmentPriority,
+      ),
+
     bestRole:
       getBestRole(
+        pal,
         combat,
+        combatPotential,
         base,
-        breeding,
+        farming,
+        support,
         workRoles,
       ),
 
@@ -1052,7 +3076,8 @@ function scorePal(
 
     reviewReasons: [],
 
-    decisionBucket: "USEFUL_BACKUP",
+    decisionBucket:
+      "USEFUL_BACKUP",
 
     workRoles,
 
@@ -1078,9 +3103,32 @@ function rankedCopy(
     | "breeding",
 ): RankedRealPal[] {
   return [...pals].sort(
-    (a, b) =>
-      b.score[key] -
-      a.score[key],
+    (a, b) => {
+      if (key === "combat") {
+        const aHasData =
+          Boolean(
+            a.pal.combatStats,
+          );
+
+        const bHasData =
+          Boolean(
+            b.pal.combatStats,
+          );
+
+        if (
+          aHasData !== bHasData
+        ) {
+          return bHasData
+            ? 1
+            : -1;
+        }
+      }
+
+      return (
+        b.score[key] -
+        a.score[key]
+      );
+    },
   );
 }
 
@@ -1170,15 +3218,18 @@ function protectUniqueValuablePassives(
       continue;
     }
 
+    const speciesName =
+      onlyHolder.pal.species;
+
     protectEntry(
       onlyHolder,
-      `Unique valuable passive: ${name}`,
+      `Only ${speciesName} copy with ${name}`,
     );
 
     pushUnique(
       onlyHolder.score
         .breedingReasons,
-      `Unique passive donor: ${name}`,
+      `Only ${speciesName} breeding donor with ${name}`,
     );
   }
 }
@@ -1256,15 +3307,23 @@ function protectGenderDiversity(
       best.score.ivQuality >=
         75
     ) {
+      const genderLabel =
+        gender.charAt(0).toUpperCase() +
+        gender.slice(1);
+
       protectEntry(
         best,
-        `Best ${gender} breeding option`,
+        entries.length > 1
+          ? `Best ${genderLabel} breeder among ${entries.length} ${genderLabel.toLowerCase()} ${best.pal.species} copies`
+          : `Only ${genderLabel} ${best.pal.species} breeding option`,
       );
 
       pushUnique(
         best.score
           .breedingReasons,
-        `Preserves ${gender} breeding option`,
+        entries.length > 1
+          ? `Best ${genderLabel.toLowerCase()} breeder among ${entries.length} same-gender copies`
+          : `Preserves the only ${genderLabel.toLowerCase()} breeding option for this species`,
       );
     }
   }
@@ -1457,8 +3516,11 @@ function isStrongRoleWinner(
     role === "combat"
   ) {
     return (
+      Boolean(
+        entry.pal.combatStats,
+      ) &&
       entry.score.combat >=
-      60
+        60
     );
   }
 
@@ -2075,7 +4137,39 @@ function applyCollectionIntelligence(
       ) {
         protectEntry(
           rankedPal,
-          "Rare or valuable passive",
+          "Valuable passive trait",
+        );
+      }
+
+      const stars =
+        getCondensationStars(pal);
+
+      const soulInvestment =
+        getSoulInvestmentTotal(pal);
+
+      const workUpgradeCount =
+        pal.progression
+          ?.workSuitabilityUpgrades
+          ?.length ?? 0;
+
+      if (stars > 0) {
+        protectEntry(
+          rankedPal,
+          `Invested Pal: ${stars}★ condensed`,
+        );
+      }
+
+      if (soulInvestment > 0) {
+        protectEntry(
+          rankedPal,
+          "Invested Pal: Pal Souls used",
+        );
+      }
+
+      if (workUpgradeCount > 0) {
+        protectEntry(
+          rankedPal,
+          "Invested Pal: permanent work upgrade",
         );
       }
 
@@ -2089,6 +4183,7 @@ function applyCollectionIntelligence(
       }
 
       if (
+        groupPals.length > 1 &&
         score.bestOfSpecies.overall
       ) {
         protectEntry(
@@ -2098,6 +4193,8 @@ function applyCollectionIntelligence(
       }
 
       if (
+        groupPals.length > 1 &&
+        pal.combatStats &&
         score.bestOfSpecies.combat
       ) {
         pushUnique(
@@ -2105,18 +4202,14 @@ function applyCollectionIntelligence(
           "Best combat copy of this species",
         );
 
-        if (
-          groupPals.length >
-          1
-        ) {
-          pushUnique(
-            score.combatReasons,
-            `Best fighter from ${groupPals.length} owned copies`,
-          );
-        }
+        pushUnique(
+          score.combatReasons,
+          `Best fighter from ${groupPals.length} owned copies`,
+        );
       }
 
       if (
+        groupPals.length > 1 &&
         score.bestOfSpecies.breeding
       ) {
         pushUnique(
@@ -2124,15 +4217,10 @@ function applyCollectionIntelligence(
           "Best breeding copy of this species",
         );
 
-        if (
-          groupPals.length >
-          1
-        ) {
-          pushUnique(
-            score.breedingReasons,
-            `Best breeder from ${groupPals.length} owned copies`,
-          );
-        }
+        pushUnique(
+          score.breedingReasons,
+          `Best breeder from ${groupPals.length} owned copies`,
+        );
       }
     }
 
@@ -2153,6 +4241,7 @@ function applyCollectionIntelligence(
     );
 
     if (
+      groupPals.length > 1 &&
       isStrongRoleWinner(
         bestCombat,
         "combat",
@@ -2165,6 +4254,7 @@ function applyCollectionIntelligence(
     }
 
     if (
+      groupPals.length > 1 &&
       isStrongRoleWinner(
         bestBase,
         "base",
@@ -2177,6 +4267,7 @@ function applyCollectionIntelligence(
     }
 
     if (
+      groupPals.length > 1 &&
       isStrongRoleWinner(
         bestBreeding,
         "breeding",
@@ -2290,6 +4381,15 @@ function applyCollectionIntelligence(
         pal,
         score,
       } = rankedPal;
+
+      if (
+        groupPals.length === 1
+      ) {
+        score.action =
+          "KEEP";
+
+        continue;
+      }
 
       if (
         score.bestOfSpecies.overall
@@ -2528,8 +4628,40 @@ function applyCollectionIntelligence(
 }
 
 export function rankRealPals(
-  pals: RealOwnedPal[],
+  entities: RealOwnedPal[],
 ) {
+  /*
+   * Captured humans can legitimately live in Palworld
+   * party/Palbox containers, but they are not Pal species.
+   * Keep them available to the UI without feeding them into
+   * Pal breeding, work, combat or cleanup intelligence.
+   *
+   * Legacy rows with no entityType are treated as Pals so
+   * older generated JSON remains backwards compatible.
+   */
+  const humans =
+    entities.filter(
+      (entry) =>
+        entry.entityType ===
+        "HUMAN",
+    );
+
+  const unknownEntities =
+    entities.filter(
+      (entry) =>
+        entry.entityType ===
+        "UNKNOWN",
+    );
+
+  const pals =
+    entities.filter(
+      (entry) =>
+        entry.entityType !==
+          "HUMAN" &&
+        entry.entityType !==
+          "UNKNOWN",
+    );
+
   const all:
     RankedRealPal[] =
     pals.map((pal) => ({
@@ -2565,6 +4697,135 @@ export function rankRealPals(
     rankedCopy(
       all,
       "breeding",
+    );
+
+  const combatPotential =
+    [...all].sort(
+      (a, b) =>
+        b.score.combatPotential -
+        a.score.combatPotential,
+    );
+
+  const currentPower =
+    [...all].sort(
+      (a, b) =>
+        b.score.currentPower -
+        a.score.currentPower,
+    );
+
+  const farming =
+    [...all].sort(
+      (a, b) =>
+        b.score.farming -
+        a.score.farming,
+    );
+
+  const support =
+    [...all].sort(
+      (a, b) =>
+        b.score.support -
+        a.score.support,
+    );
+
+  const expeditionFirepower =
+    [...all].sort(
+      (a, b) =>
+        b.score.expeditionFirepower -
+        a.score.expeditionFirepower,
+    );
+
+  const investmentPriority =
+    [...all].sort(
+      (a, b) =>
+        b.score.investmentPriority -
+        a.score.investmentPriority,
+    );
+
+  const roleNames =
+    new Set<string>();
+
+  for (const entry of all) {
+    for (
+      const role
+      of entry.score.workRoles
+    ) {
+      roleNames.add(role.role);
+    }
+  }
+
+  const workByRole:
+    Record<
+      string,
+      RankedRealPal[]
+    > = {};
+
+  for (const role of roleNames) {
+    workByRole[role] =
+      all
+        .filter((entry) =>
+          entry.score.workRoles.some(
+            (item) =>
+              item.role === role,
+          ),
+        )
+        .sort((a, b) => {
+          const aRole =
+            a.score.workRoles.find(
+              (item) =>
+                item.role === role,
+            );
+
+          const bRole =
+            b.score.workRoles.find(
+              (item) =>
+                item.role === role,
+            );
+
+          return (
+            (bRole?.score ?? 0) -
+              (aRole?.score ?? 0) ||
+            (bRole?.effectiveLevel ??
+              0) -
+              (aRole?.effectiveLevel ??
+                0)
+          );
+        });
+  }
+
+  const efficientWorkers =
+    [...base].sort(
+      (a, b) => {
+        const aBest =
+          a.score.workRoles[0];
+
+        const bBest =
+          b.score.workRoles[0];
+
+        const aEfficiency =
+          aBest
+            ? (
+                aBest.score *
+                  0.7 +
+                aBest.foodEfficiency *
+                  0.3
+              )
+            : 0;
+
+        const bEfficiency =
+          bBest
+            ? (
+                bBest.score *
+                  0.7 +
+                bBest.foodEfficiency *
+                  0.3
+              )
+            : 0;
+
+        return (
+          bEfficiency -
+          aEfficiency
+        );
+      },
     );
 
   const coreKeep =
@@ -2656,12 +4917,17 @@ export function rankRealPals(
 
   const combatKeepers =
     overall.filter(
-      ({ score }) =>
-        score.action ===
-          "KEEP — COMBAT" ||
+      ({ pal, score }) =>
+        Boolean(
+          pal.combatStats,
+        ) &&
         (
-          score.bestOfSpecies.combat &&
-          score.combat >= 60
+          score.action ===
+            "KEEP — COMBAT" ||
+          (
+            score.bestOfSpecies.combat &&
+            score.combat >= 60
+          )
         ),
     );
 
@@ -2707,10 +4973,22 @@ export function rankRealPals(
   return {
     all,
 
+    humans,
+    unknownEntities,
+
     overall,
     combat,
     base,
     breeding,
+
+    combatPotential,
+    currentPower,
+    farming,
+    support,
+    expeditionFirepower,
+    investmentPriority,
+    workByRole,
+    efficientWorkers,
 
     speciesGroups,
 
@@ -2747,6 +5025,18 @@ export function rankRealPals(
     summary: {
       total:
         all.length,
+
+      totalEntities:
+        entities.length,
+
+      totalPals:
+        all.length,
+
+      capturedHumans:
+        humans.length,
+
+      unknownEntities:
+        unknownEntities.length,
 
       species:
         speciesGroups.length,
@@ -2794,6 +5084,29 @@ export function rankRealPals(
 
       breedingKeepers:
         breedingKeepers.length,
+
+      condensed:
+        all.filter(
+          ({ pal }) =>
+            getCondensationStars(
+              pal,
+            ) > 0,
+        ).length,
+
+      farmingCandidates:
+        farming.filter(
+          ({ score }) =>
+            score.farming > 0,
+        ).length,
+
+      supportCandidates:
+        support.filter(
+          ({ score }) =>
+            score.support > 0,
+        ).length,
+
+      workRoles:
+        roleNames.size,
     },
   };
 }

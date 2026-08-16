@@ -1,0 +1,203 @@
+{
+  "generatedAt": "2026-08-15T15:02:25.430Z",
+  "totalUniqueFields": 19,
+  "fields": [
+    {
+      "field": "ArenaRankPoint",
+      "count": 1,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[0].value.RawData.value.object.SaveParameter.value.ArenaRankPoint"
+      ]
+    },
+    {
+      "field": "bFavoriteChangedByFriendship",
+      "count": 7,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[10].value.RawData.value.object.SaveParameter.value.bFavoriteChangedByFriendship",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[39].value.RawData.value.object.SaveParameter.value.bFavoriteChangedByFriendship",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[52].value.RawData.value.object.SaveParameter.value.bFavoriteChangedByFriendship",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[74].value.RawData.value.object.SaveParameter.value.bFavoriteChangedByFriendship",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[77].value.RawData.value.object.SaveParameter.value.bFavoriteChangedByFriendship"
+      ]
+    },
+    {
+      "field": "CurrentWorkSuitability",
+      "count": 13,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[29].value.RawData.value.object.SaveParameter.value.CurrentWorkSuitability",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[55].value.RawData.value.object.SaveParameter.value.CurrentWorkSuitability",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[69].value.RawData.value.object.SaveParameter.value.CurrentWorkSuitability",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[81].value.RawData.value.object.SaveParameter.value.CurrentWorkSuitability",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[82].value.RawData.value.object.SaveParameter.value.CurrentWorkSuitability"
+      ]
+    },
+    {
+      "field": "FriendshipActiveOtomoSec",
+      "count": 15,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[6].value.RawData.value.object.SaveParameter.value.FriendshipActiveOtomoSec",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[10].value.RawData.value.object.SaveParameter.value.FriendshipActiveOtomoSec",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[39].value.RawData.value.object.SaveParameter.value.FriendshipActiveOtomoSec",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[41].value.RawData.value.object.SaveParameter.value.FriendshipActiveOtomoSec",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[42].value.RawData.value.object.SaveParameter.value.FriendshipActiveOtomoSec"
+      ]
+    },
+    {
+      "field": "FriendshipBasecampSec",
+      "count": 96,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[3].value.RawData.value.object.SaveParameter.value.FriendshipBasecampSec",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[4].value.RawData.value.object.SaveParameter.value.FriendshipBasecampSec",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[5].value.RawData.value.object.SaveParameter.value.FriendshipBasecampSec",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[6].value.RawData.value.object.SaveParameter.value.FriendshipBasecampSec",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[7].value.RawData.value.object.SaveParameter.value.FriendshipBasecampSec"
+      ]
+    },
+    {
+      "field": "FriendshipOtomoSec",
+      "count": 69,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[3].value.RawData.value.object.SaveParameter.value.FriendshipOtomoSec",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[4].value.RawData.value.object.SaveParameter.value.FriendshipOtomoSec",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[6].value.RawData.value.object.SaveParameter.value.FriendshipOtomoSec",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[8].value.RawData.value.object.SaveParameter.value.FriendshipOtomoSec",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[9].value.RawData.value.object.SaveParameter.value.FriendshipOtomoSec"
+      ]
+    },
+    {
+      "field": "FriendshipPoint",
+      "count": 127,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[3].value.RawData.value.object.SaveParameter.value.FriendshipPoint",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[4].value.RawData.value.object.SaveParameter.value.FriendshipPoint",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[5].value.RawData.value.object.SaveParameter.value.FriendshipPoint",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[6].value.RawData.value.object.SaveParameter.value.FriendshipPoint",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[7].value.RawData.value.object.SaveParameter.value.FriendshipPoint"
+      ]
+    },
+    {
+      "field": "GotExStatusPointList",
+      "count": 375,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[0].value.RawData.value.object.SaveParameter.value.GotExStatusPointList",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[1].value.RawData.value.object.SaveParameter.value.GotExStatusPointList",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[2].value.RawData.value.object.SaveParameter.value.GotExStatusPointList",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[3].value.RawData.value.object.SaveParameter.value.GotExStatusPointList",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[4].value.RawData.value.object.SaveParameter.value.GotExStatusPointList"
+      ]
+    },
+    {
+      "field": "GotStatusPointList",
+      "count": 375,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[0].value.RawData.value.object.SaveParameter.value.GotStatusPointList",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[1].value.RawData.value.object.SaveParameter.value.GotStatusPointList",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[2].value.RawData.value.object.SaveParameter.value.GotStatusPointList",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[3].value.RawData.value.object.SaveParameter.value.GotStatusPointList",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[4].value.RawData.value.object.SaveParameter.value.GotStatusPointList"
+      ]
+    },
+    {
+      "field": "GotWorkSuitabilityAddRankList",
+      "count": 1,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[52].value.RawData.value.object.SaveParameter.value.GotWorkSuitabilityAddRankList"
+      ]
+    },
+    {
+      "field": "OffWorkSuitabilityList",
+      "count": 10,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[19].value.RawData.value.object.SaveParameter.value.WorkSuitabilityOptionInfo.value.OffWorkSuitabilityList",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[22].value.RawData.value.object.SaveParameter.value.WorkSuitabilityOptionInfo.value.OffWorkSuitabilityList",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[32].value.RawData.value.object.SaveParameter.value.WorkSuitabilityOptionInfo.value.OffWorkSuitabilityList",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[35].value.RawData.value.object.SaveParameter.value.WorkSuitabilityOptionInfo.value.OffWorkSuitabilityList",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[46].value.RawData.value.object.SaveParameter.value.WorkSuitabilityOptionInfo.value.OffWorkSuitabilityList"
+      ]
+    },
+    {
+      "field": "Rank",
+      "count": 22,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[4].value.RawData.value.object.SaveParameter.value.Rank",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[20].value.RawData.value.object.SaveParameter.value.Rank",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[52].value.RawData.value.object.SaveParameter.value.GotWorkSuitabilityAddRankList.value.values[0].Rank",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[54].value.RawData.value.object.SaveParameter.value.Rank",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[83].value.RawData.value.object.SaveParameter.value.Rank"
+      ]
+    },
+    {
+      "field": "RankUpExp",
+      "count": 12,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[20].value.RawData.value.object.SaveParameter.value.RankUpExp",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[25].value.RawData.value.object.SaveParameter.value.RankUpExp",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[105].value.RawData.value.object.SaveParameter.value.RankUpExp",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[140].value.RawData.value.object.SaveParameter.value.RankUpExp",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[157].value.RawData.value.object.SaveParameter.value.RankUpExp"
+      ]
+    },
+    {
+      "field": "StatusPoint",
+      "count": 4131,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[0].value.RawData.value.object.SaveParameter.value.GotStatusPointList.value.values[0].StatusPoint",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[0].value.RawData.value.object.SaveParameter.value.GotStatusPointList.value.values[1].StatusPoint",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[0].value.RawData.value.object.SaveParameter.value.GotStatusPointList.value.values[2].StatusPoint",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[0].value.RawData.value.object.SaveParameter.value.GotStatusPointList.value.values[3].StatusPoint",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[0].value.RawData.value.object.SaveParameter.value.GotStatusPointList.value.values[4].StatusPoint"
+      ]
+    },
+    {
+      "field": "Talent_Defense",
+      "count": 372,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[1].value.RawData.value.object.SaveParameter.value.Talent_Defense",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[2].value.RawData.value.object.SaveParameter.value.Talent_Defense",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[3].value.RawData.value.object.SaveParameter.value.Talent_Defense",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[4].value.RawData.value.object.SaveParameter.value.Talent_Defense",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[5].value.RawData.value.object.SaveParameter.value.Talent_Defense"
+      ]
+    },
+    {
+      "field": "Talent_HP",
+      "count": 372,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[1].value.RawData.value.object.SaveParameter.value.Talent_HP",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[2].value.RawData.value.object.SaveParameter.value.Talent_HP",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[3].value.RawData.value.object.SaveParameter.value.Talent_HP",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[4].value.RawData.value.object.SaveParameter.value.Talent_HP",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[5].value.RawData.value.object.SaveParameter.value.Talent_HP"
+      ]
+    },
+    {
+      "field": "Talent_Shot",
+      "count": 372,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[1].value.RawData.value.object.SaveParameter.value.Talent_Shot",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[2].value.RawData.value.object.SaveParameter.value.Talent_Shot",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[3].value.RawData.value.object.SaveParameter.value.Talent_Shot",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[4].value.RawData.value.object.SaveParameter.value.Talent_Shot",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[5].value.RawData.value.object.SaveParameter.value.Talent_Shot"
+      ]
+    },
+    {
+      "field": "WorkSuitability",
+      "count": 1,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[52].value.RawData.value.object.SaveParameter.value.GotWorkSuitabilityAddRankList.value.values[0].WorkSuitability"
+      ]
+    },
+    {
+      "field": "WorkSuitabilityOptionInfo",
+      "count": 10,
+      "samplePaths": [
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[19].value.RawData.value.object.SaveParameter.value.WorkSuitabilityOptionInfo",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[22].value.RawData.value.object.SaveParameter.value.WorkSuitabilityOptionInfo",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[32].value.RawData.value.object.SaveParameter.value.WorkSuitabilityOptionInfo",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[35].value.RawData.value.object.SaveParameter.value.WorkSuitabilityOptionInfo",
+        "root.properties.worldSaveData.value.CharacterSaveParameterMap.value[46].value.RawData.value.object.SaveParameter.value.WorkSuitabilityOptionInfo"
+      ]
+    }
+  ]
+}

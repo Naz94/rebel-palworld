@@ -1,0 +1,1969 @@
+{
+  "generatedAt": "2026-08-15T15:05:20.238Z",
+  "characterSaveParameters": 375,
+  "totalUniqueFields": 49,
+  "knownFields": 40,
+  "unknownFields": 9,
+  "fields": [
+    {
+      "field": "ArenaRankPoint",
+      "count": 1,
+      "known": false,
+      "samples": [
+        {
+          "species": null,
+          "type": "IntProperty",
+          "preview": 170
+        }
+      ]
+    },
+    {
+      "field": "ArenaRestoreParameter",
+      "count": 8,
+      "known": true,
+      "samples": [
+        {
+          "species": null,
+          "type": "StructProperty",
+          "preview": {
+            "Hp": {
+              "struct_type": "FixedPoint64",
+              "struct_id": "00000000-0000-0000-0000-000000000000",
+              "id": null,
+              "value": {
+                "Value": {
+                  "id": null,
+                  "value": 4475000,
+                  "type": "Int64Property"
+                }
+              },
+              "type": "StructProperty"
+            },
+            "FullStomach": {
+              "id": null,
+              "value": 85.55732727050781,
+              "type": "FloatProperty"
+            },
+            "FoodWithStatusEffect": {
+              "id": null,
+              "value": "ChickenSaute",
+              "type": "NameProperty"
+            },
+            "Tiemr_FoodWithStatusEffect": {
+              "id": null,
+              "value": 251,
+              "type": "IntProperty"
+            },
+            "FoodRegeneEffectInfo": {
+              "struct_type": "PalFoodRegeneInfo",
+              "struct_id": "00000000-0000-0000-0000-000000000000",
+              "id": null,
+              "value": {
+                "EffectTime": {
+                  "id": null,
+                  "value": 1,
+                  "type": "IntProperty"
+                },
+                "RemainingTime": {
+                  "id": null,
+                  "value": 51,
+                  "type": "IntProperty"
+                }
+              },
+              "type": "StructProperty"
+            }
+          }
+        },
+        {
+          "species": "BirdDragon",
+          "type": "StructProperty",
+          "preview": {
+            "Hp": {
+              "struct_type": "FixedPoint64",
+              "struct_id": "00000000-0000-0000-0000-000000000000",
+              "id": null,
+              "value": {
+                "Value": {
+                  "id": null,
+                  "value": 5871000,
+                  "type": "Int64Property"
+                }
+              },
+              "type": "StructProperty"
+            },
+            "FullStomach": {
+              "id": null,
+              "value": 309.39300537109375,
+              "type": "FloatProperty"
+            },
+            "SanityValue": {
+              "id": null,
+              "value": 100,
+              "type": "FloatProperty"
+            },
+            "FoodRegeneEffectInfo": {
+              "struct_type": "PalFoodRegeneInfo",
+              "struct_id": "00000000-0000-0000-0000-000000000000",
+              "id": null,
+              "value": {
+                "EffectTime": {
+                  "id": null,
+                  "value": 1491234720,
+                  "type": "IntProperty"
+                },
+                "RemainingTime": {
+                  "id": null,
+                  "value": 348,
+                  "type": "IntProperty"
+                }
+              },
+              "type": "StructProperty"
+            }
+          }
+        },
+        {
+          "species": "FireKirin_Dark",
+          "type": "StructProperty",
+          "preview": {
+            "Hp": {
+              "struct_type": "FixedPoint64",
+              "struct_id": "00000000-0000-0000-0000-000000000000",
+              "id": null,
+              "value": {
+                "Value": {
+                  "id": null,
+                  "value": 6320000,
+                  "type": "Int64Property"
+                }
+              },
+              "type": "StructProperty"
+            },
+            "FullStomach": {
+              "id": null,
+              "value": 280,
+              "type": "FloatProperty"
+            },
+            "SanityValue": {
+              "id": null,
+              "value": 100,
+              "type": "FloatProperty"
+            },
+            "FoodRegeneEffectInfo": {
+              "struct_type": "PalFoodRegeneInfo",
+              "struct_id": "00000000-0000-0000-0000-000000000000",
+              "id": null,
+              "value": {
+                "EffectTime": {
+                  "id": null,
+                  "value": 1491234720,
+                  "type": "IntProperty"
+                },
+                "RemainingTime": {
+                  "id": null,
+                  "value": 348,
+                  "type": "IntProperty"
+                }
+              },
+              "type": "StructProperty"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "field": "BaseCampWorkerEventProgressTime",
+      "count": 1,
+      "known": false,
+      "samples": [
+        {
+          "species": "WingGolem",
+          "type": "FloatProperty",
+          "preview": 7.169683456420898
+        }
+      ]
+    },
+    {
+      "field": "BaseCampWorkerEventType",
+      "count": 1,
+      "known": false,
+      "samples": [
+        {
+          "species": "WingGolem",
+          "type": "EnumProperty",
+          "preview": {
+            "type": "EPalBaseCampWorkerEventType",
+            "value": "EPalBaseCampWorkerEventType::DodgeWork_Short"
+          }
+        }
+      ]
+    },
+    {
+      "field": "bDisableSaleInPalLost",
+      "count": 1,
+      "known": true,
+      "samples": [
+        {
+          "species": "GrassMammoth",
+          "type": "BoolProperty",
+          "preview": false
+        }
+      ]
+    },
+    {
+      "field": "bFavoriteChangedByFriendship",
+      "count": 7,
+      "known": true,
+      "samples": [
+        {
+          "species": "Deer",
+          "type": "BoolProperty",
+          "preview": true
+        },
+        {
+          "species": "BirdDragon",
+          "type": "BoolProperty",
+          "preview": true
+        },
+        {
+          "species": "FireKirin_Dark",
+          "type": "BoolProperty",
+          "preview": true
+        }
+      ]
+    },
+    {
+      "field": "CharacterID",
+      "count": 374,
+      "known": true,
+      "samples": [
+        {
+          "species": "ThunderDog_Ice",
+          "type": "NameProperty",
+          "preview": "ThunderDog_Ice"
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "NameProperty",
+          "preview": "BOSS_SharkKid"
+        },
+        {
+          "species": "Ganesha",
+          "type": "NameProperty",
+          "preview": "Ganesha"
+        }
+      ]
+    },
+    {
+      "field": "CurrentWorkSuitability",
+      "count": 13,
+      "known": true,
+      "samples": [
+        {
+          "species": "Hedgehog_Ice",
+          "type": "EnumProperty",
+          "preview": {
+            "type": "EPalWorkSuitability",
+            "value": "EPalWorkSuitability::Cool"
+          }
+        },
+        {
+          "species": "BirdDragon_Ice",
+          "type": "EnumProperty",
+          "preview": {
+            "type": "EPalWorkSuitability",
+            "value": "EPalWorkSuitability::Transport"
+          }
+        },
+        {
+          "species": "LazyCatfish",
+          "type": "EnumProperty",
+          "preview": {
+            "type": "EPalWorkSuitability",
+            "value": "EPalWorkSuitability::MonsterFarm"
+          }
+        }
+      ]
+    },
+    {
+      "field": "EquipWaza",
+      "count": 374,
+      "known": true,
+      "samples": [
+        {
+          "species": "ThunderDog_Ice",
+          "type": "ArrayProperty",
+          "preview": {
+            "values": [
+              "EPalWazaID::Unique_ThunderDog_Ice_KoriShorai",
+              "EPalWazaID::FrostBreath",
+              "EPalWazaID::BlizzardLance"
+            ]
+          }
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "ArrayProperty",
+          "preview": {
+            "values": [
+              "EPalWazaID::AquaJet"
+            ]
+          }
+        },
+        {
+          "species": "Ganesha",
+          "type": "ArrayProperty",
+          "preview": {
+            "values": [
+              "EPalWazaID::AcidRain",
+              "EPalWazaID::WaterBall",
+              "EPalWazaID::HydroPump"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "field": "Exp",
+      "count": 347,
+      "known": true,
+      "samples": [
+        {
+          "species": null,
+          "type": "Int64Property",
+          "preview": 45859908
+        },
+        {
+          "species": "ThunderDog_Ice",
+          "type": "Int64Property",
+          "preview": 298084
+        },
+        {
+          "species": "Ganesha",
+          "type": "Int64Property",
+          "preview": 3524612
+        }
+      ]
+    },
+    {
+      "field": "ExpTableMigrationVersion",
+      "count": 1,
+      "known": false,
+      "samples": [
+        {
+          "species": null,
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 1
+          }
+        }
+      ]
+    },
+    {
+      "field": "FavoriteIndex",
+      "count": 7,
+      "known": true,
+      "samples": [
+        {
+          "species": "Deer",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 1
+          }
+        },
+        {
+          "species": "BirdDragon",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 1
+          }
+        },
+        {
+          "species": "FireKirin_Dark",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 1
+          }
+        }
+      ]
+    },
+    {
+      "field": "FilteredNickName",
+      "count": 1,
+      "known": false,
+      "samples": [
+        {
+          "species": null,
+          "type": "StrProperty",
+          "preview": "BittyBurrito"
+        }
+      ]
+    },
+    {
+      "field": "FoodRegeneEffectInfo",
+      "count": 4,
+      "known": true,
+      "samples": [
+        {
+          "species": "WhiteMoth",
+          "type": "StructProperty",
+          "preview": {
+            "EffectTime": {
+              "id": null,
+              "value": -1701216368,
+              "type": "IntProperty"
+            },
+            "RemainingTime": {
+              "id": null,
+              "value": 495,
+              "type": "IntProperty"
+            }
+          }
+        },
+        {
+          "species": "FlameBuffalo",
+          "type": "StructProperty",
+          "preview": {
+            "EffectTime": {
+              "id": null,
+              "value": 2086367696,
+              "type": "IntProperty"
+            },
+            "RemainingTime": {
+              "id": null,
+              "value": 495,
+              "type": "IntProperty"
+            }
+          }
+        },
+        {
+          "species": "SmallYeti",
+          "type": "StructProperty",
+          "preview": {
+            "EffectTime": {
+              "id": null,
+              "value": 1461575152,
+              "type": "IntProperty"
+            },
+            "RemainingTime": {
+              "id": null,
+              "value": 494,
+              "type": "IntProperty"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "field": "FoodWithStatusEffect",
+      "count": 27,
+      "known": true,
+      "samples": [
+        {
+          "species": "Ganesha",
+          "type": "NameProperty",
+          "preview": "Pizza"
+        },
+        {
+          "species": "BOSS_Hedgehog",
+          "type": "NameProperty",
+          "preview": "Chowder"
+        },
+        {
+          "species": "CuteFox",
+          "type": "NameProperty",
+          "preview": "Salad"
+        }
+      ]
+    },
+    {
+      "field": "FriendshipActiveOtomoSec",
+      "count": 15,
+      "known": true,
+      "samples": [
+        {
+          "species": "DreamDemon",
+          "type": "IntProperty",
+          "preview": 1
+        },
+        {
+          "species": "Deer",
+          "type": "IntProperty",
+          "preview": 56
+        },
+        {
+          "species": "BirdDragon",
+          "type": "IntProperty",
+          "preview": 192
+        }
+      ]
+    },
+    {
+      "field": "FriendshipBasecampSec",
+      "count": 96,
+      "known": true,
+      "samples": [
+        {
+          "species": "Ganesha",
+          "type": "IntProperty",
+          "preview": 134
+        },
+        {
+          "species": "BOSS_Hedgehog",
+          "type": "IntProperty",
+          "preview": 267
+        },
+        {
+          "species": "CloverFairy",
+          "type": "IntProperty",
+          "preview": 32
+        }
+      ]
+    },
+    {
+      "field": "FriendshipOtomoSec",
+      "count": 69,
+      "known": true,
+      "samples": [
+        {
+          "species": "Ganesha",
+          "type": "IntProperty",
+          "preview": 132
+        },
+        {
+          "species": "BOSS_Hedgehog",
+          "type": "IntProperty",
+          "preview": 69
+        },
+        {
+          "species": "DreamDemon",
+          "type": "IntProperty",
+          "preview": 66
+        }
+      ]
+    },
+    {
+      "field": "FriendshipPoint",
+      "count": 127,
+      "known": true,
+      "samples": [
+        {
+          "species": "Ganesha",
+          "type": "IntProperty",
+          "preview": 1520
+        },
+        {
+          "species": "BOSS_Hedgehog",
+          "type": "IntProperty",
+          "preview": 11810
+        },
+        {
+          "species": "CloverFairy",
+          "type": "IntProperty",
+          "preview": 1475
+        }
+      ]
+    },
+    {
+      "field": "FullStomach",
+      "count": 281,
+      "known": true,
+      "samples": [
+        {
+          "species": null,
+          "type": "FloatProperty",
+          "preview": 70.400390625
+        },
+        {
+          "species": "ThunderDog_Ice",
+          "type": "FloatProperty",
+          "preview": 280
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "FloatProperty",
+          "preview": 150
+        }
+      ]
+    },
+    {
+      "field": "Gender",
+      "count": 371,
+      "known": true,
+      "samples": [
+        {
+          "species": "ThunderDog_Ice",
+          "type": "EnumProperty",
+          "preview": {
+            "type": "EPalGenderType",
+            "value": "EPalGenderType::Female"
+          }
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "EnumProperty",
+          "preview": {
+            "type": "EPalGenderType",
+            "value": "EPalGenderType::Female"
+          }
+        },
+        {
+          "species": "Ganesha",
+          "type": "EnumProperty",
+          "preview": {
+            "type": "EPalGenderType",
+            "value": "EPalGenderType::Male"
+          }
+        }
+      ]
+    },
+    {
+      "field": "GotExStatusPointList",
+      "count": 375,
+      "known": true,
+      "samples": [
+        {
+          "species": null,
+          "type": "ArrayProperty",
+          "preview": {
+            "prop_name": "GotExStatusPointList",
+            "prop_type": "StructProperty",
+            "values": [
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "最大HP",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 8,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "最大SP",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 5,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "攻撃力",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 9,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "所持重量",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 2,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "作業速度",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 23,
+                  "type": "IntProperty"
+                }
+              }
+            ],
+            "type_name": "PalGotStatusPoint",
+            "id": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        {
+          "species": "ThunderDog_Ice",
+          "type": "ArrayProperty",
+          "preview": {
+            "prop_name": "GotExStatusPointList",
+            "prop_type": "StructProperty",
+            "values": [
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "最大HP",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "最大SP",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "攻撃力",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "所持重量",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "作業速度",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              }
+            ],
+            "type_name": "PalGotStatusPoint",
+            "id": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "ArrayProperty",
+          "preview": {
+            "prop_name": "GotExStatusPointList",
+            "prop_type": "StructProperty",
+            "values": [
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "最大HP",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "最大SP",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "攻撃力",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "所持重量",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "作業速度",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              }
+            ],
+            "type_name": "PalGotStatusPoint",
+            "id": "00000000-0000-0000-0000-000000000000"
+          }
+        }
+      ]
+    },
+    {
+      "field": "GotStatusPointList",
+      "count": 375,
+      "known": true,
+      "samples": [
+        {
+          "species": null,
+          "type": "ArrayProperty",
+          "preview": {
+            "prop_name": "GotStatusPointList",
+            "prop_type": "StructProperty",
+            "values": [
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "最大HP",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 20,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "最大SP",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 20,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "攻撃力",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 22,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "所持重量",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 13,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "捕獲率",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 5,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "作業速度",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 4,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "移動速度アップ",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 12,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "空腹率低減",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 3,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "泳ぎ速度",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 2,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "ジャンプ力",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 2,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "食料腐敗低減",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 1,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "パルスフィアホーミング",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 1,
+                  "type": "IntProperty"
+                }
+              }
+            ],
+            "type_name": "PalGotStatusPoint",
+            "id": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        {
+          "species": "ThunderDog_Ice",
+          "type": "ArrayProperty",
+          "preview": {
+            "prop_name": "GotStatusPointList",
+            "prop_type": "StructProperty",
+            "values": [
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "最大HP",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "最大SP",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "攻撃力",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "所持重量",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "捕獲率",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "作業速度",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              }
+            ],
+            "type_name": "PalGotStatusPoint",
+            "id": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "ArrayProperty",
+          "preview": {
+            "prop_name": "GotStatusPointList",
+            "prop_type": "StructProperty",
+            "values": [
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "最大HP",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "最大SP",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "攻撃力",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "所持重量",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "捕獲率",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              },
+              {
+                "StatusName": {
+                  "id": null,
+                  "value": "作業速度",
+                  "type": "NameProperty"
+                },
+                "StatusPoint": {
+                  "id": null,
+                  "value": 0,
+                  "type": "IntProperty"
+                }
+              }
+            ],
+            "type_name": "PalGotStatusPoint",
+            "id": "00000000-0000-0000-0000-000000000000"
+          }
+        }
+      ]
+    },
+    {
+      "field": "GotWorkSuitabilityAddRankList",
+      "count": 1,
+      "known": true,
+      "samples": [
+        {
+          "species": "FireKirin_Dark",
+          "type": "ArrayProperty",
+          "preview": {
+            "prop_name": "GotWorkSuitabilityAddRankList",
+            "prop_type": "StructProperty",
+            "values": [
+              {
+                "WorkSuitability": {
+                  "id": null,
+                  "value": {
+                    "type": "EPalWorkSuitability",
+                    "value": "EPalWorkSuitability::EmitFlame"
+                  },
+                  "type": "EnumProperty"
+                },
+                "Rank": {
+                  "id": null,
+                  "value": 1,
+                  "type": "IntProperty"
+                }
+              }
+            ],
+            "type_name": "PalWorkSuitabilityInfo",
+            "id": "00000000-0000-0000-0000-000000000000"
+          }
+        }
+      ]
+    },
+    {
+      "field": "Hp",
+      "count": 375,
+      "known": true,
+      "samples": [
+        {
+          "species": null,
+          "type": "StructProperty",
+          "preview": {
+            "Value": {
+              "id": null,
+              "value": 4175000,
+              "type": "Int64Property"
+            }
+          }
+        },
+        {
+          "species": "ThunderDog_Ice",
+          "type": "StructProperty",
+          "preview": {
+            "Value": {
+              "id": null,
+              "value": 2795000,
+              "type": "Int64Property"
+            }
+          }
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "StructProperty",
+          "preview": {
+            "Value": {
+              "id": null,
+              "value": 569000,
+              "type": "Int64Property"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "field": "HungerType",
+      "count": 1,
+      "known": true,
+      "samples": [
+        {
+          "species": "LazyDragon",
+          "type": "EnumProperty",
+          "preview": {
+            "type": "EPalStatusHungerType",
+            "value": "EPalStatusHungerType::Starvation"
+          }
+        }
+      ]
+    },
+    {
+      "field": "IsPlayer",
+      "count": 1,
+      "known": false,
+      "samples": [
+        {
+          "species": null,
+          "type": "BoolProperty",
+          "preview": true
+        }
+      ]
+    },
+    {
+      "field": "IsRarePal",
+      "count": 5,
+      "known": true,
+      "samples": [
+        {
+          "species": "BOSS_Hedgehog",
+          "type": "BoolProperty",
+          "preview": true
+        },
+        {
+          "species": "BOSS_FlameBambi",
+          "type": "BoolProperty",
+          "preview": true
+        },
+        {
+          "species": "BOSS_Penguin",
+          "type": "BoolProperty",
+          "preview": true
+        }
+      ]
+    },
+    {
+      "field": "ItemContainerId",
+      "count": 3,
+      "known": true,
+      "samples": [
+        {
+          "species": "BirdDragon_Ice",
+          "type": "StructProperty",
+          "preview": {
+            "ID": {
+              "struct_type": "Guid",
+              "struct_id": "00000000-0000-0000-0000-000000000000",
+              "id": null,
+              "value": "89aa6957-41f7-35f8-defd-21ac5d0c11b5",
+              "type": "StructProperty"
+            }
+          }
+        },
+        {
+          "species": "IceCrocodile",
+          "type": "StructProperty",
+          "preview": {
+            "ID": {
+              "struct_type": "Guid",
+              "struct_id": "00000000-0000-0000-0000-000000000000",
+              "id": null,
+              "value": "90b80af3-4263-77b7-20b2-a793fa764177",
+              "type": "StructProperty"
+            }
+          }
+        },
+        {
+          "species": "TentacleTurtle",
+          "type": "StructProperty",
+          "preview": {
+            "ID": {
+              "struct_type": "Guid",
+              "struct_id": "00000000-0000-0000-0000-000000000000",
+              "id": null,
+              "value": "64a04afd-4c1e-17d0-ec88-efad29733fab",
+              "type": "StructProperty"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "field": "LastJumpedLocation",
+      "count": 309,
+      "known": true,
+      "samples": [
+        {
+          "species": null,
+          "type": "StructProperty",
+          "preview": {
+            "x": -299043.77583536465,
+            "y": 46415.410888582526,
+            "z": 14205.330026436859
+          }
+        },
+        {
+          "species": "ThunderDog_Ice",
+          "type": "StructProperty",
+          "preview": {
+            "x": 6920.712143873777,
+            "y": 2157.855335565755,
+            "z": 6708.035478933876
+          }
+        },
+        {
+          "species": "Ganesha",
+          "type": "StructProperty",
+          "preview": {
+            "x": -297958.2972482154,
+            "y": 49283.5553925698,
+            "z": -999999
+          }
+        }
+      ]
+    },
+    {
+      "field": "LastNickNameModifierPlayerUid",
+      "count": 375,
+      "known": true,
+      "samples": [
+        {
+          "species": null,
+          "type": "StructProperty",
+          "preview": "00000000-0000-0000-0000-000000000001"
+        },
+        {
+          "species": "ThunderDog_Ice",
+          "type": "StructProperty",
+          "preview": "00000000-0000-0000-0000-000000000001"
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "StructProperty",
+          "preview": "00000000-0000-0000-0000-000000000001"
+        }
+      ]
+    },
+    {
+      "field": "Level",
+      "count": 347,
+      "known": true,
+      "samples": [
+        {
+          "species": null,
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 80
+          }
+        },
+        {
+          "species": "ThunderDog_Ice",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 38
+          }
+        },
+        {
+          "species": "Ganesha",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 51
+          }
+        }
+      ]
+    },
+    {
+      "field": "MasteredWaza",
+      "count": 8,
+      "known": true,
+      "samples": [
+        {
+          "species": "BOSS_Hedgehog",
+          "type": "ArrayProperty",
+          "preview": {
+            "values": [
+              "EPalWazaID::WaterBall"
+            ]
+          }
+        },
+        {
+          "species": "Hunter_Handgun",
+          "type": "ArrayProperty",
+          "preview": {
+            "values": [
+              "EPalWazaID::Weapon_Use"
+            ]
+          }
+        },
+        {
+          "species": "Hunter_Handgun",
+          "type": "ArrayProperty",
+          "preview": {
+            "values": [
+              "EPalWazaID::Weapon_Use"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "field": "NickName",
+      "count": 1,
+      "known": false,
+      "samples": [
+        {
+          "species": null,
+          "type": "StrProperty",
+          "preview": "BittyBurrito"
+        }
+      ]
+    },
+    {
+      "field": "OldOwnerPlayerUIds",
+      "count": 374,
+      "known": true,
+      "samples": [
+        {
+          "species": "ThunderDog_Ice",
+          "type": "ArrayProperty",
+          "preview": {
+            "prop_name": "OldOwnerPlayerUIds",
+            "prop_type": "StructProperty",
+            "values": [
+              "00000000-0000-0000-0000-000000000001"
+            ],
+            "type_name": "Guid",
+            "id": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "ArrayProperty",
+          "preview": {
+            "prop_name": "OldOwnerPlayerUIds",
+            "prop_type": "StructProperty",
+            "values": [
+              "00000000-0000-0000-0000-000000000001"
+            ],
+            "type_name": "Guid",
+            "id": "00000000-0000-0000-0000-000000000000"
+          }
+        },
+        {
+          "species": "Ganesha",
+          "type": "ArrayProperty",
+          "preview": {
+            "prop_name": "OldOwnerPlayerUIds",
+            "prop_type": "StructProperty",
+            "values": [
+              "00000000-0000-0000-0000-000000000001"
+            ],
+            "type_name": "Guid",
+            "id": "00000000-0000-0000-0000-000000000000"
+          }
+        }
+      ]
+    },
+    {
+      "field": "OwnedTime",
+      "count": 327,
+      "known": true,
+      "samples": [
+        {
+          "species": "ThunderDog_Ice",
+          "type": "StructProperty",
+          "preview": 639221470801140000
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "StructProperty",
+          "preview": 639221691376810000
+        },
+        {
+          "species": "Ganesha",
+          "type": "StructProperty",
+          "preview": 639223233823240000
+        }
+      ]
+    },
+    {
+      "field": "OwnerPlayerUId",
+      "count": 327,
+      "known": true,
+      "samples": [
+        {
+          "species": "ThunderDog_Ice",
+          "type": "StructProperty",
+          "preview": "00000000-0000-0000-0000-000000000001"
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "StructProperty",
+          "preview": "00000000-0000-0000-0000-000000000001"
+        },
+        {
+          "species": "Ganesha",
+          "type": "StructProperty",
+          "preview": "00000000-0000-0000-0000-000000000001"
+        }
+      ]
+    },
+    {
+      "field": "PassiveSkillList",
+      "count": 344,
+      "known": true,
+      "samples": [
+        {
+          "species": "ThunderDog_Ice",
+          "type": "ArrayProperty",
+          "preview": {
+            "values": [
+              "ElementBoost_Ice_1_PAL"
+            ]
+          }
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "ArrayProperty",
+          "preview": {
+            "values": [
+              "MoveSpeed_up_3"
+            ]
+          }
+        },
+        {
+          "species": "Ganesha",
+          "type": "ArrayProperty",
+          "preview": {
+            "values": [
+              "PAL_ALLAttack_down1"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "field": "Rank",
+      "count": 21,
+      "known": true,
+      "samples": [
+        {
+          "species": "BOSS_Hedgehog",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 2
+          }
+        },
+        {
+          "species": "Penguin",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 2
+          }
+        },
+        {
+          "species": "LeafMomonga",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 2
+          }
+        }
+      ]
+    },
+    {
+      "field": "RankUpExp",
+      "count": 12,
+      "known": true,
+      "samples": [
+        {
+          "species": "Penguin",
+          "type": "UInt16Property",
+          "preview": 1
+        },
+        {
+          "species": "PinkRabbit",
+          "type": "UInt16Property",
+          "preview": 3
+        },
+        {
+          "species": "DarkCrow",
+          "type": "UInt16Property",
+          "preview": 2
+        }
+      ]
+    },
+    {
+      "field": "SanityValue",
+      "count": 18,
+      "known": true,
+      "samples": [
+        {
+          "species": "BirdDragon_Ice",
+          "type": "FloatProperty",
+          "preview": 99.97599792480469
+        },
+        {
+          "species": "FoxMage",
+          "type": "FloatProperty",
+          "preview": 86.8989486694336
+        },
+        {
+          "species": "GrassRabbitMan",
+          "type": "FloatProperty",
+          "preview": 97.23316955566406
+        }
+      ]
+    },
+    {
+      "field": "ShieldHP",
+      "count": 1,
+      "known": false,
+      "samples": [
+        {
+          "species": null,
+          "type": "StructProperty",
+          "preview": {
+            "Value": {
+              "id": null,
+              "value": 1045000,
+              "type": "Int64Property"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "field": "SlotId",
+      "count": 374,
+      "known": true,
+      "samples": [
+        {
+          "species": "ThunderDog_Ice",
+          "type": "StructProperty",
+          "preview": {
+            "ContainerId": {
+              "struct_type": "PalContainerId",
+              "struct_id": "00000000-0000-0000-0000-000000000000",
+              "id": null,
+              "value": {
+                "ID": {
+                  "struct_type": "Guid",
+                  "struct_id": "00000000-0000-0000-0000-000000000000",
+                  "id": null,
+                  "value": "1c78b36d-4e9d-daca-b54f-03bee1fe1ff1",
+                  "type": "StructProperty"
+                }
+              },
+              "type": "StructProperty"
+            },
+            "SlotIndex": {
+              "id": null,
+              "value": 106,
+              "type": "IntProperty"
+            }
+          }
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "StructProperty",
+          "preview": {
+            "ContainerId": {
+              "struct_type": "PalContainerId",
+              "struct_id": "00000000-0000-0000-0000-000000000000",
+              "id": null,
+              "value": {
+                "ID": {
+                  "struct_type": "Guid",
+                  "struct_id": "00000000-0000-0000-0000-000000000000",
+                  "id": null,
+                  "value": "1c78b36d-4e9d-daca-b54f-03bee1fe1ff1",
+                  "type": "StructProperty"
+                }
+              },
+              "type": "StructProperty"
+            },
+            "SlotIndex": {
+              "id": null,
+              "value": 316,
+              "type": "IntProperty"
+            }
+          }
+        },
+        {
+          "species": "Ganesha",
+          "type": "StructProperty",
+          "preview": {
+            "ContainerId": {
+              "struct_type": "PalContainerId",
+              "struct_id": "00000000-0000-0000-0000-000000000000",
+              "id": null,
+              "value": {
+                "ID": {
+                  "struct_type": "Guid",
+                  "struct_id": "00000000-0000-0000-0000-000000000000",
+                  "id": null,
+                  "value": "1c78b36d-4e9d-daca-b54f-03bee1fe1ff1",
+                  "type": "StructProperty"
+                }
+              },
+              "type": "StructProperty"
+            },
+            "SlotIndex": {
+              "id": null,
+              "value": 71,
+              "type": "IntProperty"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "field": "Talent_Defense",
+      "count": 372,
+      "known": true,
+      "samples": [
+        {
+          "species": "ThunderDog_Ice",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 34
+          }
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 50
+          }
+        },
+        {
+          "species": "Ganesha",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 35
+          }
+        }
+      ]
+    },
+    {
+      "field": "Talent_HP",
+      "count": 372,
+      "known": true,
+      "samples": [
+        {
+          "species": "ThunderDog_Ice",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 77
+          }
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 64
+          }
+        },
+        {
+          "species": "Ganesha",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 97
+          }
+        }
+      ]
+    },
+    {
+      "field": "Talent_Shot",
+      "count": 372,
+      "known": true,
+      "samples": [
+        {
+          "species": "ThunderDog_Ice",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 63
+          }
+        },
+        {
+          "species": "BOSS_SharkKid",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 81
+          }
+        },
+        {
+          "species": "Ganesha",
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 24
+          }
+        }
+      ]
+    },
+    {
+      "field": "Tiemr_FoodWithStatusEffect",
+      "count": 27,
+      "known": true,
+      "samples": [
+        {
+          "species": "Ganesha",
+          "type": "IntProperty",
+          "preview": 535
+        },
+        {
+          "species": "BOSS_Hedgehog",
+          "type": "IntProperty",
+          "preview": 139
+        },
+        {
+          "species": "CuteFox",
+          "type": "IntProperty",
+          "preview": 360
+        }
+      ]
+    },
+    {
+      "field": "VoiceID",
+      "count": 1,
+      "known": false,
+      "samples": [
+        {
+          "species": null,
+          "type": "ByteProperty",
+          "preview": {
+            "type": "None",
+            "value": 1
+          }
+        }
+      ]
+    },
+    {
+      "field": "WorkSuitabilityOptionInfo",
+      "count": 10,
+      "known": true,
+      "samples": [
+        {
+          "species": "Penguin",
+          "type": "StructProperty",
+          "preview": {
+            "OffWorkSuitabilityList": {
+              "array_type": "EnumProperty",
+              "id": null,
+              "value": {
+                "values": [
+                  "EPalWorkSuitability::Watering",
+                  "EPalWorkSuitability::Transport"
+                ]
+              },
+              "type": "ArrayProperty"
+            }
+          }
+        },
+        {
+          "species": "BOSS_CuteMole",
+          "type": "StructProperty",
+          "preview": {
+            "OffWorkSuitabilityList": {
+              "array_type": "EnumProperty",
+              "id": null,
+              "value": {
+                "values": [
+                  "EPalWorkSuitability::Handcraft",
+                  "EPalWorkSuitability::Transport"
+                ]
+              },
+              "type": "ArrayProperty"
+            }
+          }
+        },
+        {
+          "species": "LavaGirl",
+          "type": "StructProperty",
+          "preview": {
+            "OffWorkSuitabilityList": {
+              "array_type": "EnumProperty",
+              "id": null,
+              "value": {
+                "values": [
+                  "EPalWorkSuitability::Transport"
+                ]
+              },
+              "type": "ArrayProperty"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

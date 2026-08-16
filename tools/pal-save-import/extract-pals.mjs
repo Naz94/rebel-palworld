@@ -1,4 +1,4 @@
-import fs from "node:fs";
+﻿import fs from "node:fs";
 
 const inputPath =
   "C:\\Users\\nazva\\rebel-palworld\\tools\\pal-save-import\\level.json";
@@ -6,15 +6,8 @@ const inputPath =
 const outputPath =
   "C:\\Users\\nazva\\rebel-palworld\\tools\\pal-save-import\\pals.json";
 
-// ============================================================
-// LOAD SAVE JSON
-// ============================================================
-
 const data = JSON.parse(
-  fs.readFileSync(
-    inputPath,
-    "utf8",
-  ),
+  fs.readFileSync(inputPath, "utf8"),
 );
 
 const characters =
@@ -27,30 +20,13 @@ if (!Array.isArray(characters)) {
   );
 }
 
-// ============================================================
-// PROPERTY HELPERS
-// ============================================================
-
 function getSaveParameter(character) {
   return (
     character?.value?.RawData?.value?.object
-      ?.SaveParameter?.value ??
-    null
+      ?.SaveParameter?.value ?? null
   );
 }
 
-/**
- * Palworld ByteProperty values currently appear as:
- *
- * {
- *   value: {
- *     type: "None",
- *     value: 50
- *   }
- * }
- *
- * Returns null when the property itself is absent or malformed.
- */
 function byteValue(property) {
   const value =
     property?.value?.value;
@@ -60,227 +36,348 @@ function byteValue(property) {
     : null;
 }
 
-/**
- * Handles normal scalar properties:
- *
- * {
- *   value: 3127413
- * }
- */
 function simpleValue(property) {
-  return (
-    property?.value ??
-    null
+  return property?.value ?? null;
+}
+
+function numericValue(property) {
+  const nested =
+    property?.value?.value;
+
+  if (typeof nested === "number") {
+    return nested;
+  }
+
+  const direct =
+    property?.value;
+
+  return typeof direct === "number"
+    ? direct
+    : null;
+}
+
+function arrayValues(property) {
+  const values =
+    property?.value?.values;
+
+  return Array.isArray(values)
+    ? values
+    : [];
+}
+
+function stripEnumPrefix(
+  value,
+  prefix,
+) {
+  if (typeof value !== "string") {
+    return value ?? null;
+  }
+
+  return value.replace(
+    prefix,
+    "",
   );
 }
 
-/**
- * Palworld omits some properties when they are still at their
- * default value.
- *
- * For an owned Pal:
- *
- * missing Level -> Level 1
- * missing Exp   -> 0 EXP
- *
- * We only apply these defaults when the values cannot be read.
- */
 function getPalLevel(save) {
-  const level =
-    byteValue(
-      save?.Level,
-    );
-
-  if (
-    typeof level ===
-    "number"
-  ) {
-    return level;
-  }
-
-  return 1;
+  return byteValue(save?.Level) ?? 1;
 }
 
 function getPalExp(save) {
   const exp =
-    simpleValue(
-      save?.Exp,
-    );
+    simpleValue(save?.Exp);
 
-  if (
-    typeof exp ===
-    "number"
-  ) {
-    return exp;
-  }
-
-  return 0;
+  return typeof exp === "number"
+    ? exp
+    : 0;
 }
 
 function getGender(property) {
   const raw =
     property?.value?.value;
 
-  if (
-    typeof raw !==
-    "string"
-  ) {
-    return null;
-  }
-
-  return raw.replace(
-    "EPalGenderType::",
-    "",
-  );
+  return typeof raw === "string"
+    ? stripEnumPrefix(
+        raw,
+        "EPalGenderType::",
+      )
+    : null;
 }
 
 function getPassives(property) {
-  const values =
-    property?.value?.values;
-
-  return Array.isArray(
-    values,
-  )
-    ? values
-    : [];
+  return arrayValues(property);
 }
 
-function getDisabledWork(
-  property,
-) {
+function getDisabledWork(property) {
   const values =
     property?.value
       ?.OffWorkSuitabilityList
       ?.value?.values;
 
-  if (
-    !Array.isArray(
-      values,
-    )
-  ) {
+  if (!Array.isArray(values)) {
     return [];
   }
 
   return values.map(
     (value) =>
-      value.replace(
+      stripEnumPrefix(
+        value,
         "EPalWorkSuitability::",
-        "",
       ),
   );
 }
 
-// ============================================================
-// EXTRACT PALS
-// ============================================================
+function getEquippedSkills(save) {
+  return arrayValues(
+    save?.EquipWaza,
+  ).map(
+    (value) =>
+      stripEnumPrefix(
+        value,
+        "EPalWazaID::",
+      ),
+  );
+}
+
+function getLearnedSkills(save) {
+  return arrayValues(
+    save?.MasteredWaza,
+  ).map(
+    (value) =>
+      stripEnumPrefix(
+        value,
+        "EPalWazaID::",
+      ),
+  );
+}
+
+function getCondensation(save) {
+  const rank =
+    numericValue(save?.Rank) ?? 1;
+
+  const rankUpExp =
+    numericValue(save?.RankUpExp) ?? 0;
+
+  return {
+    rank,
+    stars:
+      Math.max(
+        0,
+        rank - 1,
+      ),
+    rankUpExp,
+  };
+}
+
+function getSoulEnhancements(save) {
+  return {
+    hp:
+      numericValue(
+        save?.Rank_HP,
+      ) ?? 0,
+
+    attack:
+      numericValue(
+        save?.Rank_Attack,
+      ) ?? 0,
+
+    defense:
+      numericValue(
+        save?.Rank_Defence,
+      ) ?? 0,
+
+    workSpeed:
+      numericValue(
+        save?.Rank_CraftSpeed,
+      ) ?? 0,
+  };
+}
+
+function getWorkSuitabilityUpgrades(
+  save,
+) {
+  const values =
+    save?.GotWorkSuitabilityAddRankList
+      ?.value?.values;
+
+  if (!Array.isArray(values)) {
+    return [];
+  }
+
+  return values
+    .map((entry) => {
+      const rawWork =
+        entry?.WorkSuitability
+          ?.value?.value;
+
+      const rank =
+        numericValue(
+          entry?.Rank,
+        );
+
+      if (
+        typeof rawWork !== "string" ||
+        typeof rank !== "number"
+      ) {
+        return null;
+      }
+
+      return {
+        workSuitability:
+          stripEnumPrefix(
+            rawWork,
+            "EPalWorkSuitability::",
+          ),
+
+        rank,
+      };
+    })
+    .filter(Boolean);
+}
+
+function getFriendship(save) {
+  return {
+    points:
+      numericValue(
+        save?.FriendshipPoint,
+      ) ?? 0,
+
+    activePartySeconds:
+      numericValue(
+        save?.FriendshipActiveOtomoSec,
+      ) ?? 0,
+
+    partySeconds:
+      numericValue(
+        save?.FriendshipOtomoSec,
+      ) ?? 0,
+
+    baseSeconds:
+      numericValue(
+        save?.FriendshipBasecampSec,
+      ) ?? 0,
+  };
+}
+
+function getCurrentWorkSuitability(
+  save,
+) {
+  const raw =
+    save?.CurrentWorkSuitability
+      ?.value?.value ??
+    save?.CurrentWorkSuitability
+      ?.value ??
+    null;
+
+  if (typeof raw !== "string") {
+    return null;
+  }
+
+  return stripEnumPrefix(
+    raw,
+    "EPalWorkSuitability::",
+  );
+}
 
 const pals = [];
 
-let defaultedLevelCount =
-  0;
+let defaultedLevelCount = 0;
+let defaultedExpCount = 0;
+let condensedCount = 0;
+let partialCondensationCount = 0;
+let learnedSkillCount = 0;
+let workUpgradeCount = 0;
+let soulInvestmentCount = 0;
 
-let defaultedExpCount =
-  0;
-
-for (
-  const character
-  of characters
-) {
+for (const character of characters) {
   const save =
-    getSaveParameter(
-      character,
-    );
+    getSaveParameter(character);
 
   if (!save) {
     continue;
   }
 
-  // ----------------------------------------------------------
-  // SKIP PLAYER CHARACTER
-  // ----------------------------------------------------------
-
-  if (
-    save.IsPlayer?.value ===
-    true
-  ) {
+  if (save.IsPlayer?.value === true) {
     continue;
   }
 
-  // ----------------------------------------------------------
-  // SPECIES
-  // ----------------------------------------------------------
-
   const species =
-    simpleValue(
-      save.CharacterID,
-    );
+    simpleValue(save.CharacterID);
 
   if (!species) {
     continue;
   }
 
-  // ----------------------------------------------------------
-  // LEVEL / EXP
-  // ----------------------------------------------------------
-
   const rawLevel =
-    byteValue(
-      save.Level,
-    );
+    byteValue(save.Level);
 
   const rawExp =
-    simpleValue(
-      save.Exp,
-    );
+    simpleValue(save.Exp);
 
-  if (
-    typeof rawLevel !==
-    "number"
-  ) {
-    defaultedLevelCount +=
-      1;
+  if (typeof rawLevel !== "number") {
+    defaultedLevelCount += 1;
   }
 
-  if (
-    typeof rawExp !==
-    "number"
-  ) {
-    defaultedExpCount +=
-      1;
+  if (typeof rawExp !== "number") {
+    defaultedExpCount += 1;
   }
 
   const level =
-    getPalLevel(
-      save,
-    );
+    getPalLevel(save);
 
   const exp =
-    getPalExp(
-      save,
-    );
+    getPalExp(save);
 
-  // ----------------------------------------------------------
-  // BUILD PAL
-  // ----------------------------------------------------------
+  const condensation =
+    getCondensation(save);
+
+  const souls =
+    getSoulEnhancements(save);
+
+  const workSuitabilityUpgrades =
+    getWorkSuitabilityUpgrades(save);
+
+  const learnedSkills =
+    getLearnedSkills(save);
+
+  if (condensation.stars > 0) {
+    condensedCount += 1;
+  }
+
+  if (condensation.rankUpExp > 0) {
+    partialCondensationCount += 1;
+  }
+
+  if (learnedSkills.length > 0) {
+    learnedSkillCount += 1;
+  }
+
+  if (workSuitabilityUpgrades.length > 0) {
+    workUpgradeCount += 1;
+  }
+
+  if (
+    souls.hp > 0 ||
+    souls.attack > 0 ||
+    souls.defense > 0 ||
+    souls.workSpeed > 0
+  ) {
+    soulInvestmentCount += 1;
+  }
 
   pals.push({
     instanceId:
       character?.key
-        ?.InstanceId?.value ??
-      null,
+        ?.InstanceId?.value ?? null,
 
     species,
 
     nickname:
-      simpleValue(
-        save.NickName,
-      ) ??
+      simpleValue(save.NickName) ??
       null,
 
     gender:
-      getGender(
-        save.Gender,
-      ),
+      getGender(save.Gender),
 
     level,
 
@@ -288,8 +385,7 @@ for (
 
     hp:
       save?.Hp?.value
-        ?.Value?.value ??
-      null,
+        ?.Value?.value ?? null,
 
     ivs: {
       hp:
@@ -313,29 +409,60 @@ for (
         save.PassiveSkillList,
       ),
 
+    skills: {
+      equipped:
+        getEquippedSkills(save),
+
+      learned:
+        learnedSkills,
+    },
+
+    progression: {
+      condensation,
+
+      souls,
+
+      workSuitabilityUpgrades,
+
+      friendship:
+        getFriendship(save),
+    },
+
+    currentState: {
+      workSuitability:
+        getCurrentWorkSuitability(save),
+
+      fullStomach:
+        numericValue(
+          save?.FullStomach,
+        ),
+
+      sanity:
+        numericValue(
+          save?.SanityValue,
+        ),
+    },
+
     disabledWorkSuitabilities:
       getDisabledWork(
         save.WorkSuitabilityOptionInfo,
       ),
 
+    isRarePal:
+      save?.IsRarePal?.value === true,
+
     slot: {
       containerId:
         save?.SlotId?.value
           ?.ContainerId?.value
-          ?.ID?.value ??
-        null,
+          ?.ID?.value ?? null,
 
       slotIndex:
         save?.SlotId?.value
-          ?.SlotIndex?.value ??
-        null,
+          ?.SlotIndex?.value ?? null,
     },
   });
 }
-
-// ============================================================
-// WRITE OUTPUT
-// ============================================================
 
 fs.writeFileSync(
   outputPath,
@@ -346,10 +473,6 @@ fs.writeFileSync(
   ),
   "utf8",
 );
-
-// ============================================================
-// REPORT
-// ============================================================
 
 console.log(
   `Extracted ${pals.length} Pals.`,
@@ -369,16 +492,35 @@ console.log(
   `Defaulted missing Exp fields to 0: ${defaultedExpCount}`,
 );
 
+console.log("");
+
+console.log(
+  `Condensed Pals (1★+): ${condensedCount}`,
+);
+
+console.log(
+  `Pals with partial condensation progress: ${partialCondensationCount}`,
+);
+
+console.log(
+  `Pals with MasteredWaza data: ${learnedSkillCount}`,
+);
+
+console.log(
+  `Pals with permanent work-suitability upgrades: ${workUpgradeCount}`,
+);
+
+console.log(
+  `Pals with Pal Soul investment: ${soulInvestmentCount}`,
+);
+
 console.log(
   "\nFirst 5 Pals:",
 );
 
 for (
   const pal
-  of pals.slice(
-    0,
-    5,
-  )
+  of pals.slice(0, 5)
 ) {
   console.log({
     species:
@@ -401,5 +543,20 @@ for (
 
     passives:
       pal.passives,
+
+    equippedSkills:
+      pal.skills.equipped,
+
+    condensation:
+      pal.progression
+        .condensation,
+
+    souls:
+      pal.progression
+        .souls,
+
+    workSuitabilityUpgrades:
+      pal.progression
+        .workSuitabilityUpgrades,
   });
 }

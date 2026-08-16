@@ -1219,7 +1219,7 @@ function StrategyWorkGroup({
 
                 <span className="text-[9px] text-neutral-500">
                   {item.workers} workers
-                  {" Â· "}
+                  {" · "}
                   best Lv.
                   {item.highestLevel}
                 </span>
@@ -1544,7 +1544,7 @@ function ComparisonPal({
                     effect.passive.name
                   }
 
-                  {" Â· "}
+                  {" · "}
 
                   {
                     effect.summary
@@ -1867,7 +1867,7 @@ function WorkerCard({
                     {level}
 
                     {disabled
-                      ? " Â· Disabled"
+                      ? " · Disabled"
                       : ""}
                   </span>
                 );

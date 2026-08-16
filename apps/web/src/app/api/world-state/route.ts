@@ -71,7 +71,7 @@ export async function GET() {
         "watcher-status.json",
       );
 
-    const pals =
+    const entities =
       readJson<RealOwnedPal[]>(
         palsPath,
       );
@@ -99,14 +99,14 @@ export async function GET() {
 
     const rankings =
       rankRealPals(
-        pals,
+        entities,
       );
 
     const party =
-      pals
+      entities
         .filter(
-          (pal) =>
-            pal.location.type ===
+          (entry) =>
+            entry.location.type ===
             "PARTY",
         )
         .sort(
@@ -115,48 +115,101 @@ export async function GET() {
             (b.location.slotIndex ?? 999),
         )
         .map(
-          (pal) => ({
-            id: pal.id,
-            species: pal.species,
-            nickname: pal.nickname,
-            level: pal.level,
-            gender: pal.gender,
+          (entry) => ({
+            id: entry.id,
+            entityType:
+              entry.entityType ??
+              "PAL",
+            species: entry.species,
+            nickname: entry.nickname,
+            level: entry.level,
+            gender: entry.gender,
             slot:
-              pal.location.displaySlot,
+              entry.location.displaySlot,
           }),
         );
 
     const palboxCount =
-      pals.filter(
-        (pal) =>
-          pal.location.type ===
+      entities.filter(
+        (entry) =>
+          entry.location.type ===
           "PALBOX",
       ).length;
 
-    const bases =
-      [1, 2, 3].map(
-        (baseIndex) => ({
-          baseIndex,
-
-          count:
-            pals.filter(
-              (pal) =>
-                pal.location.type ===
+    const discoveredBaseIndexes =
+      [
+        ...new Set(
+          entities
+            .filter(
+              (entry) =>
+                entry.location.type ===
                   "BASE" &&
-                pal.location.baseIndex ===
-                  baseIndex,
-            ).length,
+                typeof entry.location
+                  .baseIndex ===
+                  "number",
+            )
+            .map(
+              (entry) =>
+                entry.location
+                  .baseIndex as number,
+            ),
+        ),
+      ].sort(
+        (a, b) =>
+          a - b,
+      );
 
-          capacity: 26,
-        }),
+    const expectedBaseIndexes =
+      [1, 2, 3, 4];
+
+    const allBaseIndexes =
+      [
+        ...new Set([
+          ...expectedBaseIndexes,
+          ...discoveredBaseIndexes,
+        ]),
+      ].sort(
+        (a, b) =>
+          a - b,
+      );
+
+    const bases =
+      allBaseIndexes.map(
+        (baseIndex) => {
+          const baseEntities =
+            entities.filter(
+              (entry) =>
+                entry.location.type ===
+                  "BASE" &&
+                entry.location.baseIndex ===
+                  baseIndex,
+            );
+
+          const detectedCapacity =
+            baseEntities.find(
+              (entry) =>
+                typeof entry.location
+                  .capacity ===
+                  "number",
+            )?.location.capacity;
+
+          return {
+            baseIndex,
+            count:
+              baseEntities.length,
+            capacity:
+              detectedCapacity ??
+              26,
+          };
+        },
       );
 
     const unknownCount =
-      pals.filter(
-        (pal) =>
-          pal.location.type ===
+      entities.filter(
+        (entry) =>
+          entry.location.type ===
             "UNKNOWN" ||
-          pal.location.type ===
+          entry.location.type ===
             "OTHER",
       ).length;
 
@@ -167,12 +220,9 @@ export async function GET() {
 
         watcher: {
           ...watcher,
-
           status:
             effectiveStatus,
-
           watcherAlive,
-
           heartbeatAgeMs:
             Number.isFinite(
               heartbeatAgeMs,
@@ -183,7 +233,16 @@ export async function GET() {
 
         collection: {
           ownedPals:
-            pals.length,
+            rankings.summary
+              .totalPals,
+
+          capturedHumans:
+            rankings.summary
+              .capturedHumans,
+
+          unknownEntities:
+            rankings.summary
+              .unknownEntities,
 
           species:
             rankings.summary.species,
@@ -208,15 +267,11 @@ export async function GET() {
         locations: {
           partyCount:
             party.length,
-
           partyCapacity:
             5,
-
           palboxCount,
-
           palboxCapacity:
             960,
-
           bases,
         },
 
