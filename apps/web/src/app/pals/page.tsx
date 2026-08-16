@@ -4045,20 +4045,9 @@ function PalDetailPanel({
         combatV2.weakAgainst.includes(element),
     );
 
-  const passiveIntelligence =
-    pal.passives.map(getPassiveTraitIntelligence);
-
-  const individualPlayerSupport =
-    passiveIntelligence.some(
-      (trait) =>
-        trait.disposition !== "BAD" &&
-        trait.affects.playerSupport,
-    );
-
   const partyOnlySupport =
     Boolean(partnerSkillDisplay?.affects.partySupport) &&
-    !partnerSkillDisplay?.affects.playerSupport &&
-    true;
+    !partnerSkillDisplay?.affects.playerSupport;
 
   const displayedSpeciesPrimaryUtility =
     partyOnlySupport &&
