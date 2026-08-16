@@ -1,0 +1,5394 @@
+{
+  "AirDash_1": {
+    "name": "Aerial Dash +1",
+    "description": "Aerial Dash +1",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "AirDash",
+        "value": 1,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "AirDash_2": {
+    "name": "Aerial Dash +2",
+    "description": "Aerial Dash +2",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "AirDash",
+        "value": 2,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "AirDash_3": {
+    "name": "Aerial Dash +3",
+    "description": "Aerial Dash +3",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "AirDash",
+        "value": 3,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "AirDash_4": {
+    "name": "Aerial Dash +4",
+    "description": "Aerial Dash +4",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "AirDash",
+        "value": 4,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Alien": {
+    "name": "Otherworldly Cells",
+    "description": "Attack +10.0% Fire damage reduction 15.0% Lightning damage reduction 15.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 10,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ElementResist_Fire",
+        "value": 15,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Attack_ACC_up1": {
+    "name": "Attack Up Lv. 1",
+    "description": "Attack +5.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 5,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Attack_ACC_up1_Armor": {
+    "name": "Attack Up (S) Lv. 1",
+    "description": "Attack +3.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 3,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Attack_ACC_up1_Otomo_Only_Equip": {
+    "name": "Pal Attack Up Lv. 1",
+    "description": "Attack +4.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 4,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "Attack_ACC_up2": {
+    "name": "Attack Up Lv. 2",
+    "description": "Attack +10.0%",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Attack_ACC_up2_Armor": {
+    "name": "Attack Up (S) Lv. 2",
+    "description": "Attack +6.0%",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 6,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Attack_ACC_up2_Otomo_Only_Equip": {
+    "name": "Pal Attack Up Lv. 2",
+    "description": "Attack +8.0%",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 8,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "Attack_ACC_up3": {
+    "name": "Attack Up Lv. 3",
+    "description": "Attack +15.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Attack_ACC_up3_Armor": {
+    "name": "Attack Up (S) Lv. 3",
+    "description": "Attack +9.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 9,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Attack_ACC_up3_Otomo_Only_Equip": {
+    "name": "Pal Attack Up Lv. 3",
+    "description": "Attack +12.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 12,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "Attack_ACC_up4": {
+    "name": "Attack Up Lv. 4",
+    "description": "Attack +20.0%",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Attack_ACC_up4_Armor": {
+    "name": "Attack Up (S) Lv. 4",
+    "description": "Attack +12.0%",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 12,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Attack_ACC_up4_Otomo_Only_Equip": {
+    "name": "Pal Attack Up Lv. 4",
+    "description": "Attack +16.0%",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 16,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "AutoHPRegeneRate_Passive": {
+    "name": "Healing Coach",
+    "description": "Player Auto Health Regeneration Rate +5.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "AutoHPRegeneRate",
+        "value": 5,
+        "target": "ToTrainer"
+      }
+    ]
+  },
+  "AvoidDurationUp_EquipSkill_2": {
+    "name": "Extended Dodge Immunity",
+    "description": "AvoidDurationUp_EquipSkill +20.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "AvoidDurationUp_EquipSkill",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "BossDefeatReward_AmaterasuWolf_Dark": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_Anubis": {
+    "name": "Ground Damage Enhancement (Small)",
+    "description": "1.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_BadCatgirl": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_BerryGoat_Dark": {
+    "name": "Grass Damage Enhancement (Medium)",
+    "description": "2.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_BlackMetalDragon": {
+    "name": "Dragon Damage Enhancement (Medium)",
+    "description": "2.0% increase in Dragon attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_BlackPuppy": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_BlueDragon": {
+    "name": "Water Damage Enhancement (Small)",
+    "description": "1.0% increase in Water attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_BlueThunderHorse": {
+    "name": "Electric Damage Enhancement (Medium)",
+    "description": "2.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_BlueberryFairy": {
+    "name": "Grass Damage Enhancement (Medium)",
+    "description": "2.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_CactusDoll": {
+    "name": "Grass Damage Enhancement (Small)",
+    "description": "1.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_CaptainPenguin": {
+    "name": "Water Damage Enhancement (Small)",
+    "description": "1.0% increase in Water attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_CatMage": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_CatVampire": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_CubeTurtle": {
+    "name": "Ground Damage Enhancement (Small)",
+    "description": "1.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_CubeTurtle_Neutral": {
+    "name": "Neutral Damage Enhancement (Medium)",
+    "description": "2.0% increase in Neutral attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_DarkScorpion": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_DarkScorpion_Ground": {
+    "name": "Ground Damage Enhancement (Small)",
+    "description": "1.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_DomeArmorDragon": {
+    "name": "Dragon Damage Enhancement (Large)",
+    "description": "3.0% increase in Dragon attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_ElecLizard": {
+    "name": "Electric Damage Enhancement (Small)",
+    "description": "1.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_ElecPanda": {
+    "name": "Electric Damage Enhancement (Medium)",
+    "description": "2.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_ElecSnail": {
+    "name": "Electric Damage Enhancement (Small)",
+    "description": "1.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_FairyDragon": {
+    "name": "Dragon Damage Enhancement (Small)",
+    "description": "1.0% increase in Dragon attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_FengyunDeeper": {
+    "name": "Neutral Damage Enhancement (Small)",
+    "description": "1.0% increase in Neutral attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_FengyunDeeper_Electric": {
+    "name": "Electric Damage Enhancement (Medium)",
+    "description": "2.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_FireKirin": {
+    "name": "Fire Damage Enhancement (Small)",
+    "description": "1.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_FlameBuffalo": {
+    "name": "Fire Damage Enhancement (Small)",
+    "description": "1.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_FlowerDinosaur_Electric": {
+    "name": "Electric Damage Enhancement (Small)",
+    "description": "1.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_FlowerDoll": {
+    "name": "Grass Damage Enhancement (Small)",
+    "description": "1.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_FoxExorcist": {
+    "name": "Fire Damage Enhancement (Medium)",
+    "description": "2.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_FoxMage": {
+    "name": "Fire Damage Enhancement (Small)",
+    "description": "1.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_GhostDragon": {
+    "name": "Dragon Damage Enhancement (Medium)",
+    "description": "2.0% increase in Dragon attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_GhostRabbit": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_GoldenHorse": {
+    "name": "Ground Damage Enhancement (Medium)",
+    "description": "2.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_GrassGolem": {
+    "name": "Grass Damage Enhancement (Medium)",
+    "description": "2.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_GrassGolem_Dark": {
+    "name": "Dark Damage Enhancement (Medium)",
+    "description": "2.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_GrassMammoth": {
+    "name": "Grass Damage Enhancement (Medium)",
+    "description": "2.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_GrassPanda_Electric": {
+    "name": "Electric Damage Enhancement (Small)",
+    "description": "1.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_GrassRabbitMan": {
+    "name": "Grass Damage Enhancement (Small)",
+    "description": "1.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_GrimGirl": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_HawkBird": {
+    "name": "Neutral Damage Enhancement (Small)",
+    "description": "1.0% increase in Neutral attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_HerculesBeetle": {
+    "name": "Ground Damage Enhancement (Small)",
+    "description": "1.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_HerculesBeetle_Ground": {
+    "name": "Ground Damage Enhancement (Medium)",
+    "description": "2.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_Horus_Water": {
+    "name": "Water Damage Enhancement (Medium)",
+    "description": "2.0% increase in Water attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_IceFox": {
+    "name": "Ice Damage Enhancement (Small)",
+    "description": "1.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_IceHorse": {
+    "name": "Ice Damage Enhancement (Large)",
+    "description": "3.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_IceHorse_Dark": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_IceNarwhal": {
+    "name": "Ice Damage Enhancement (Large)",
+    "description": "3.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_IceNarwhal_Fire": {
+    "name": "Fire Damage Enhancement (Large)",
+    "description": "3.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_JetDragon": {
+    "name": "Dragon Damage Enhancement (Large)",
+    "description": "3.0% increase in Dragon attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_KabukiMan": {
+    "name": "Fire Damage Enhancement (Medium)",
+    "description": "2.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_KingAlpaca": {
+    "name": "Neutral Damage Enhancement (Small)",
+    "description": "1.0% increase in Neutral attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_KingAlpaca_Ice": {
+    "name": "Ice Damage Enhancement (Medium)",
+    "description": "2.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_KingBahamut": {
+    "name": "Fire Damage Enhancement (Large)",
+    "description": "3.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_Kirin": {
+    "name": "Electric Damage Enhancement (Small)",
+    "description": "1.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_Kitsunebi_Ice": {
+    "name": "Ice Damage Enhancement (Large)",
+    "description": "3.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_LazyCatfish": {
+    "name": "Ground Damage Enhancement (Small)",
+    "description": "1.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_LazyDragon_Electric": {
+    "name": "Dragon Damage Enhancement (Small)",
+    "description": "1.0% increase in Dragon attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_LilyQueen": {
+    "name": "Grass Damage Enhancement (Large)",
+    "description": "3.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_LilyQueen_Dark": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_LotusDragon": {
+    "name": "Water Damage Enhancement (Medium)",
+    "description": "2.0% increase in Water attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_Manticore": {
+    "name": "Fire Damage Enhancement (Small)",
+    "description": "1.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_MoonChild": {
+    "name": "Dark Damage Enhancement (Medium)",
+    "description": "2.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_MopKing": {
+    "name": "Ice Damage Enhancement (Small)",
+    "description": "1.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_MushroomLady": {
+    "name": "Grass Damage Enhancement (Small)",
+    "description": "1.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_Mutant": {
+    "name": "Neutral Damage Enhancement (Small)",
+    "description": "1.0% increase in Neutral attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_MysteryMask": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_NaughtyCat": {
+    "name": "Neutral Damage Enhancement (Small)",
+    "description": "1.0% increase in Neutral attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_NightBlueHorse": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_PinkRabbit_Grass": {
+    "name": "Grass Damage Enhancement (Medium)",
+    "description": "2.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_PlantSlime": {
+    "name": "Ground Damage Enhancement (Small)",
+    "description": "1.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_PoseidonOrca": {
+    "name": "Water Damage Enhancement (Large)",
+    "description": "3.0% increase in Water attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_PurpleSpider": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_QueenBee": {
+    "name": "Grass Damage Enhancement (Small)",
+    "description": "1.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_RaijinDaughter_Water": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_RockBeast": {
+    "name": "Ground Damage Enhancement (Medium)",
+    "description": "2.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_RockBeast_Ice": {
+    "name": "Ice Damage Enhancement (Medium)",
+    "description": "2.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_Ronin": {
+    "name": "Fire Damage Enhancement (Medium)",
+    "description": "2.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_SaintCentaur_1": {
+    "name": "Neutral Damage Enhancement (Large)",
+    "description": "3.0% increase in Neutral attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_SaintCentaur_2": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_SakuraSaurus": {
+    "name": "Grass Damage Enhancement (Small)",
+    "description": "1.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_SakuraSaurus_Water": {
+    "name": "Water Damage Enhancement (Small)",
+    "description": "1.0% increase in Water attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_ScorpionMan_Electric": {
+    "name": "Electric Damage Enhancement (Small)",
+    "description": "1.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_SkyDragon": {
+    "name": "Dragon Damage Enhancement (Small)",
+    "description": "1.0% increase in Dragon attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_Suzaku": {
+    "name": "Fire Damage Enhancement (Large)",
+    "description": "3.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_ThunderBird": {
+    "name": "Electric Damage Enhancement (Small)",
+    "description": "1.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_ThunderFluffyBird": {
+    "name": "Electric Damage Enhancement (Small)",
+    "description": "1.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_Umihebi": {
+    "name": "Water Damage Enhancement (Medium)",
+    "description": "2.0% increase in Water attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_VioletFairy": {
+    "name": "Grass Damage Enhancement (Medium)",
+    "description": "2.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_VolcanicMonster": {
+    "name": "Ground Damage Enhancement (Small)",
+    "description": "1.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_VolcanoDragon": {
+    "name": "Fire Damage Enhancement (Small)",
+    "description": "1.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_VolcanoDragon_Ice": {
+    "name": "Ice Damage Enhancement (Medium)",
+    "description": "2.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_WeaselDragon": {
+    "name": "Ice Damage Enhancement (Small)",
+    "description": "1.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_Werewolf_Ice": {
+    "name": "Ice Damage Enhancement (Large)",
+    "description": "3.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_WhiteDeer": {
+    "name": "Neutral Damage Enhancement (Medium)",
+    "description": "2.0% increase in Neutral attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_WhiteDeer_Dark": {
+    "name": "Dark Damage Enhancement (Medium)",
+    "description": "2.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_WhiteMoth": {
+    "name": "Ice Damage Enhancement (Small)",
+    "description": "1.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_WhiteShieldDragon": {
+    "name": "Dragon Damage Enhancement (Medium)",
+    "description": "2.0% increase in Dragon attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_WhiteTiger_Ground": {
+    "name": "Ground Damage Enhancement (Medium)",
+    "description": "2.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_WingGolem": {
+    "name": "Ground Damage Enhancement (Small)",
+    "description": "1.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "BossDefeatReward_Yeti_Grass": {
+    "name": "Grass Damage Enhancement (Small)",
+    "description": "1.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "CaptureLevel_Up_1": {
+    "name": "Capture Strength +1",
+    "description": "Capture Power +1.0",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CaptureLevel",
+        "value": 1,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CaptureLevel_Up_2": {
+    "name": "Capture Strength +2",
+    "description": "Capture Power +2.0",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CaptureLevel",
+        "value": 2,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CaptureLevel_Up_3": {
+    "name": "Capture Strength +3",
+    "description": "Capture Power +3.0",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CaptureLevel",
+        "value": 3,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CaptureLevel_Up_4": {
+    "name": "Capture Strength +4",
+    "description": "Capture Power +4.0",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CaptureLevel",
+        "value": 4,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CaptureLevel_Up_5": {
+    "name": "Capture Strength +5",
+    "description": "Capture Power +5.0",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CaptureLevel",
+        "value": 5,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CaptureLevel_Up_6": {
+    "name": "Capture Strength +6",
+    "description": "Capture Power +6.0",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CaptureLevel",
+        "value": 6,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CollectItem_Berries": {
+    "name": "Berry Picker",
+    "description": null,
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CollectItem",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CollectItem_Egg": {
+    "name": "Egg Layer",
+    "description": null,
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CollectItem",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CollectItem_Milk": {
+    "name": "Milk Maker",
+    "description": null,
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CollectItem",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CollectItem_Money": {
+    "name": "Gold Digger",
+    "description": null,
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CollectItem",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CollectItem_Sweets": {
+    "name": "Confectioner",
+    "description": null,
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CollectItem",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CollectItem_Wool_Alpaca": {
+    "name": "Wool Maker",
+    "description": null,
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CollectItem",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CollectItem_Wool_SheepBall": {
+    "name": "Wool Maker",
+    "description": null,
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CollectItem",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CollectItem_Wool_WhiteMoth": {
+    "name": "Silk Spinner",
+    "description": null,
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CollectItem",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CoolTimeReduction_Down_1": {
+    "name": "Easygoing",
+    "description": "Active skill cooldown extension -15.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "ActiveSkillCoolTime_Decrease",
+        "value": -15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CoolTimeReduction_Up_1": {
+    "name": "Serenity",
+    "description": "Active skill cooldown reduction 30.0% Attack +10.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ActiveSkillCoolTime_Decrease",
+        "value": 30,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ShotAttack",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CoolTimeReduction_Up_2": {
+    "name": "Impatient",
+    "description": "Active skill cooldown reduction 15.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ActiveSkillCoolTime_Decrease",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CoolTimeReduction_Up_3": {
+    "name": "Tempest Fury",
+    "description": "Active skill cooldown reduction 0.0% Attack +0.0%",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ActiveSkillCoolTime_Decrease",
+        "value": 0,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ShotAttack",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CraftSpeed_down1": {
+    "name": "Clumsy",
+    "description": "Work Speed -10.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "CraftSpeed",
+        "value": -10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CraftSpeed_down2": {
+    "name": "Slacker",
+    "description": "Work Speed -30.0%",
+    "rank": -3,
+    "effects": [
+      {
+        "type": "CraftSpeed",
+        "value": -30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CraftSpeed_up1": {
+    "name": "Serious",
+    "description": "Work Speed +20.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CraftSpeed",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CraftSpeed_up2": {
+    "name": "Artisan",
+    "description": "Work Speed +50.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "CraftSpeed",
+        "value": 50,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "CraftSpeed_up3": {
+    "name": "Remarkable Craftsmanship",
+    "description": "Work Speed +75.0%",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "CraftSpeed",
+        "value": 75,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Defense_ACC_up1_Otomo_Only_Equip": {
+    "name": "Pal Defense Up Lv. 1",
+    "description": "Defense +5.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 5,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "Defense_ACC_up2_Otomo_Only_Equip": {
+    "name": "Pal Defense Up Lv. 2",
+    "description": "Defense +10.0%",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 10,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "Defense_ACC_up3_Otomo_Only_Equip": {
+    "name": "Pal Defense Up Lv. 3",
+    "description": "Defense +15.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 15,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "Defense_ACC_up4_Otomo_Only_Equip": {
+    "name": "Pal Defense Up Lv. 4",
+    "description": "Defense +20.0%",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 20,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "Deffence_down1": {
+    "name": "Downtrodden",
+    "description": "Defense -10.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": -10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Deffence_down2": {
+    "name": "Brittle",
+    "description": "Defense -20.0%",
+    "rank": -3,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": -20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Deffence_up1": {
+    "name": "Hard Skin",
+    "description": "Defense +10.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Deffence_up2": {
+    "name": "Burly Body",
+    "description": "Defense +20.0% Immune to Flinch",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "LeanBackInvalid_ForPassiveSkill",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Deffence_up2_2": {
+    "name": "Heavyweight",
+    "description": "Defense +20.0% Immune to Knockback",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "KnockbackInvalid_ForPassiveSkill",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Deffence_up3": {
+    "name": "Diamond Body",
+    "description": "Defense +30.0% Immune to Flinch Immune to Knockback",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 30,
+        "target": "ToSelf"
+      },
+      {
+        "type": "LeanBackInvalid_ForPassiveSkill",
+        "value": 0,
+        "target": "ToSelf"
+      },
+      {
+        "type": "KnockbackInvalid_ForPassiveSkill",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Defuser_ExplosiveSpore_EquipSkill": {
+    "name": "Explosion Immunity",
+    "description": "Defuser_ExplosiveSpore +1.0 ExplosionResist +100.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "Defuser_ExplosiveSpore",
+        "value": 1,
+        "target": "ToSelf"
+      },
+      {
+        "type": "Defuser_ExplosiveSpore",
+        "value": 1,
+        "target": "ToOtomo"
+      },
+      {
+        "type": "ExplosionResist",
+        "value": 100,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ExplosionResist",
+        "value": 100,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Aqua_1_PAL": {
+    "name": "Hydromaniac",
+    "description": "10.0% increase in Water attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Aqua_2_PAL": {
+    "name": "Lord of the Sea",
+    "description": "30.0% increase in Water attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Dark_1_BossDefeat": {
+    "name": "Dark Damage Enhancement (Small)",
+    "description": "1.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Dark_1_Otomo_Only_Equip": {
+    "name": "Pal Dark Damage Enhancement Lv. 1",
+    "description": "6.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 6,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Dark_1_PAL": {
+    "name": "Veil of Darkness",
+    "description": "10.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Dark_2_BossDefeat": {
+    "name": "Dark Damage Enhancement (Medium)",
+    "description": "2.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Dark_2_Otomo_Only_Equip": {
+    "name": "Pal Dark Damage Enhancement Lv. 2",
+    "description": "12.0% increase in Dark attack damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 12,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Dark_2_PAL": {
+    "name": "Lord of the Underworld",
+    "description": "30.0% increase in Dark attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Dark_3_BossDefeat": {
+    "name": "Dark Damage Enhancement (Large)",
+    "description": "3.0% increase in Dark attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Dark_3_Otomo_Only_Equip": {
+    "name": "Pal Dark Damage Enhancement Lv. 3",
+    "description": "18.0% increase in Dark attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 18,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Dark_4_Otomo_Only_Equip": {
+    "name": "Pal Dark Damage Enhancement Lv. 4",
+    "description": "20.0% increase in Dark attack damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 20,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Dragon_1_BossDefeat": {
+    "name": "Dragon Damage Enhancement (Small)",
+    "description": "1.0% increase in Dragon attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Dragon_1_Otomo_Only_Equip": {
+    "name": "Pal Dragon Damage Enhancement Lv. 1",
+    "description": "6.0% increase in Dragon attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 6,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Dragon_1_PAL": {
+    "name": "Blood of the Dragon",
+    "description": "10.0% increase in Dragon attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Dragon_2_BossDefeat": {
+    "name": "Dragon Damage Enhancement (Medium)",
+    "description": "2.0% increase in Dragon attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Dragon_2_Otomo_Only_Equip": {
+    "name": "Pal Dragon Damage Enhancement Lv. 2",
+    "description": "12.0% increase in Dragon attack damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 12,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Dragon_2_PAL": {
+    "name": "Divine Dragon",
+    "description": "30.0% increase in Dragon attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Dragon_3_BossDefeat": {
+    "name": "Dragon Damage Enhancement (Large)",
+    "description": "3.0% increase in Dragon attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Dragon_3_Otomo_Only_Equip": {
+    "name": "Pal Dragon Damage Enhancement Lv. 3",
+    "description": "18.0% increase in Dragon attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 18,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Dragon_4_Otomo_Only_Equip": {
+    "name": "Pal Dragon Damage Enhancement Lv. 4",
+    "description": "20.0% increase in Dragon attack damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 20,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Earth_1_BossDefeat": {
+    "name": "Ground Damage Enhancement (Small)",
+    "description": "1.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Earth_1_Otomo_Only_Equip": {
+    "name": "Pal Ground Damage Enhancement Lv. 1",
+    "description": "6.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 6,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Earth_1_PAL": {
+    "name": "Power of Gaia",
+    "description": "10.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Earth_2_BossDefeat": {
+    "name": "Ground Damage Enhancement (Medium)",
+    "description": "2.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Earth_2_Otomo_Only_Equip": {
+    "name": "Pal Ground Damage Enhancement Lv. 2",
+    "description": "12.0% increase in Earth attack damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 12,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Earth_2_PAL": {
+    "name": "Earth Emperor",
+    "description": "30.0% increase in Earth attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Earth_3_BossDefeat": {
+    "name": "Ground Damage Enhancement (Large)",
+    "description": "3.0% increase in Earth attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Earth_3_Otomo_Only_Equip": {
+    "name": "Pal Ground Damage Enhancement Lv. 3",
+    "description": "18.0% increase in Earth attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 18,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Earth_4_Otomo_Only_Equip": {
+    "name": "Pal Ground Damage Enhancement Lv. 4",
+    "description": "20.0% increase in Earth attack damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementBoost_Earth",
+        "value": 20,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Electricity_1_BossDefeat": {
+    "name": "Electric Damage Enhancement (Small)",
+    "description": "1.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Electricity_1_Otomo_Only_Equip": {
+    "name": "Pal Electric Damage Enhancement Lv. 1",
+    "description": "6.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 6,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Electricity_2_BossDefeat": {
+    "name": "Electric Damage Enhancement (Medium)",
+    "description": "2.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Electricity_2_Otomo_Only_Equip": {
+    "name": "Pal Electric Damage Enhancement Lv. 2",
+    "description": "12.0% increase in Lightning attack damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 12,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Electricity_3_BossDefeat": {
+    "name": "Electric Damage Enhancement (Large)",
+    "description": "3.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Electricity_3_Otomo_Only_Equip": {
+    "name": "Pal Electric Damage Enhancement Lv. 3",
+    "description": "18.0% increase in Lightning attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 18,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Electricity_4_Otomo_Only_Equip": {
+    "name": "Pal Electric Damage Enhancement Lv. 4",
+    "description": "20.0% increase in Lightning attack damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 20,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Fire_1_BossDefeat": {
+    "name": "Fire Damage Enhancement (Small)",
+    "description": "1.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Fire_1_Otomo_Only_Equip": {
+    "name": "Pal Fire Damage Enhancement Lv. 1",
+    "description": "6.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 6,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Fire_1_PAL": {
+    "name": "Pyromaniac",
+    "description": "10.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Fire_2_BossDefeat": {
+    "name": "Fire Damage Enhancement (Medium)",
+    "description": "2.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Fire_2_Otomo_Only_Equip": {
+    "name": "Pal Fire Damage Enhancement Lv. 2",
+    "description": "12.0% increase in Fire attack damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 12,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Fire_2_PAL": {
+    "name": "Flame Emperor",
+    "description": "30.0% increase in Fire attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Fire_3_BossDefeat": {
+    "name": "Fire Damage Enhancement (Large)",
+    "description": "3.0% increase in Fire attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Fire_3_Otomo_Only_Equip": {
+    "name": "Pal Fire Damage Enhancement Lv. 3",
+    "description": "18.0% increase in Fire attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 18,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Fire_4_Otomo_Only_Equip": {
+    "name": "Pal Fire Damage Enhancement Lv. 4",
+    "description": "20.0% increase in Fire attack damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 20,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Ice_1_BossDefeat": {
+    "name": "Ice Damage Enhancement (Small)",
+    "description": "1.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Ice_1_Otomo_Only_Equip": {
+    "name": "Pal Ice Damage Enhancement Lv. 1",
+    "description": "6.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 6,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Ice_1_PAL": {
+    "name": "Coldblooded",
+    "description": "10.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Ice_2_BossDefeat": {
+    "name": "Ice Damage Enhancement (Medium)",
+    "description": "2.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Ice_2_Otomo_Only_Equip": {
+    "name": "Pal Ice Damage Enhancement Lv. 2",
+    "description": "12.0% increase in Ice attack damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 12,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Ice_2_PAL": {
+    "name": "Ice Emperor",
+    "description": "30.0% increase in Ice attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Ice_3_BossDefeat": {
+    "name": "Ice Damage Enhancement (Large)",
+    "description": "3.0% increase in Ice attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Ice_3_Otomo_Only_Equip": {
+    "name": "Pal Ice Damage Enhancement Lv. 3",
+    "description": "18.0% increase in Ice attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 18,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Ice_4_Otomo_Only_Equip": {
+    "name": "Pal Ice Damage Enhancement Lv. 4",
+    "description": "20.0% increase in Ice attack damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementBoost_Ice",
+        "value": 20,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Leaf_1_BossDefeat": {
+    "name": "Grass Damage Enhancement (Small)",
+    "description": "1.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Leaf_1_Otomo_Only_Equip": {
+    "name": "Pal Grass Damage Enhancement Lv. 1",
+    "description": "6.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 6,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Leaf_1_PAL": {
+    "name": "Fragrant Foliage",
+    "description": "10.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Leaf_2_BossDefeat": {
+    "name": "Grass Damage Enhancement (Medium)",
+    "description": "2.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Leaf_2_Otomo_Only_Equip": {
+    "name": "Pal Grass Damage Enhancement Lv. 2",
+    "description": "12.0% increase in Grass attack damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 12,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Leaf_2_PAL": {
+    "name": "Spirit Emperor",
+    "description": "30.0% increase in Grass attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Leaf_3_BossDefeat": {
+    "name": "Grass Damage Enhancement (Large)",
+    "description": "3.0% increase in Grass attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Leaf_3_Otomo_Only_Equip": {
+    "name": "Pal Grass Damage Enhancement Lv. 3",
+    "description": "18.0% increase in Grass attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 18,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Leaf_4_Otomo_Only_Equip": {
+    "name": "Pal Grass Damage Enhancement Lv. 4",
+    "description": "20.0% increase in Grass attack damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 20,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Normal_1_BossDefeat": {
+    "name": "Neutral Damage Enhancement (Small)",
+    "description": "1.0% increase in Neutral attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Normal_1_Otomo_Only_Equip": {
+    "name": "Pal Neutral Damage Enhancement Lv. 1",
+    "description": "6.0% increase in Neutral attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 6,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Normal_1_PAL": {
+    "name": "Spirit of Zen",
+    "description": "10.0% increase in Neutral attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Normal_2_BossDefeat": {
+    "name": "Neutral Damage Enhancement (Medium)",
+    "description": "2.0% increase in Neutral attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Normal_2_Otomo_Only_Equip": {
+    "name": "Pal Neutral Damage Enhancement Lv. 2",
+    "description": "12.0% increase in Neutral attack damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 12,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Normal_2_PAL": {
+    "name": "Celestial Emperor",
+    "description": "30.0% increase in Neutral attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Normal_3_BossDefeat": {
+    "name": "Neutral Damage Enhancement (Large)",
+    "description": "3.0% increase in Neutral attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Normal_3_Otomo_Only_Equip": {
+    "name": "Pal Neutral Damage Enhancement Lv. 3",
+    "description": "18.0% increase in Neutral attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 18,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Normal_4_Otomo_Only_Equip": {
+    "name": "Pal Neutral Damage Enhancement Lv. 4",
+    "description": "20.0% increase in Neutral attack damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 20,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Thunder_1_PAL": {
+    "name": "Capacitor",
+    "description": "10.0% increase in Lightning attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Thunder_2_PAL": {
+    "name": "Lord of Lightning",
+    "description": "30.0% increase in Lightning attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementBoost_Water_1_BossDefeat": {
+    "name": "Water Damage Enhancement (Small)",
+    "description": "1.0% increase in Water attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Water_1_Otomo_Only_Equip": {
+    "name": "Pal Water Damage Enhancement Lv. 1",
+    "description": "6.0% increase in Water attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 6,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Water_2_BossDefeat": {
+    "name": "Water Damage Enhancement (Medium)",
+    "description": "2.0% increase in Water attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 2,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Water_2_Otomo_Only_Equip": {
+    "name": "Pal Water Damage Enhancement Lv. 2",
+    "description": "12.0% increase in Water attack damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 12,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Water_3_BossDefeat": {
+    "name": "Water Damage Enhancement (Large)",
+    "description": "3.0% increase in Water attack damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 3,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Water_3_Otomo_Only_Equip": {
+    "name": "Pal Water Damage Enhancement Lv. 3",
+    "description": "18.0% increase in Water attack damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 18,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementBoost_Water_4_Otomo_Only_Equip": {
+    "name": "Pal Water Damage Enhancement Lv. 4",
+    "description": "20.0% increase in Water attack damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 20,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "ElementResist_Aqua_1": {
+    "name": "Water Damage Reduction Lv. 1",
+    "description": "15.0% decrease in incoming Water damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Water",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Aqua_1_PAL": {
+    "name": "Waterproof",
+    "description": "10.0% decrease in incoming Water damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Water",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Aqua_2": {
+    "name": "Water Damage Reduction Lv. 2",
+    "description": "25.0% decrease in incoming Water damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementResist_Water",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Aqua_3": {
+    "name": "Water Damage Reduction Lv. 3",
+    "description": "30.0% decrease in incoming Water damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementResist_Water",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Aqua_4": {
+    "name": "Water Damage Reduction Lv. 4",
+    "description": "35.0% decrease in incoming Water damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementResist_Water",
+        "value": 35,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Dark_1": {
+    "name": "Dark Damage Reduction Lv. 1",
+    "description": "15.0% decrease in incoming Dark damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Dark",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Dark_1_PAL": {
+    "name": "Cheery",
+    "description": "10.0% decrease in incoming Dark damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Dark",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Dark_2": {
+    "name": "Dark Damage Reduction Lv. 2",
+    "description": "25.0% decrease in incoming Dark damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementResist_Dark",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Dark_3": {
+    "name": "Dark Damage Reduction Lv. 3",
+    "description": "30.0% decrease in incoming Dark damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementResist_Dark",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Dark_4": {
+    "name": "Dark Damage Reduction Lv. 4",
+    "description": "35.0% decrease in incoming Dark damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementResist_Dark",
+        "value": 35,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Dragon_1": {
+    "name": "Dragon Damage Reduction Lv. 1",
+    "description": "15.0% decrease in incoming Dragon damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Dragon",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Dragon_1_PAL": {
+    "name": "Dragonkiller",
+    "description": "10.0% decrease in incoming Dragon damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Dragon",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Dragon_2": {
+    "name": "Dragon Damage Reduction Lv. 2",
+    "description": "25.0% decrease in incoming Dragon damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementResist_Dragon",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Dragon_3": {
+    "name": "Dragon Damage Reduction Lv. 3",
+    "description": "30.0% decrease in incoming Dragon damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementResist_Dragon",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Dragon_4": {
+    "name": "Dragon Damage Reduction Lv. 4",
+    "description": "35.0% decrease in incoming Dragon damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementResist_Dragon",
+        "value": 35,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Earth_1": {
+    "name": "Earth Damage Reduction Lv. 1",
+    "description": "15.0% decrease in incoming Earth damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Earth",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Earth_1_PAL": {
+    "name": "Earthquake Resistant",
+    "description": "10.0% decrease in incoming Earth damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Earth",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Earth_2": {
+    "name": "Earth Damage Reduction Lv. 2",
+    "description": "25.0% decrease in incoming Earth damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementResist_Earth",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Earth_3": {
+    "name": "Earth Damage Reduction Lv. 3",
+    "description": "30.0% decrease in incoming Earth damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementResist_Earth",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Earth_4": {
+    "name": "Ground Damage Reduction Lv. 4",
+    "description": "35.0% decrease in incoming Earth damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementResist_Earth",
+        "value": 35,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Fire_1": {
+    "name": "Fire Damage Reduction Lv. 1",
+    "description": "15.0% decrease in incoming Fire damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Fire",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Fire_1_PAL": {
+    "name": "Suntan Lover",
+    "description": "10.0% decrease in incoming Fire damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Fire",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Fire_2": {
+    "name": "Fire Damage Reduction Lv. 2",
+    "description": "25.0% decrease in incoming Fire damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementResist_Fire",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Fire_3": {
+    "name": "Fire Damage Reduction Lv. 3",
+    "description": "30.0% decrease in incoming Fire damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementResist_Fire",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Fire_4": {
+    "name": "Fire Damage Reduction Lv. 4",
+    "description": "35.0% decrease in incoming Fire damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementResist_Fire",
+        "value": 35,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Ice_1": {
+    "name": "Ice Damage Reduction Lv. 1",
+    "description": "15.0% decrease in incoming Ice damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Ice",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Ice_1_PAL": {
+    "name": "Heated Body",
+    "description": "10.0% decrease in incoming Ice damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Ice",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Ice_2": {
+    "name": "Ice Damage Reduction Lv. 2",
+    "description": "25.0% decrease in incoming Ice damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementResist_Ice",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Ice_3": {
+    "name": "Ice Damage Reduction Lv. 3",
+    "description": "30.0% decrease in incoming Ice damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementResist_Ice",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Ice_4": {
+    "name": "Ice Damage Reduction Lv. 4",
+    "description": "35.0% decrease in incoming Ice damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementResist_Ice",
+        "value": 35,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Leaf_1": {
+    "name": "Grass Damage Reduction Lv. 1",
+    "description": "15.0% decrease in incoming Grass damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Leaf",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Leaf_1_PAL": {
+    "name": "Botanical Barrier",
+    "description": "10.0% decrease in incoming Grass damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Leaf",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Leaf_2": {
+    "name": "Grass Damage Reduction Lv. 2",
+    "description": "25.0% decrease in incoming Grass damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementResist_Leaf",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Leaf_3": {
+    "name": "Grass Damage Reduction Lv. 3",
+    "description": "30.0% decrease in incoming Grass damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementResist_Leaf",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Leaf_4": {
+    "name": "Grass Damage Reduction Lv. 4",
+    "description": "35.0% decrease in incoming Grass damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementResist_Leaf",
+        "value": 35,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Normal_1": {
+    "name": "Neutral Damage Reduction Lv. 1",
+    "description": "15.0% decrease in incoming Neutral damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Normal",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Normal_1_PAL": {
+    "name": "Abnormal",
+    "description": "10.0% decrease in incoming Neutral damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Normal",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Normal_2": {
+    "name": "Neutral Damage Reduction Lv. 2",
+    "description": "25.0% decrease in incoming Neutral damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementResist_Normal",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Normal_3": {
+    "name": "Neutral Damage Reduction Lv. 3",
+    "description": "30.0% decrease in incoming Neutral damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementResist_Normal",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Normal_4": {
+    "name": "Neutral Damage Reduction Lv. 4",
+    "description": "35.0% decrease in incoming Neutral damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementResist_Normal",
+        "value": 35,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Thunder_1": {
+    "name": "Electric Damage Reduction Lv. 1",
+    "description": "15.0% decrease in incoming Lightning damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Electricity",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Thunder_1_PAL": {
+    "name": "Insulated Body",
+    "description": "10.0% decrease in incoming Lightning damage.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ElementResist_Electricity",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Thunder_2": {
+    "name": "Electric Damage Reduction Lv. 2",
+    "description": "25.0% decrease in incoming Lightning damage.",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ElementResist_Electricity",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Thunder_3": {
+    "name": "Electric Damage Reduction Lv. 3",
+    "description": "30.0% decrease in incoming Lightning damage.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementResist_Electricity",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ElementResist_Thunder_4": {
+    "name": "Electric Damage Reduction Lv. 4",
+    "description": "35.0% decrease in incoming Lightning damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementResist_Electricity",
+        "value": 35,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "EternalFlame": {
+    "name": "Eternal Flame",
+    "description": "30.0% increase to Fire attack damage. 30.0% increase to Lightning attack damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementBoost_Fire",
+        "value": 30,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ElementBoost_Electricity",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "FriendshipPoint_Increase_EquipSkill": {
+    "name": "Party Pals Bond Boost",
+    "description": "Trust +50.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "FriendshipPoint_Increase",
+        "value": 50,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "FullStomach_Down_1_BossDefeat": {
+    "name": "FullStomach_Down_1_BossDefeat",
+    "description": "Hunger decreases <NumBlue_13>+10.0%</> slower.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "FullStomatch_Decrease",
+        "value": -1,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "GYM_NAME_Desert": {
+    "name": "PIDF Commander",
+    "description": "Attack +20.0% MoveSpeed +10.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "MoveSpeed",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "GYM_NAME_Forest": {
+    "name": "Free Pal Alliance Founder",
+    "description": "Attack +20.0% MoveSpeed +10.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "MoveSpeed",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "GYM_NAME_Meadow": {
+    "name": "Rayne Syndicate Boss",
+    "description": "Attack +20.0% Movement Speed increases 10.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "MoveSpeed",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "GYM_NAME_Sakurajima": {
+    "name": "Leader of the Moonflowers",
+    "description": "Attack +20.0% MoveSpeed +10.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "MoveSpeed",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "GYM_NAME_Snow": {
+    "name": "PAL Genetic Research Unit Commander",
+    "description": "Attack +20.0% MoveSpeed +10.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "MoveSpeed",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "GYM_NAME_Viking": {
+    "name": "Jarl of Feybreak",
+    "description": "Attack +20.0% MoveSpeed +10.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "MoveSpeed",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "GYM_NAME_Volcano": {
+    "name": "Brothers of the Eternal Pyre Soul Leader",
+    "description": "Attack +20.0% MoveSpeed +10.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "MoveSpeed",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "HP_ACC_up1": {
+    "name": "Health Up Lv. 1",
+    "description": "Max Health +10.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "MaxHP",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "HP_ACC_up2": {
+    "name": "Health Up Lv. 2",
+    "description": "Max Health +15.0%",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "MaxHP",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "HP_ACC_up3": {
+    "name": "Health Up Lv. 3",
+    "description": "Max Health +20.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "MaxHP",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "HP_ACC_up4": {
+    "name": "Health Up Lv. 4",
+    "description": "Max Health +25.0%",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "MaxHP",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Invader": {
+    "name": "Invader",
+    "description": "30.0% increase in Dark attack damage. 30.0% increase in Dragon attack damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 30,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ElementBoost_Dragon",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Invalid_ToxicGas_EquipSkill": {
+    "name": "Toxic Gas Immunity",
+    "description": "InvalidToxicGas",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "InvalidToxicGas",
+        "value": 0,
+        "target": "ToSelf"
+      },
+      {
+        "type": "InvalidToxicGas",
+        "value": 0,
+        "target": "ToOtomo"
+      }
+    ]
+  },
+  "JumpCount_Increase1": {
+    "name": "Jump Count Increase +1",
+    "description": "Jump Count Increase +1",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "JumpCount_Increase",
+        "value": 1,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "JumpCount_Increase2": {
+    "name": "Jump Count Increase +2",
+    "description": "Jump Count Increase +2",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "JumpCount_Increase",
+        "value": 2,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "JumpCount_Increase3": {
+    "name": "Jump Count Increase +3",
+    "description": "Jump Count Increase +3",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "JumpCount_Increase",
+        "value": 3,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "JumpPower_Increase": {
+    "name": "Jump Power Boost",
+    "description": "Jump Power Boost",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "JumpPower_Increase",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Legend": {
+    "name": "Legend",
+    "description": "Attack +20.0% Defense +20.0% Movement Speed increases 20.0%",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "Defense",
+        "value": 20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "MoveSpeed",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "MaxInventoryWeight_up": {
+    "name": "Max Carrying Capacity Lv. 1",
+    "description": "Carrying Capacity +50.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "MaxInventoryWeight",
+        "value": 50,
+        "target": "ToTrainer"
+      }
+    ]
+  },
+  "MaxInventoryWeight_up2": {
+    "name": "Max Carrying Capacity Lv. 2",
+    "description": "Carrying Capacity +150.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "MaxInventoryWeight",
+        "value": 150,
+        "target": "ToTrainer"
+      }
+    ]
+  },
+  "MaxInventoryWeight_up3": {
+    "name": "Max Carrying Capacity Lv. 3",
+    "description": "Carrying Capacity +200.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "MaxInventoryWeight",
+        "value": 200,
+        "target": "ToTrainer"
+      }
+    ]
+  },
+  "MaxInventoryWeight_up_Equip_1": {
+    "name": "Max Carrying Capacity Lv. 1",
+    "description": "Carrying Capacity +50.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "MaxInventoryWeight",
+        "value": 50,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "MaxInventoryWeight_up_Equip_2": {
+    "name": "Max Carrying Capacity Lv. 2",
+    "description": "Carrying Capacity +100.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "MaxInventoryWeight",
+        "value": 100,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "MaxInventoryWeight_up_Equip_3": {
+    "name": "Max Carrying Capacity Lv. 3",
+    "description": "Carrying Capacity +200.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "MaxInventoryWeight",
+        "value": 200,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "MaxInventoryWeight_up_Equip_4": {
+    "name": "Max Carrying Capacity Lv. 4",
+    "description": "Carrying Capacity +300.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "MaxInventoryWeight",
+        "value": 300,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "MiniNushi": {
+    "name": "Whopper",
+    "description": "5.0% increase to Water attack damage 5.0% increase to Ice attack damage 5.0% increase to defense.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 5,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ElementBoost_Ice",
+        "value": 5,
+        "target": "ToSelf"
+      },
+      {
+        "type": "Defense",
+        "value": 5,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "MoveSpeed_up_1": {
+    "name": "Nimble",
+    "description": "10.0% increase to movement speed.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "MoveSpeed",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "MoveSpeed_up_2": {
+    "name": "Runner",
+    "description": "20.0% increase to movement speed.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "MoveSpeed",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "MoveSpeed_up_3": {
+    "name": "Swift",
+    "description": "30.0% increase to movement speed.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "MoveSpeed",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "MutationPal_Babysitter": {
+    "name": "Babysitter",
+    "description": "While at a base, increases egg production speed by +30.0% and incubation speed by +30.0% for Pals assigned to a Breeding Farm.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "PalEggHatchingSpeed",
+        "value": 30,
+        "target": "ToBuildObject"
+      },
+      {
+        "type": "BreedSpeed_InBaseCamp",
+        "value": 30,
+        "target": "ToBuildObject"
+      }
+    ]
+  },
+  "MutationPal_ExplosionResist": {
+    "name": "Heavily Armored",
+    "description": "<Status_Up>Immune</> to Explosion Damage",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ExplosionResist",
+        "value": 100,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "MutationPal_Immortal": {
+    "name": "Immortality",
+    "description": "Life Steal +5.0% Pal Auto Health Regeneration Rate +100.0% Attack +15.0%",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "LifeSteal",
+        "value": 5,
+        "target": "ToSelf"
+      },
+      {
+        "type": "AutoHPRegeneRate",
+        "value": 100,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ShotAttack",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "MutationPal_Mutant": {
+    "name": "Idiosyncratic",
+    "description": "Pal and Player Auto Health Regeneration Rate +50.0% Defense +25.0% <Status_Up>Immune</> to Poison Damage <Status_Up>Immune</> to Burn Damage",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "AutoHPRegeneRate",
+        "value": 50,
+        "target": "ToSelfAndTrainer"
+      },
+      {
+        "type": "ResistAdditionalEffect_Burn",
+        "value": 100,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ResistAdditionalEffect_Poison",
+        "value": 100,
+        "target": "ToSelf"
+      },
+      {
+        "type": "Defense",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "NightOwl": {
+    "name": "Night Owl",
+    "description": "Tends to nap through the day, due to being nocturnal.",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "NightOwl",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Nocturnal": {
+    "name": "Insomnia",
+    "description": "Does not sleep and continues to work even at night.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "Nocturnal",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "NonKilling": {
+    "name": "Mercy Hit",
+    "description": "Pacifist. Will not reduce the target's Health below 1.",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "NonKilling",
+        "value": 0,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Noukin": {
+    "name": "Musclehead",
+    "description": "Attack +30.0% Work Speed -50.0%",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 30,
+        "target": "ToSelf"
+      },
+      {
+        "type": "CraftSpeed",
+        "value": -50,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Nushi": {
+    "name": "Lunker",
+    "description": "20.0% increase to Water attack damage 20.0% increase to Ice attack damage 20.0% increase to defense.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementBoost_Water",
+        "value": 20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ElementBoost_Ice",
+        "value": 20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "Defense",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "OctaviaArmorVampire": {
+    "name": "Blood Is Fuel",
+    "description": "Absorbs a portion of the damage dealt to restore Health. Does not sleep at night and continues to work.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "LifeSteal",
+        "value": 1,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_ALLAttack_down1": {
+    "name": "Coward",
+    "description": "Attack -10.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": -10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_ALLAttack_down2": {
+    "name": "Pacifist",
+    "description": "Attack -20.0%",
+    "rank": -3,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": -20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_ALLAttack_up1": {
+    "name": "Brave",
+    "description": "Attack +10.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_ALLAttack_up2": {
+    "name": "Ferocious",
+    "description": "Attack +20.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_ALLAttack_up3": {
+    "name": "Demon God",
+    "description": "Attack +30.0% Defense +5.0%",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 30,
+        "target": "ToSelf"
+      },
+      {
+        "type": "Defense",
+        "value": 5,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_CorporateSlave": {
+    "name": "Work Slave",
+    "description": "Work Speed +30.0% Attack -30.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CraftSpeed",
+        "value": 30,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ShotAttack",
+        "value": -30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_FullStomach_Down_1": {
+    "name": "Dainty Eater",
+    "description": "Hunger decreases <NumBlue_13>+10.0%</> slower.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "FullStomatch_Decrease",
+        "value": -10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_FullStomach_Down_2": {
+    "name": "Diet Lover",
+    "description": "Hunger decreases <NumBlue_13>+15.0%</> slower.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "FullStomatch_Decrease",
+        "value": -15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_FullStomach_Down_3": {
+    "name": "Mastery of Fasting",
+    "description": "Hunger decreases <NumBlue_13>+20.0%</> slower.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "FullStomatch_Decrease",
+        "value": -20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_FullStomach_Up_1": {
+    "name": "Glutton",
+    "description": "Hunger decreases <NumRed_13>+10.0%</> faster.",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "FullStomatch_Decrease",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_FullStomach_Up_2": {
+    "name": "Bottomless Stomach",
+    "description": "Hunger decreases <NumRed_13>+15.0%</> faster.",
+    "rank": -2,
+    "effects": [
+      {
+        "type": "FullStomatch_Decrease",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_Sanity_Down_1": {
+    "name": "Positive Thinker",
+    "description": "SAN drops <NumBlue_13>+10.0%</> slower.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "Sanity_Decrease",
+        "value": -10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_Sanity_Down_2": {
+    "name": "Workaholic",
+    "description": "SAN drops <NumBlue_13>+15.0%</> slower.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "Sanity_Decrease",
+        "value": -15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_Sanity_Down_3": {
+    "name": "Heart of the Immovable King",
+    "description": "SAN drops <NumBlue_13>+20.0%</> slower.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "Sanity_Decrease",
+        "value": -20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_Sanity_Up_1": {
+    "name": "Unstable",
+    "description": "SAN drops <NumRed_13>+10.0%</> faster.",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "Sanity_Decrease",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_Sanity_Up_2": {
+    "name": "Destructive",
+    "description": "SAN drops <NumRed_13>+15.0%</> faster.",
+    "rank": -2,
+    "effects": [
+      {
+        "type": "Sanity_Decrease",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_SpiritualInst": {
+    "name": "Mentally unstable",
+    "description": "Work Speed -10.0% Defense -10.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "CraftSpeed",
+        "value": -10,
+        "target": "ToSelf"
+      },
+      {
+        "type": "Defense",
+        "value": -10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_conceited": {
+    "name": "Conceited",
+    "description": "Work Speed +10.0% Defense -10.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CraftSpeed",
+        "value": 10,
+        "target": "ToSelf"
+      },
+      {
+        "type": "Defense",
+        "value": -10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_masochist": {
+    "name": "Masochist",
+    "description": "Defense +15.0% Attack -15.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 15,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ShotAttack",
+        "value": -15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_oraora": {
+    "name": "Aggressive",
+    "description": "Attack +10.0% Defense -10.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 10,
+        "target": "ToSelf"
+      },
+      {
+        "type": "Defense",
+        "value": -10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_rude": {
+    "name": "Hooligan",
+    "description": "Attack +15.0% Work Speed -10.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 15,
+        "target": "ToSelf"
+      },
+      {
+        "type": "CraftSpeed",
+        "value": -10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PAL_sadist": {
+    "name": "Sadist",
+    "description": "Attack +15.0% Defense -15.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 15,
+        "target": "ToSelf"
+      },
+      {
+        "type": "Defense",
+        "value": -15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PalExp_Increase_1_Otomo_Only_Equip": {
+    "name": "Pal EXP Up Lv. 1",
+    "description": "PalExp_Increase +30.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "PalExp_Increase",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PalExp_Increase_2_Otomo_Only_Equip": {
+    "name": "Pal EXP Up Lv. 2",
+    "description": "PalExp_Increase +40.0%",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "PalExp_Increase",
+        "value": 40,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PalExp_Increase_3_Otomo_Only_Equip": {
+    "name": "Pal EXP Up Lv. 3",
+    "description": "PalExp_Increase +50.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "PalExp_Increase",
+        "value": 50,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "PlayerSP_DecreaseRate_Passive": {
+    "name": "Wellness Watcher",
+    "description": "Player Stamina Consumption -<NumBlue_13>5.0</>%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "PlayerSP_DecreaseRate",
+        "value": -5,
+        "target": "ToTrainer"
+      }
+    ]
+  },
+  "Rare": {
+    "name": "Lucky",
+    "description": "Attack +15.0% Defense +15.0% Work Speed +20.0%",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 15,
+        "target": "ToSelf"
+      },
+      {
+        "type": "Defense",
+        "value": 15,
+        "target": "None"
+      },
+      {
+        "type": "CraftSpeed",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "ReloadSpeedUp_Passive": {
+    "name": "Reload Master",
+    "description": "Player Reload Speed +4.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ReloadSpeedUp",
+        "value": 4,
+        "target": "ToTrainer"
+      }
+    ]
+  },
+  "RideJumpCount_Increase1": {
+    "name": "Lightfooted",
+    "description": "Mounted Jump Count +1",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "RideJumpCount_Increase",
+        "value": 1,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "RideJumpCount_Increase2": {
+    "name": "Skymarcher",
+    "description": "Mounted Jump Count +2",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "RideJumpCount_Increase",
+        "value": 2,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SalePrice_Down_1": {
+    "name": "Shabby",
+    "description": "Decrease the value of items when sold by -10.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "ShopSellPrice_Money_Increase",
+        "value": -10,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ShopBuyPrice_Money_Increase",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SalePrice_Up_1": {
+    "name": "Noble",
+    "description": "Increases the value of items when sold by +5.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ShopSellPrice_Money_Increase",
+        "value": 5,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ShopBuyPrice_Money_Increase",
+        "value": -5,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SalePrice_Up_2": {
+    "name": "Fine Furs",
+    "description": "Increases the value of items when sold by +3.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "ShopSellPrice_Money_Increase",
+        "value": 3,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ShopBuyPrice_Money_Increase",
+        "value": -3,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Salvation": {
+    "name": "Savior",
+    "description": "30.0% increase in Neutral attack damage. 30.0% increase in Grass attack damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementBoost_Normal",
+        "value": 30,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ElementBoost_Leaf",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SelfDeathAddItemDrop_up_1": {
+    "name": "Sharing is Caring",
+    "description": "Your Dropped Items + 15.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "SelfDeathAddItemDrop",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SelfDeathAddItemDrop_up_2": {
+    "name": "Service-Minded",
+    "description": "Your Dropped Items + 50.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "SelfDeathAddItemDrop",
+        "value": 50,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SelfDeathAddItemDrop_up_3": {
+    "name": "Lavish Hospitality",
+    "description": "Your Dropped Items + 100.0%",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "SelfDeathAddItemDrop",
+        "value": 100,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SphereModule_Curve": {
+    "name": "Sphere Curve +1",
+    "description": null,
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CurveType",
+        "value": 7,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SphereModule_Curve2": {
+    "name": "Sphere Slider",
+    "description": null,
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CurveType",
+        "value": 8,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SphereModule_Heavy": {
+    "name": "Sphere Weight +1",
+    "description": null,
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CurveType",
+        "value": 16,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SphereModule_Homing": {
+    "name": "Sphere Homing",
+    "description": null,
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CurveType",
+        "value": 19,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SphereModule_Sniper": {
+    "name": "Sphere Range +1",
+    "description": null,
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CurveType",
+        "value": 1,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SphereModule_Sniper2": {
+    "name": "Sphere Range +2",
+    "description": null,
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CurveType",
+        "value": 2,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Stamina_Down_1": {
+    "name": "Sickly",
+    "description": "Max Stamina -25.0% *This effect is only valid for rideable pals.",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "PalSP_Increase",
+        "value": -25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Stamina_Up_1": {
+    "name": "Infinite Stamina",
+    "description": "Max stamina +50.0% *This effect is only valid for rideable pals.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "PalSP_Increase",
+        "value": 50,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Stamina_Up_2": {
+    "name": "Fit as a Fiddle",
+    "description": "Max stamina +25.0% *This effect is only valid for rideable pals.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "PalSP_Increase",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Stamina_Up_3": {
+    "name": "Eternal Engine",
+    "description": "Max stamina +75.0% *This effect is only valid for rideable pals.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "PalSP_Increase",
+        "value": 75,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "StonDrop_Boost_1": {
+    "name": "Mining Yield Up Lv. 1",
+    "description": "Slightly increases the drop amount of Stone and Ore.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CollectItemDrop_NaturalObject",
+        "value": 50,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "StonDrop_Boost_2": {
+    "name": "Mining Yield Up Lv. 2",
+    "description": "Increases the drop amount of Stone and Ore.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CollectItemDrop_NaturalObject",
+        "value": 80,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "StonDrop_Boost_3": {
+    "name": "Mining Yield Up Lv. 3",
+    "description": "Greatly increases the drop amount of Stone and Ore.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "CollectItemDrop_NaturalObject",
+        "value": 120,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "StonDrop_Boost_4": {
+    "name": "Mining Yield Up Lv. 4",
+    "description": "Significantly increases the drop amount of Stone and Ore.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "CollectItemDrop_NaturalObject",
+        "value": 160,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "StonDrop_Boost_5": {
+    "name": "Mining Yield Up Lv. 5",
+    "description": "Massively increases the drop amount of Stone and Ore.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "CollectItemDrop_NaturalObject",
+        "value": 200,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "StonWoodDrop_Boost": {
+    "name": "Logging/Mining Yield Up",
+    "description": "Significantly increases the drop amount of Wood, Stone, and Ore.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "CollectItemDrop_NaturalObject",
+        "value": 160,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SwimSpeed_up_1": {
+    "name": "Sleek Stroke",
+    "description": "30.0% increase movement speed on water.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "SwimSpeed",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SwimSpeed_up_2": {
+    "name": "Ace Swimmer",
+    "description": "40.0% increase movement speed on water.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "SwimSpeed",
+        "value": 40,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "SwimSpeed_up_3": {
+    "name": "King of the Waves",
+    "description": "50.0% increase movement speed on water.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "SwimSpeed",
+        "value": 50,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "TemperatureResist_Cold1": {
+    "name": "Cold Resistance Lv. 1",
+    "description": "TemperatureResist_Cold +1.0",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "TemperatureResist_Cold",
+        "value": 1,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "TemperatureResist_Cold2": {
+    "name": "Cold Resistance Lv. 2",
+    "description": "TemperatureResist_Cold +2.0",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "TemperatureResist_Cold",
+        "value": 2,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "TemperatureResist_Cold3": {
+    "name": "Cold Resistance Lv. 3",
+    "description": "TemperatureResist_Cold +3.0",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "TemperatureResist_Cold",
+        "value": 3,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "TemperatureResist_Heat1": {
+    "name": "Heat Resistance Lv. 1",
+    "description": "TemperatureResist_Heat +1.0",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "TemperatureResist_Heat",
+        "value": 1,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "TemperatureResist_Heat1Cold1": {
+    "name": "Heat Resistance Lv. 1 / Cold Resistance Lv. 1",
+    "description": "TemperatureResist_Cold +1.0 TemperatureResist_Heat +1.0",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "TemperatureResist_Cold",
+        "value": 1,
+        "target": "ToSelf"
+      },
+      {
+        "type": "TemperatureResist_Heat",
+        "value": 1,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "TemperatureResist_Heat2": {
+    "name": "Heat Resistance Lv. 2",
+    "description": "TemperatureResist_Heat +2.0",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "TemperatureResist_Heat",
+        "value": 2,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "TemperatureResist_Heat2Cold2": {
+    "name": "Heat Resistance Lv. 2 / Cold Resistance Lv. 2",
+    "description": "TemperatureResist_Cold +2.0 TemperatureResist_Heat +2.0",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "TemperatureResist_Cold",
+        "value": 2,
+        "target": "ToSelf"
+      },
+      {
+        "type": "TemperatureResist_Heat",
+        "value": 2,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "TemperatureResist_Heat3": {
+    "name": "Heat Resistance Lv. 3",
+    "description": "TemperatureResist_Heat +3.0",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "TemperatureResist_Heat",
+        "value": 3,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "TemperatureResist_Heat3Cold3": {
+    "name": "Heat Resistance Lv. 3 / Cold Resistance Lv. 3",
+    "description": "TemperatureResist_Cold +3.0 TemperatureResist_Heat +3.0",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "TemperatureResist_Cold",
+        "value": 3,
+        "target": "ToSelf"
+      },
+      {
+        "type": "TemperatureResist_Heat",
+        "value": 3,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Test_PalEgg_HatchingSpeed_Up": {
+    "name": "Philanthropist",
+    "description": "When assigned to a Breeding Farm, breeding speed is increased by 100.0%.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "BreedSpeed",
+        "value": 100,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "TrainerATK_UP_1": {
+    "name": "Vanguard",
+    "description": "10.0% increase in Player Attack.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 10,
+        "target": "ToTrainer"
+      }
+    ]
+  },
+  "TrainerDEF_UP_1": {
+    "name": "Stronghold Strategist",
+    "description": "10.0% increase in Player Defense.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 10,
+        "target": "ToTrainer"
+      }
+    ]
+  },
+  "TrainerLogging_up1": {
+    "name": "Logging Foreman",
+    "description": "25.0% increase in Player Logging Efficiency.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "Logging",
+        "value": 25,
+        "target": "ToTrainer"
+      }
+    ]
+  },
+  "TrainerMining_up1": {
+    "name": "Mine Foreman",
+    "description": "25.0% increase in Player Mining Efficiency.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "Mining",
+        "value": 25,
+        "target": "ToTrainer"
+      }
+    ]
+  },
+  "TrainerWorkSpeed_UP_1": {
+    "name": "Motivational Leader",
+    "description": "25.0% increase in Player Work Speed.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "CraftSpeed",
+        "value": 25,
+        "target": "ToTrainer"
+      }
+    ]
+  },
+  "Vampire": {
+    "name": "Vampiric",
+    "description": "Absorbs a portion of the damage dealt to restore Health. Does not sleep at night and continues to work.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "Nocturnal",
+        "value": 0,
+        "target": "ToSelf"
+      },
+      {
+        "type": "LifeSteal",
+        "value": 5,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "Witch": {
+    "name": "Siren of the Void",
+    "description": "30.0% increase in Dark attack damage. 30.0% increase in Ice attack damage.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "ElementBoost_Dark",
+        "value": 30,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ElementBoost_Ice",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "WoodDrop_Boost_1": {
+    "name": "Logging Yield Up Lv. 1",
+    "description": "Slightly increases the drop amount of Wood.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CollectItemDrop_NaturalObject",
+        "value": 50,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "WoodDrop_Boost_2": {
+    "name": "Logging Yield Up Lv. 2",
+    "description": "Increases the drop amount of Wood.",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CollectItemDrop_NaturalObject",
+        "value": 80,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "WoodDrop_Boost_3": {
+    "name": "Logging Yield Up Lv. 3",
+    "description": "Greatly increases the drop amount of Wood.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "CollectItemDrop_NaturalObject",
+        "value": 120,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "WoodDrop_Boost_4": {
+    "name": "Logging Yield Up Lv. 4",
+    "description": "Significantly increases the drop amount of Wood.",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "CollectItemDrop_NaturalObject",
+        "value": 160,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "WoodDrop_Boost_5": {
+    "name": "Logging Yield Up Lv. 5",
+    "description": "Massively increases the drop amount of Wood.",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "CollectItemDrop_NaturalObject",
+        "value": 200,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "WorkSpeed_ACC_up1": {
+    "name": "Speedy Worker Lv. 1",
+    "description": "Work Speed +10.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "CraftSpeed",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "WorkSpeed_ACC_up2": {
+    "name": "Speedy Worker Lv. 2",
+    "description": "Work Speed +15.0%",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "CraftSpeed",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "WorkSpeed_ACC_up3": {
+    "name": "Speedy Worker Lv. 3",
+    "description": "Work Speed +20.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "CraftSpeed",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "WorkSpeed_ACC_up4": {
+    "name": "Speedy Worker Lv. 4",
+    "description": "Work Speed +25.0%",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "CraftSpeed",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "WorkSuitabilityAddRank_MonsterFarm_1": {
+    "name": "Farmhand",
+    "description": "Farming's Work Suitability<NumBlue_13> +1</>",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "WorkSuitabilityAddRank_MonsterFarm",
+        "value": 1,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "WorkSuitabilityAddRank_MonsterFarm_2": {
+    "name": "Ranch Master",
+    "description": "Farming's Work Suitability<NumBlue_13> +2</>",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "WorkSuitabilityAddRank_MonsterFarm",
+        "value": 2,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "WorldTree_ATK": {
+    "name": "Twin-Edged Holy Blade",
+    "description": "Attack <NumBlue_13>+</>50.0% Defense -30.0% World Tree resources will not vanish when approached.",
+    "rank": 5,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 50,
+        "target": "ToSelf"
+      },
+      {
+        "type": "Defense",
+        "value": -30,
+        "target": "ToSelf"
+      },
+      {
+        "type": "WorldTreeDecayImmunity",
+        "value": 0,
+        "target": "ToSelfAndTrainer"
+      }
+    ]
+  },
+  "WorldTree_ATK_DEF": {
+    "name": "God of Destruction",
+    "description": "Attack <NumBlue_13>+</>40.0% Defense <NumBlue_13>+</>20.0% Max Health -50.0% World Tree resources will not vanish when approached.",
+    "rank": 5,
+    "effects": [
+      {
+        "type": "ShotAttack",
+        "value": 40,
+        "target": "ToSelf"
+      },
+      {
+        "type": "Defense",
+        "value": 20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "MaxHP",
+        "value": -50,
+        "target": "ToSelf"
+      },
+      {
+        "type": "WorldTreeDecayImmunity",
+        "value": 0,
+        "target": "ToSelfAndTrainer"
+      }
+    ]
+  },
+  "WorldTree_CraftSpeed": {
+    "name": "Demon’s Hand",
+    "description": "Work Speed <NumBlue_13>+</>90.0<NumBlue_13>%</> SAN dreceases <NumRed_13>+15.0% faster</> World Tree harvestables won't vanish when approached.",
+    "rank": 5,
+    "effects": [
+      {
+        "type": "CraftSpeed",
+        "value": 90,
+        "target": "ToSelf"
+      },
+      {
+        "type": "Sanity_Decrease",
+        "value": 15,
+        "target": "ToSelf"
+      },
+      {
+        "type": "WorldTreeDecayImmunity",
+        "value": 0,
+        "target": "ToSelfAndTrainer"
+      }
+    ]
+  },
+  "WorldTree_DEF": {
+    "name": "Sanctified Meat Shield",
+    "description": "Defense <NumBlue_13>+</>50.0% Attack -30.0% World Tree resources will not vanish when approached.",
+    "rank": 5,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 50,
+        "target": "ToSelf"
+      },
+      {
+        "type": "ShotAttack",
+        "value": -30,
+        "target": "ToSelf"
+      },
+      {
+        "type": "WorldTreeDecayImmunity",
+        "value": 0,
+        "target": "ToSelfAndTrainer"
+      }
+    ]
+  },
+  "WorldTree_FullStomach": {
+    "name": "World Tree Seedbed",
+    "description": "Decrease Hunger depletion rate by <NumBlue_13>+50.0%</> HP -20.0<NumRed_13>%</> World Tree resources will not vanish when approached.",
+    "rank": 5,
+    "effects": [
+      {
+        "type": "FullStomatch_Decrease",
+        "value": -50,
+        "target": "ToSelf"
+      },
+      {
+        "type": "MaxHP",
+        "value": -20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "WorldTreeDecayImmunity",
+        "value": 0,
+        "target": "ToSelfAndTrainer"
+      }
+    ]
+  },
+  "WorldTree_MoveSpeed": {
+    "name": "Dimensional Leap",
+    "description": "Movement Speed <NumBlue_13>+</>50.0<NumBlue_13>%</> Increases Hunger depletion rate by <NumRed_13>+15.0%</> World Tree resources will not vanish when approached.",
+    "rank": 5,
+    "effects": [
+      {
+        "type": "MoveSpeed",
+        "value": 50,
+        "target": "ToSelf"
+      },
+      {
+        "type": "FullStomatch_Decrease",
+        "value": 15,
+        "target": "ToSelf"
+      },
+      {
+        "type": "WorldTreeDecayImmunity",
+        "value": 0,
+        "target": "ToSelfAndTrainer"
+      }
+    ]
+  },
+  "WorldTree_Sanity": {
+    "name": "Hermit Sage",
+    "description": "SAN depletion rate -<NumBlue_13>50.0%</> Work Speed -20.0<NumRed_13>%</> World Tree resources will not vanish when approached.",
+    "rank": 5,
+    "effects": [
+      {
+        "type": "Sanity_Decrease",
+        "value": -50,
+        "target": "ToSelf"
+      },
+      {
+        "type": "CraftSpeed",
+        "value": -20,
+        "target": "ToSelf"
+      },
+      {
+        "type": "WorldTreeDecayImmunity",
+        "value": 0,
+        "target": "ToSelfAndTrainer"
+      }
+    ]
+  },
+  "YakushimaDagameBoost_Magic_Equip": {
+    "name": "Hallowed Power: Magic",
+    "description": "DamageUpIfEquipped_YakushimaMagicWeapon +20.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "DamageUpIfEquipped_YakushimaMagicWeapon",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "YakushimaDagameBoost_Melee_Equip": {
+    "name": "Hallowed Power: Close Range",
+    "description": "DamageUpIfEquipped_YakushimaMeleeWeapon +20.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "DamageUpIfEquipped_YakushimaMeleeWeapon",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "YakushimaDagameBoost_Ranged_Equip": {
+    "name": "Hallowed Power: Ranged",
+    "description": "DamageUpIfEquipped_YakushimaRangedWeapon +20.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "DamageUpIfEquipped_YakushimaRangedWeapon",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "YakushimaDagameBoost_Summon_Equip": {
+    "name": "Hallowed Power: Summon",
+    "description": "DamageUpIfEquipped_YakushimaSummonWeapon +20.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "DamageUpIfEquipped_YakushimaSummonWeapon",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "YakushimaProtection_Equip": {
+    "name": "Hallowed Guard",
+    "description": "ForYakushimaDefenceRate +30.0%",
+    "rank": -1,
+    "effects": [
+      {
+        "type": "ForYakushimaDefenceRate",
+        "value": 30,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "defense_ACC_up1": {
+    "name": "Defense Up Lv. 1",
+    "description": "Defense +10.0%",
+    "rank": 1,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 10,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "defense_ACC_up2": {
+    "name": "Defense Up Lv. 2",
+    "description": "Defense +15.0%",
+    "rank": 2,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 15,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "defense_ACC_up3": {
+    "name": "Defense Up Lv. 3",
+    "description": "Defense +20.0%",
+    "rank": 3,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 20,
+        "target": "ToSelf"
+      }
+    ]
+  },
+  "defense_ACC_up4": {
+    "name": "Defense Up Lv. 4",
+    "description": "Defense +25.0%",
+    "rank": 4,
+    "effects": [
+      {
+        "type": "Defense",
+        "value": 25,
+        "target": "ToSelf"
+      }
+    ]
+  }
+}
