@@ -3992,6 +3992,12 @@ function PalDetailPanel({
   const combatV2 =
     score.combatIntelligenceV2;
 
+  const displayedPrimaryUse =
+    pal.location.type === "PARTY" &&
+    combatV2.generalCeiling >= 60
+      ? "Combat"
+      : score.bestRole;
+
   const passiveIntelligence =
     pal.passives.map(getPassiveTraitIntelligence);
 
@@ -4155,7 +4161,7 @@ function PalDetailPanel({
                   {bucketLabel}
                 </p>
                 <p className="mt-1 text-[17px] text-neutral-400">
-                  Primary use: {score.bestRole}
+                  Primary use: {displayedPrimaryUse}
                 </p>
               </div>
               <span className="rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-3 py-1.5 text-[15px] uppercase tracking-wide text-cyan-100">
@@ -4399,7 +4405,7 @@ function PalDetailPanel({
                 <p className="mt-3 text-[17px] text-violet-200">
                   {score.investmentPlan.actions.condense
                     ? `✓ Condensation recommended · Current rank ${partnerSkillDisplay.rank}`
-                    : `Rank scaling documented, but condensation is not recommended for this copy's ${score.bestRole.toLowerCase()} role.`}
+                    : `Rank scaling documented, but condensation is not recommended for this copy's ${displayedPrimaryUse.toLowerCase()} role.`}
                 </p>
               )}
             </div>
