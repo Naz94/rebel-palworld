@@ -1,4 +1,9 @@
 // PARTNER_CLASSIFICATION_V2_SAFE
+import {
+  calculateCombatIntelligenceV2,
+  type PalCombatIntelligenceV2,
+} from "./combat-intelligence-v2";
+
 export type PalPassive = {
   internalId: string;
   name: string;
@@ -295,6 +300,12 @@ export type RealPalScore = {
    * Current investment-aware strength.
    */
   currentPower: number;
+
+  /**
+   * Transparent Combat V2 breakdown. This keeps offense,
+   * durability, passive fit and current investment separate.
+   */
+  combatIntelligenceV2: PalCombatIntelligenceV2;
 
   base: number;
 
@@ -2853,6 +2864,11 @@ function scorePal(
   const combat =
     currentPower;
 
+  const combatIntelligenceV2 =
+    calculateCombatIntelligenceV2(
+      pal,
+    );
+
   const combatReasons =
     getCombatReasons(pal);
 
@@ -3049,6 +3065,7 @@ function scorePal(
     combat,
     combatPotential,
     currentPower,
+    combatIntelligenceV2,
     base,
     farming,
     breeding,
