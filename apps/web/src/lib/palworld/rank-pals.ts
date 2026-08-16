@@ -4192,7 +4192,7 @@ function buildInvestmentPlan(
   const condense =
     scalablePartner &&
     (
-      (supportWinner &&
+      ((supportWinner || combatInvestmentCandidate) &&
         partnerSupportScaling) ||
       (baseWinner &&
         partnerBaseScaling) ||
@@ -4227,13 +4227,24 @@ function buildInvestmentPlan(
   }
 
   if (condense) {
+    const partnerDescription =
+      getPartnerSkillDescription(pal);
+    const palTeamScaling =
+      partnerSupportScaling &&
+      (
+        partnerDescription.includes("attack of") &&
+        partnerDescription.includes("pals")
+      );
+
     const scalingRole =
       ranchCandidate &&
       partnerFarmingScaling
         ? "ranch / farming"
-        : supportWinner &&
+        : (supportWinner || combatInvestmentCandidate) &&
             partnerSupportScaling
-          ? "Player Support"
+          ? palTeamScaling
+            ? "Pal team support"
+            : "Player Support"
           : baseWinner &&
               partnerBaseScaling
             ? "base work"
