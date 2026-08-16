@@ -259,7 +259,12 @@ export function getPassiveTraitIntelligence(
 
   if (movement) {
     addUnique(categories, "Movement / Traversal");
-    addUnique(bestFor, "Mounts and traversal Pals");
+    addUnique(
+      bestFor,
+      key === "ace swimmer"
+        ? "Swimming mounts"
+        : "Mounts and traversal Pals",
+    );
   }
 
   if (playerSupport) {
@@ -275,6 +280,10 @@ export function getPassiveTraitIntelligence(
   if (categories.length === 0) {
     addUnique(categories, disposition === "BAD" ? "Negative Trait" : "General Utility");
     addUnique(bestFor, disposition === "BAD" ? "Avoid inheriting where possible" : "Specialised builds");
+  }
+
+  if (disposition === "BAD") {
+    bestFor.splice(0, bestFor.length, "Avoid on role-focused builds");
   }
 
   const breedingUseful =
