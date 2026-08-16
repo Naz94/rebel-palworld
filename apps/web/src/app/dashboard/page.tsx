@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import AddServerForm from "./add-server-form";
@@ -44,7 +45,16 @@ export default async function DashboardPage() {
               </p>
             </div>
 
-            <SignOutButton />
+            <div className="flex items-center gap-3">
+              <Link
+                href="/pals"
+                className="rounded-xl bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-neutral-200"
+              >
+                View My Pals
+              </Link>
+
+              <SignOutButton />
+            </div>
           </div>
         </header>
 
