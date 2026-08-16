@@ -4113,6 +4113,30 @@ function PalDetailPanel({
                 ))}
               </div>
 
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                <div className="rounded-xl border border-emerald-400/15 bg-emerald-400/[0.04] p-3">
+                  <p className="text-[9px] uppercase tracking-[0.14em] text-emerald-300">
+                    Naturally Strong Against
+                  </p>
+                  <p className="mt-1 text-[10px] text-neutral-300">
+                    {combatV2.strongAgainst.length > 0
+                      ? combatV2.strongAgainst.join(" · ")
+                      : "No natural type advantage"}
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-red-400/15 bg-red-400/[0.04] p-3">
+                  <p className="text-[9px] uppercase tracking-[0.14em] text-red-300">
+                    Threatened By
+                  </p>
+                  <p className="mt-1 text-[10px] text-neutral-300">
+                    {combatV2.weakAgainst.length > 0
+                      ? combatV2.weakAgainst.join(" · ")
+                      : "No listed type weakness"}
+                  </p>
+                </div>
+              </div>
+
               <p className="mt-3 text-[9px] leading-relaxed text-neutral-600">
                 General score only. Enemy matchup and active-skill power/cooldown will be added before Rebel treats cross-species rankings as authoritative.
               </p>
