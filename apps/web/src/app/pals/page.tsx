@@ -4542,7 +4542,7 @@ function PalDetailPanel({
                   <p className="mt-2 text-[15px] leading-relaxed text-neutral-500">
                     These are documented possible drops across Partner Skill ranks.
                     Rebel does not yet claim that every item is available at the
-                    current Rank {pal.partnerSkill?.rank ?? 1}.
+                    current Rank {pal.progression?.condensation?.rank ?? 1}.
                   </p>
                 </div>
               )}
