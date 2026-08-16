@@ -455,7 +455,7 @@ function AuditView({
     "INFO",
   ];
 
-  const copyReport = () => {
+  const copyReport = async () => {
     const lines = [
       `REBEL COLLECTION AUDIT — ${report.scanned} PALS`,
       `Errors: ${report.counts.ERROR} · Warnings: ${report.counts.WARNING} · Review: ${report.counts.REVIEW} · Info: ${report.counts.INFO}`,
@@ -465,10 +465,63 @@ function AuditView({
           `[${finding.severity}] ${finding.pal.pal.species} copy ${finding.pal.score.speciesRank ?? "?"}: ${finding.title} — ${finding.detail}`,
       ),
     ];
+    const reportText = lines.join("\n");
 
-    void navigator.clipboard.writeText(
-      lines.join("\n"),
-    );
+    try {
+      if (
+        navigator.clipboard &&
+        window.isSecureContext
+      ) {
+        await navigator.clipboard.writeText(
+          reportText,
+        );
+      } else {
+        const textArea =
+          document.createElement(
+            "textarea",
+          );
+        textArea.value = reportText;
+        textArea.setAttribute(
+          "readonly",
+          "",
+        );
+        textArea.style.position =
+          "fixed";
+        textArea.style.left =
+          "-9999px";
+        textArea.style.opacity =
+          "0";
+        document.body.appendChild(
+          textArea,
+        );
+        textArea.select();
+        textArea.setSelectionRange(
+          0,
+          textArea.value.length,
+        );
+
+        const copied =
+          document.execCommand(
+            "copy",
+          );
+        textArea.remove();
+
+        if (!copied) {
+          throw new Error(
+            "Clipboard copy was blocked",
+          );
+        }
+      }
+
+      window.alert(
+        "Full report copied to your clipboard.",
+      );
+    } catch {
+      window.prompt(
+        "Automatic copying was blocked. Press Ctrl+C to copy the full report:",
+        reportText,
+      );
+    }
   };
 
   return (
