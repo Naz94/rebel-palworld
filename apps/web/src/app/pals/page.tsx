@@ -3655,6 +3655,12 @@ function getPartnerSkillDisplay(
     ) ||
     healing;
 
+  const playerMobility =
+    text.includes("additional jump") ||
+    text.includes("mid-air dash") ||
+    text.includes("air dash") ||
+    text.includes("jump height");
+
   const partyPalSupport =
     text.includes("while in party") &&
     (
@@ -3697,6 +3703,15 @@ function getPartnerSkillDisplay(
   if (glider) {
     type =
       "Glider / Traversal Utility";
+  } else if (playerMobility) {
+    type =
+      "Player Mobility / Traversal";
+  } else if (
+    ranch &&
+    partyPalSupport
+  ) {
+    type =
+      "Ranch Production / Pal Team Support";
   } else if (
     mount &&
     alphaEggUtility
@@ -3744,7 +3759,7 @@ function getPartnerSkillDisplay(
   const bestUses: string[] =
     [];
 
-  if (glider || mount) {
+  if (glider || mount || playerMobility) {
     bestUses.push(
       "World traversal",
     );
@@ -3848,7 +3863,7 @@ function getPartnerSkillDisplay(
 
     affects: {
       travel:
-        glider || mount,
+        glider || mount || playerMobility,
       combat,
       playerSupport,
       partySupport:
@@ -4525,6 +4540,10 @@ function PalDetailPanel({
                       ...(partnerSkillDisplay?.affects.partySupport
                         ? { partySupport: "YES" }
                         : {}),
+                      traversal:
+                        partnerSkillDisplay?.affects.travel
+                          ? "YES"
+                          : pal.speciesUtility.recommendations.traversal,
                       ...(pal.speciesUtility.ranchDrops.length > 0
                         ? { farming: "PRIMARY" }
                         : {}),
