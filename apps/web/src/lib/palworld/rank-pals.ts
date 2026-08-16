@@ -508,7 +508,7 @@ function hasRarePassive(
 
       return (
         rank >= 4 ||
-        IMPORTANT_PASSIVE_NAMES.has(
+        ["legend", "lucky"].includes(
           passive.name.toLowerCase(),
         )
       );
@@ -4164,8 +4164,17 @@ function buildInvestmentPlan(
     (score.bestOfSpecies.overall ||
       score.bestRole === "Player Support");
 
+  const strategicBreedingReason =
+    score.breedingReasons.some(
+      (reason) =>
+        /exceptional .* iv donor/i.test(reason) ||
+        /best .* breeder/i.test(reason) ||
+        /only .* breeding option/i.test(reason),
+    );
+
   const breedingCandidate =
-    score.breeding >= 65;
+    score.breeding >= 65 ||
+    strategicBreedingReason;
 
   const level =
     combatInvestmentCandidate &&
@@ -4189,6 +4198,16 @@ function buildInvestmentPlan(
   const partnerCombatScaling =
     getPartnerCombatUtilityBonus(pal) > 0;
 
+  const partnerDescription =
+    getPartnerSkillDescription(pal);
+  const partnerLootScaling =
+    partnerDescription.includes("acquisition increases") ||
+    partnerDescription.includes("more items when defeated") ||
+    partnerDescription.includes("meat cleaver");
+  const lootCandidate =
+    score.bestOfSpecies.overall &&
+    partnerLootScaling;
+
   const condense =
     scalablePartner &&
     (
@@ -4199,7 +4218,8 @@ function buildInvestmentPlan(
       (ranchCandidate &&
         partnerFarmingScaling) ||
       (combatInvestmentCandidate &&
-        partnerCombatScaling)
+        partnerCombatScaling) ||
+      lootCandidate
     );
 
   const souls =
@@ -4227,8 +4247,6 @@ function buildInvestmentPlan(
   }
 
   if (condense) {
-    const partnerDescription =
-      getPartnerSkillDescription(pal);
     const palTeamScaling =
       partnerSupportScaling &&
       (
@@ -4237,7 +4255,9 @@ function buildInvestmentPlan(
       );
 
     const scalingRole =
-      ranchCandidate &&
+      lootCandidate
+        ? "resource gathering"
+        : ranchCandidate &&
       partnerFarmingScaling
         ? "ranch / farming"
         : (supportWinner || combatInvestmentCandidate) &&
