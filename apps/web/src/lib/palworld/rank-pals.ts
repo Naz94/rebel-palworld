@@ -1457,6 +1457,12 @@ function getPartnerCombatUtilityBonus(
       ) ||
       description.includes(
         "attack damage",
+      ) ||
+      description.includes(
+        "increases damage player deals",
+      ) ||
+      description.includes(
+        "weak points",
       )
     )
   ) {
@@ -4149,6 +4155,7 @@ function buildInvestmentPlan(
 
   const level =
     combatInvestmentCandidate &&
+    getLevelReadiness(pal) < 95 &&
     combatGap >= 8;
 
   const ivFruit =
@@ -4206,15 +4213,15 @@ function buildInvestmentPlan(
 
   if (condense) {
     const scalingRole =
-      supportWinner &&
-      partnerSupportScaling
-        ? "Player Support"
-        : baseWinner &&
-            partnerBaseScaling
-          ? "base work"
-          : ranchCandidate &&
-              partnerFarmingScaling
-            ? "ranch / farming"
+      ranchCandidate &&
+      partnerFarmingScaling
+        ? "ranch / farming"
+        : supportWinner &&
+            partnerSupportScaling
+          ? "Player Support"
+          : baseWinner &&
+              partnerBaseScaling
+            ? "base work"
             : "combat";
 
     reasons.push(
