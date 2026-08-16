@@ -4111,6 +4111,13 @@ function buildInvestmentPlan(
     score.bestOfSpecies.combat &&
     score.combatPotential >= 65;
 
+  const combatInvestmentCandidate =
+    combatWinner &&
+    (
+      score.bestRole === "Combat" ||
+      score.combatPotential >= 85
+    );
+
   const baseWinner =
     score.bestOfSpecies.base &&
     score.base >= 65;
@@ -4124,23 +4131,41 @@ function buildInvestmentPlan(
     score.breeding >= 65;
 
   const level =
-    combatWinner &&
+    combatInvestmentCandidate &&
     combatGap >= 8;
 
   const ivFruit =
-    combatWinner &&
+    combatInvestmentCandidate &&
     fruitNeeds > 0 &&
     score.combatPotential >= 70;
 
+  const partnerSupportScaling =
+    getPartnerSupportData(pal).score > 0;
+
+  const partnerBaseScaling =
+    getPartnerBaseBonus(pal) > 0;
+
+  const partnerFarmingScaling =
+    getPartnerFarmingBonus(pal) > 0;
+
+  const partnerCombatScaling =
+    getPartnerCombatUtilityBonus(pal) > 0;
+
   const condense =
     scalablePartner &&
-    (combatWinner ||
-      baseWinner ||
-      supportWinner ||
-      ranchCandidate);
+    (
+      (supportWinner &&
+        partnerSupportScaling) ||
+      (baseWinner &&
+        partnerBaseScaling) ||
+      (ranchCandidate &&
+        partnerFarmingScaling) ||
+      (combatInvestmentCandidate &&
+        partnerCombatScaling)
+    );
 
   const souls =
-    combatWinner &&
+    combatInvestmentCandidate &&
     score.combatPotential >= 72;
 
   const workUpgrades =
@@ -4163,8 +4188,20 @@ function buildInvestmentPlan(
   }
 
   if (condense) {
+    const scalingRole =
+      supportWinner &&
+      partnerSupportScaling
+        ? "Player Support"
+        : baseWinner &&
+            partnerBaseScaling
+          ? "base work"
+          : ranchCandidate &&
+              partnerFarmingScaling
+            ? "ranch / farming"
+            : "combat";
+
     reasons.push(
-      `${getPartnerSkillName(pal)} has documented rank scaling that benefits this Pal's recommended role`,
+      `${getPartnerSkillName(pal)} has documented rank scaling for this Pal's ${scalingRole} role`,
     );
   }
 
