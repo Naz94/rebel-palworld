@@ -4130,15 +4130,22 @@ function buildInvestmentPlan(
     (pal.ranchDrops?.length ?? 0) > 0 ||
     getPartnerFarmingBonus(pal) > 0;
 
+  const combatCeiling =
+    score.combatIntelligenceV2.generalCeiling;
+
   const combatWinner =
-    score.bestOfSpecies.combat &&
-    score.combatPotential >= 65;
+    (
+      score.bestOfSpecies.combat ||
+      score.bestOfSpecies.overall
+    ) &&
+    combatCeiling >= 60;
 
   const combatInvestmentCandidate =
     combatWinner &&
     (
       score.bestRole === "Combat" ||
-      score.combatPotential >= 85
+      pal.location.type === "PARTY" ||
+      combatCeiling >= 72
     );
 
   const baseWinner =
@@ -4190,7 +4197,7 @@ function buildInvestmentPlan(
 
   const souls =
     combatInvestmentCandidate &&
-    score.combatPotential >= 72;
+    combatCeiling >= 65;
 
   const workUpgrades =
     baseWinner &&
