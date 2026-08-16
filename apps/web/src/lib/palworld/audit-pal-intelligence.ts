@@ -60,7 +60,12 @@ function add(
   detail: string,
 ): void {
   findings.push({
-    id: identity(pal) + ":" + code,
+    id:
+      identity(pal) +
+      ":" +
+      code +
+      ":" +
+      findings.length,
     severity,
     code,
     title,
