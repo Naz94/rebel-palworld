@@ -555,7 +555,7 @@ function Sidebar({
       </nav>
 
       <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-        <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">
+        <p className="text-xs uppercase tracking-[0.18em] text-neutral-500">
           Collection
         </p>
 
@@ -3937,24 +3937,24 @@ function PalDetailPanel({
           <button
             type="button"
             onClick={onClose}
-            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-sm"
+            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-base"
           >
             ×
           </button>
 
           {pal.isAlpha && (
-            <span className="absolute left-4 top-4 rounded-full bg-amber-400 px-3 py-1 text-[10px] font-bold uppercase text-black">
+            <span className="absolute left-4 top-4 rounded-full bg-amber-400 px-3 py-1 text-xs font-bold uppercase text-black">
               Alpha
             </span>
           )}
 
-          <span className="absolute bottom-4 left-4 rounded-lg border border-white/10 bg-black/60 px-3 py-1.5 text-[9px] uppercase tracking-[0.14em] text-neutral-300">
+          <span className="absolute bottom-4 left-4 rounded-lg border border-white/10 bg-black/60 px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] text-neutral-300">
             {bucketLabel}
           </span>
         </div>
 
         <div className="p-6">
-          <p className="text-[10px] uppercase tracking-[0.25em] text-neutral-500">
+          <p className="text-xs uppercase tracking-[0.25em] text-neutral-500">
             Pal Inspector
           </p>
 
@@ -3964,12 +3964,12 @@ function PalDetailPanel({
           </h2>
 
           {pal.nickname && (
-            <p className="mt-1 text-sm text-neutral-500">
+            <p className="mt-1 text-base text-neutral-500">
               {pal.species}
             </p>
           )}
 
-          <p className="mt-2 text-sm text-neutral-400">
+          <p className="mt-2 text-base text-neutral-400">
             {pal.level !==
             null
               ? `Level ${pal.level}`
@@ -3986,7 +3986,7 @@ function PalDetailPanel({
 
           {pal.elements
             .length > 0 && (
-            <p className="mt-1 text-xs text-neutral-500">
+            <p className="mt-1 text-sm text-neutral-500">
               {pal.elements.join(
                 " / ",
               )}
@@ -4000,11 +4000,11 @@ function PalDetailPanel({
                   In-game Identity
                 </PanelHeading>
 
-                <p className="mt-2 text-sm font-medium">
+                <p className="mt-2 text-base font-medium">
                   {locationTitle}
                 </p>
 
-                <p className="mt-1 text-xs text-neutral-400">
+                <p className="mt-1 text-sm text-neutral-400">
                   {slotNumber !== null
                     ? `${slotLabel} ${slotNumber}`
                     : `${slotLabel} unavailable`}
@@ -4013,14 +4013,14 @@ function PalDetailPanel({
                     : ""}
                 </p>
 
-                <p className="mt-1 text-[10px] text-neutral-500">
+                <p className="mt-1 text-xs text-neutral-500">
                   {containerLabel
                     ? `Container ${containerLabel}`
                     : "Container unavailable"}
                 </p>
               </div>
 
-              <span className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[9px] text-neutral-400">
+              <span className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[11px] text-neutral-400">
                 {score.speciesRank
                   ? `#${score.speciesRank}`
                   : "—"}
@@ -4033,7 +4033,7 @@ function PalDetailPanel({
                   pal.slot
                     .containerId
                 }
-                className="mt-3 break-all text-[9px] leading-relaxed text-neutral-600"
+                className="mt-3 break-all text-[11px] leading-relaxed text-neutral-600"
               >
                 Container ID:{" "}
                 {
@@ -4043,7 +4043,7 @@ function PalDetailPanel({
               </p>
             )}
 
-            <p className="mt-3 text-[9px] leading-relaxed text-neutral-600">
+            <p className="mt-3 text-[11px] leading-relaxed text-neutral-600">
               Rebel resolved this location directly from the current Palworld save data.
               {pal.location.type === "BASE" && pal.location.baseId
                 ? ` Base record: ${pal.location.baseId}.`
@@ -4060,18 +4060,18 @@ function PalDetailPanel({
                 <p className="mt-2 text-lg font-semibold">
                   {bucketLabel}
                 </p>
-                <p className="mt-1 text-xs text-neutral-400">
+                <p className="mt-1 text-sm text-neutral-400">
                   Primary use: {score.bestRole}
                 </p>
               </div>
-              <span className="rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-3 py-1.5 text-[9px] uppercase tracking-wide text-cyan-100">
+              <span className="rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-3 py-1.5 text-[11px] uppercase tracking-wide text-cyan-100">
                 {humanizeAction(score.action)}
               </span>
             </div>
 
             <div className="mt-3 space-y-1">
               {recommendationReasons.slice(0, 3).map((reason) => (
-                <p key={reason} className="text-[10px] leading-relaxed text-neutral-300">
+                <p key={reason} className="text-xs leading-relaxed text-neutral-300">
                   ✓ {reason}
                 </p>
               ))}
@@ -4108,18 +4108,18 @@ function PalDetailPanel({
                 <PanelHeading>
                   Combat V2
                 </PanelHeading>
-                <span className="rounded-md border border-white/10 bg-black/20 px-2 py-1 text-[9px] text-neutral-400">
+                <span className="rounded-md border border-white/10 bg-black/20 px-2 py-1 text-[11px] text-neutral-400">
                   {combatV2.confidence}
                 </span>
               </div>
 
-              <p className="mt-2 text-sm font-semibold">
+              <p className="mt-2 text-base font-semibold">
                 {combatV2.archetype}
               </p>
 
               <div className="mt-2 space-y-1">
                 {combatV2.bestUsedFor.map((use) => (
-                  <p key={use} className="text-[10px] text-neutral-300">
+                  <p key={use} className="text-xs text-neutral-300">
                     ✓ {use}
                   </p>
                 ))}
@@ -4127,10 +4127,10 @@ function PalDetailPanel({
 
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 <div className="rounded-xl border border-emerald-400/15 bg-emerald-400/[0.04] p-3">
-                  <p className="text-[9px] uppercase tracking-[0.14em] text-emerald-300">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-emerald-300">
                     Naturally Strong Against
                   </p>
-                  <p className="mt-1 text-[10px] text-neutral-300">
+                  <p className="mt-1 text-xs text-neutral-300">
                     {combatV2.strongAgainst.length > 0
                       ? combatV2.strongAgainst.join(" · ")
                       : "No natural type advantage"}
@@ -4138,10 +4138,10 @@ function PalDetailPanel({
                 </div>
 
                 <div className="rounded-xl border border-red-400/15 bg-red-400/[0.04] p-3">
-                  <p className="text-[9px] uppercase tracking-[0.14em] text-red-300">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-red-300">
                     Threatened By
                   </p>
-                  <p className="mt-1 text-[10px] text-neutral-300">
+                  <p className="mt-1 text-xs text-neutral-300">
                     {combatV2.weakAgainst.length > 0
                       ? combatV2.weakAgainst.join(" · ")
                       : "No listed type weakness"}
@@ -4149,7 +4149,7 @@ function PalDetailPanel({
                 </div>
               </div>
 
-              <p className="mt-3 text-[9px] leading-relaxed text-neutral-600">
+              <p className="mt-3 text-[11px] leading-relaxed text-neutral-600">
                 General score only. Enemy matchup and active-skill power/cooldown will be added before Rebel treats cross-species rankings as authoritative.
               </p>
             </div>
@@ -4175,10 +4175,10 @@ function PalDetailPanel({
 
             <div className="mt-3 rounded-xl border border-violet-400/20 bg-violet-400/[0.04] p-3">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500">
                   Investment Plan V2
                 </p>
-                <span className="rounded-md border border-violet-400/20 bg-violet-400/10 px-2 py-1 text-[9px] text-violet-200">
+                <span className="rounded-md border border-violet-400/20 bg-violet-400/10 px-2 py-1 text-[11px] text-violet-200">
                   {score.investmentPlan.decision.replaceAll("_", " ")}
                 </span>
               </div>
@@ -4191,7 +4191,7 @@ function PalDetailPanel({
                       ? "rounded-lg border border-emerald-400/20 bg-emerald-400/[0.06] px-2 py-1.5"
                       : "rounded-lg border border-white/5 bg-black/20 px-2 py-1.5"}
                   >
-                    <p className={recommended ? "text-[9px] text-emerald-200" : "text-[9px] text-neutral-600"}>
+                    <p className={recommended ? "text-[11px] text-emerald-200" : "text-[11px] text-neutral-600"}>
                       {humanizeSkill(action)}: {recommended ? "YES" : "NO"}
                     </p>
                   </div>
@@ -4200,7 +4200,7 @@ function PalDetailPanel({
 
               <div className="mt-3 space-y-1">
                 {score.investmentPlan.reasons.map((reason) => (
-                  <p key={reason} className="text-[10px] leading-relaxed text-neutral-400">
+                  <p key={reason} className="text-xs leading-relaxed text-neutral-400">
                     • {reason}
                   </p>
                 ))}
@@ -4210,17 +4210,17 @@ function PalDetailPanel({
             {score.investmentReasons.length > 0 && (
               <div className="mt-3 space-y-1">
                 {score.investmentReasons.map((reason) => (
-                  <p key={reason} className="text-[10px] text-neutral-300">✓ {reason}</p>
+                  <p key={reason} className="text-xs text-neutral-300">✓ {reason}</p>
                 ))}
               </div>
             )}
 
             {(pal.skills?.equipped?.length ?? 0) > 0 && (
               <div className="mt-4">
-                <p className="text-[9px] uppercase tracking-[0.18em] text-neutral-500">Equipped Skills</p>
+                <p className="text-[11px] uppercase tracking-[0.18em] text-neutral-500">Equipped Skills</p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {pal.skills?.equipped.map((skill) => (
-                    <span key={skill} className="rounded-lg border border-white/10 bg-black/20 px-2 py-1 text-[9px] text-neutral-300">
+                    <span key={skill} className="rounded-lg border border-white/10 bg-black/20 px-2 py-1 text-[11px] text-neutral-300">
                       {humanizeSkill(skill)}
                     </span>
                   ))}
@@ -4230,10 +4230,10 @@ function PalDetailPanel({
 
             {(pal.progression?.workSuitabilityUpgrades?.length ?? 0) > 0 && (
               <div className="mt-4">
-                <p className="text-[9px] uppercase tracking-[0.18em] text-neutral-500">Permanent Work Upgrades</p>
+                <p className="text-[11px] uppercase tracking-[0.18em] text-neutral-500">Permanent Work Upgrades</p>
                 <div className="mt-2 space-y-1">
                   {pal.progression?.workSuitabilityUpgrades.map((upgrade) => (
-                    <p key={`${upgrade.workSuitability}-${upgrade.rank}`} className="text-[10px] text-neutral-300">
+                    <p key={`${upgrade.workSuitability}-${upgrade.rank}`} className="text-xs text-neutral-300">
                       {upgrade.workSuitability} +{upgrade.rank}
                     </p>
                   ))}
@@ -4252,23 +4252,23 @@ function PalDetailPanel({
                   <p className="text-base font-semibold">
                     {partnerSkillDisplay.name}
                   </p>
-                  <p className="mt-1 text-[9px] uppercase tracking-[0.16em] text-cyan-300">
+                  <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-cyan-300">
                     {partnerSkillDisplay.type}
                   </p>
                 </div>
-                <span className="rounded-md border border-white/10 bg-black/20 px-2 py-1 text-[9px] text-neutral-400">
+                <span className="rounded-md border border-white/10 bg-black/20 px-2 py-1 text-[11px] text-neutral-400">
                   Rank {partnerSkillDisplay.rank}
                 </span>
               </div>
 
-              <p className="mt-2 text-xs leading-relaxed text-neutral-400">
+              <p className="mt-2 text-sm leading-relaxed text-neutral-400">
                 {partnerSkillDisplay.description}
               </p>
 
               {partnerSkillDisplay.tags.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {partnerSkillDisplay.tags.map((tag) => (
-                    <span key={tag} className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[9px] uppercase tracking-wide text-neutral-300">
+                    <span key={tag} className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[11px] uppercase tracking-wide text-neutral-300">
                       {tag}
                     </span>
                   ))}
@@ -4277,12 +4277,12 @@ function PalDetailPanel({
 
               {partnerSkillDisplay.bestUses.length > 0 && (
                 <div className="mt-3">
-                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500">
                     Best Used For
                   </p>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {partnerSkillDisplay.bestUses.map((use) => (
-                      <span key={use} className="rounded-lg border border-cyan-400/15 bg-cyan-400/[0.05] px-2.5 py-1 text-[9px] text-neutral-300">
+                      <span key={use} className="rounded-lg border border-cyan-400/15 bg-cyan-400/[0.05] px-2.5 py-1 text-[11px] text-neutral-300">
                         ✓ {use}
                       </span>
                     ))}
@@ -4291,7 +4291,7 @@ function PalDetailPanel({
               )}
 
               {partnerSkillDisplay.scales && (
-                <p className="mt-3 text-[10px] text-violet-200">
+                <p className="mt-3 text-xs text-violet-200">
                   {score.investmentPlan.actions.condense
                     ? `✓ Condensation recommended · Current rank ${partnerSkillDisplay.rank}`
                     : `Rank scaling documented, but condensation is not recommended for this copy's ${score.bestRole.toLowerCase()} role.`}
@@ -4328,34 +4328,34 @@ function PalDetailPanel({
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-sm font-medium">
+                          <p className="text-base font-medium">
                             {intelligence.name}
                           </p>
-                          <p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-neutral-500">
+                          <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-neutral-500">
                             {intelligence.categories.join(" · ")}
                           </p>
                         </div>
 
                         <div className="flex shrink-0 flex-col items-end gap-1">
-                          <span className={`rounded-md border px-2 py-1 text-[9px] ${dispositionStyle}`}>
+                          <span className={`rounded-md border px-2 py-1 text-[11px] ${dispositionStyle}`}>
                             {intelligence.disposition}
                           </span>
                           {intelligence.tier !== null && (
-                            <span className="text-[9px] text-neutral-600">
+                            <span className="text-[11px] text-neutral-600">
                               Trait Tier {intelligence.tier}
                             </span>
                           )}
                         </div>
                       </div>
 
-                      <p className="mt-2 text-xs leading-relaxed text-neutral-400">
+                      <p className="mt-2 text-sm leading-relaxed text-neutral-400">
                         {intelligence.description}
                       </p>
 
                       {intelligence.bestFor.length > 0 && (
                         <div className="mt-3 flex flex-wrap gap-2">
                           {intelligence.bestFor.map((role) => (
-                            <span key={role} className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[9px] text-neutral-300">
+                            <span key={role} className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[11px] text-neutral-300">
                               ✓ {role}
                             </span>
                           ))}
@@ -4372,7 +4372,7 @@ function PalDetailPanel({
                 Passives
               </PanelHeading>
 
-              <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-neutral-500">
+              <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-neutral-500">
                 No passive skills recorded.
               </div>
             </div>
@@ -4385,10 +4385,10 @@ function PalDetailPanel({
               </PanelHeading>
 
               <div className="mt-3">
-                <p className="text-[9px] uppercase tracking-[0.16em] text-emerald-300">
+                <p className="text-[11px] uppercase tracking-[0.16em] text-emerald-300">
                   Primary Utility
                 </p>
-                <p className="mt-1 text-sm font-semibold text-neutral-100">
+                <p className="mt-1 text-base font-semibold text-neutral-100">
                   {pal.speciesUtility.primaryUtility}
                 </p>
               </div>
@@ -4398,7 +4398,7 @@ function PalDetailPanel({
                   {pal.speciesUtility.speciesRoles.map((role) => (
                     <span
                       key={role}
-                      className="rounded-lg border border-emerald-400/15 bg-emerald-400/[0.06] px-2.5 py-1 text-[9px] text-emerald-100"
+                      className="rounded-lg border border-emerald-400/15 bg-emerald-400/[0.06] px-2.5 py-1 text-[11px] text-emerald-100"
                     >
                       {role}
                     </span>
@@ -4408,12 +4408,12 @@ function PalDetailPanel({
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500">
                     Best Used For
                   </p>
                   <div className="mt-2 space-y-1">
                     {pal.speciesUtility.bestUsedFor.map((use) => (
-                      <p key={use} className="text-[10px] leading-relaxed text-neutral-300">
+                      <p key={use} className="text-xs leading-relaxed text-neutral-300">
                         ✓ {use}
                       </p>
                     ))}
@@ -4421,7 +4421,7 @@ function PalDetailPanel({
                 </div>
 
                 <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500">
                     Rebel Recommendation
                   </p>
                   <div className="mt-2 space-y-1">
@@ -4435,7 +4435,7 @@ function PalDetailPanel({
                       ([area, recommendation]) => (
                         <p
                           key={area}
-                          className="text-[10px] text-neutral-300"
+                          className="text-xs text-neutral-300"
                         >
                           {humanizeSkill(area)}: {recommendation}
                         </p>
@@ -4447,16 +4447,16 @@ function PalDetailPanel({
 
               {pal.speciesUtility.ranchDrops.length > 0 && (
                 <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
-                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500">
                     Ranch Production
                   </p>
-                  <p className="mt-1 text-[10px] text-neutral-300">
+                  <p className="mt-1 text-xs text-neutral-300">
                     {pal.speciesUtility.ranchDrops.join(" · ")}
                   </p>
                 </div>
               )}
 
-              <p className="mt-3 text-[9px] leading-relaxed text-neutral-600">
+              <p className="mt-3 text-[11px] leading-relaxed text-neutral-600">
                 Species intelligence describes what every {pal.species} is naturally useful for. Individual IVs, passives and investment below determine how valuable this specific copy is.
               </p>
             </div>
@@ -4534,7 +4534,7 @@ function PalDetailPanel({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold">
+                      <p className="text-base font-semibold">
                         {
                           bestCopy.pal
                             .nickname ??
@@ -4543,7 +4543,7 @@ function PalDetailPanel({
                         }
                       </p>
 
-                      <p className="mt-1 text-[10px] text-neutral-500">
+                      <p className="mt-1 text-xs text-neutral-500">
                         Best overall copy · Copy{" "}
                         {
                           bestCopy.score
@@ -4552,7 +4552,7 @@ function PalDetailPanel({
                       </p>
                     </div>
 
-                    <span className="rounded-md bg-white/[0.06] px-2 py-1 text-xs font-semibold">
+                    <span className="rounded-md bg-white/[0.06] px-2 py-1 text-sm font-semibold">
                       {
                         bestCopy.score.overall.toFixed(
                           0,
@@ -4601,7 +4601,7 @@ function PalDetailPanel({
 
                   {comparison.length >
                     0 && (
-                    <p className="mt-3 text-[10px] leading-relaxed text-neutral-500">
+                    <p className="mt-3 text-xs leading-relaxed text-neutral-500">
                       {
                         comparison[0]
                       }
@@ -4619,11 +4619,11 @@ function PalDetailPanel({
                 Best Same-species Copy
               </PanelHeading>
 
-              <p className="mt-2 text-sm font-medium">
+              <p className="mt-2 text-base font-medium">
                 This is already the copy Rebel would keep first.
               </p>
 
-              <p className="mt-1 text-xs leading-relaxed text-neutral-500">
+              <p className="mt-1 text-sm leading-relaxed text-neutral-500">
                 Other copies may still be useful for breeding, base work or role backup, but none rank higher overall.
               </p>
             </div>
@@ -4635,7 +4635,7 @@ function PalDetailPanel({
                 Only Copy
               </PanelHeading>
 
-              <p className="mt-2 text-sm font-medium">
+              <p className="mt-2 text-base font-medium">
                 This is your only copy of this species, so Rebel protects it without pretending it won a same-species comparison.
               </p>
             </div>
@@ -4657,7 +4657,7 @@ function PalDetailPanel({
                       key={
                         role.role
                       }
-                      className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs"
+                      className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm"
                     >
                       {
                         role.role
@@ -4679,7 +4679,7 @@ function PalDetailPanel({
           )}
 
           <details className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-3">
-            <summary className="cursor-pointer text-xs font-medium text-neutral-300">
+            <summary className="cursor-pointer text-sm font-medium text-neutral-300">
               More technical details
             </summary>
 
@@ -4998,11 +4998,11 @@ function TinyStat({
 }) {
   return (
     <div className="rounded-lg bg-black/25 px-2 py-2 text-center">
-      <p className="text-[8px] uppercase tracking-wide text-neutral-500">
+      <p className="text-[10px] uppercase tracking-wide text-neutral-500">
         {label}
       </p>
 
-      <p className="mt-1 text-xs font-medium">
+      <p className="mt-1 text-sm font-medium">
         {value}
       </p>
     </div>
