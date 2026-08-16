@@ -5,7 +5,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
-import ownedPalsData from "@/lib/palworld/owned-pals.generated.json";
+import {
+  loadPalSnapshot,
+} from "@/lib/palworld/load-pal-snapshot";
 
 import type {
   BaseStrategy,
@@ -58,9 +60,6 @@ type PageProps = {
   }>;
 };
 
-const pals =
-  ownedPalsData as unknown as OwnedPal[];
-
 export const dynamic =
   "force-dynamic";
 
@@ -86,6 +85,14 @@ export default async function BaseInspectorPage({
   ) {
     notFound();
   }
+
+  const {
+    entities:
+      pals,
+  } =
+    await loadPalSnapshot<
+      OwnedPal
+    >();
 
   const selectedWorld =
     readSelectedWorld();
