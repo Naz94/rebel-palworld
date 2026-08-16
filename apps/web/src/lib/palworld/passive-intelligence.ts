@@ -32,6 +32,7 @@ const WORK_NAMES = new Set([
   "work slave",
   "remarkable craftsmanship",
   "heart of the immovable king",
+  "farmhand",
 ]);
 
 const COMBAT_NAMES = new Set([
@@ -162,7 +163,12 @@ export function getPassiveTraitIntelligence(
 
   if (work) {
     addUnique(categories, "Base Work");
-    addUnique(bestFor, "Base workers");
+    addUnique(
+      bestFor,
+      key === "farmhand"
+        ? "Ranch and Farming workers"
+        : "Base workers",
+    );
   }
 
   if (combat) {
