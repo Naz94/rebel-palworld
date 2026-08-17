@@ -3,6 +3,7 @@
 
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
   useEffect,
@@ -12,7 +13,6 @@ import {
 } from "react";
 
 import { getPassiveTraitIntelligence } from "@/lib/palworld/passive-intelligence";
-import { OwnedBreedingCombos } from "@/lib/palworld/owned-breeding-combos";
 import { SkillFruitIntelligence } from "@/lib/palworld/skill-fruit-intelligence";
 import {
   auditPalCollection,
@@ -27,6 +27,21 @@ import {
   type ReviewCategory,
   type SpeciesGroup,
 } from "@/lib/palworld/rank-pals";
+
+const OwnedBreedingCombos = dynamic(
+  () =>
+    import("@/lib/palworld/owned-breeding-combos").then(
+      (module) => module.OwnedBreedingCombos,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-sm text-neutral-400">
+        Loading complete breeding intelligence…
+      </div>
+    ),
+  },
+);
 
 type PalSnapshotResponse = {
   source: "local" | "cloud";
