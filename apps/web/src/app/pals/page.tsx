@@ -1039,7 +1039,7 @@ function Overview({
     view: View,
   ) => void;
 }) {
-  const bestCombat =
+  const combatCandidates =
     [...rankings.all]
       .filter(
         (entry) =>
@@ -1056,7 +1056,35 @@ function Overview({
             .combat -
           a.score
             .combat,
+      );
+
+  const bestCombatBySpecies =
+    new Map<
+      string,
+      RankedRealPal
+    >();
+
+  for (const entry of combatCandidates) {
+    const speciesKey =
+      entry.pal
+        .referenceIdentity
+        ?.canonicalName ??
+      entry.pal.species;
+
+    if (
+      !bestCombatBySpecies.has(
+        speciesKey,
       )
+    ) {
+      bestCombatBySpecies.set(
+        speciesKey,
+        entry,
+      );
+    }
+  }
+
+  const bestCombat =
+    [...bestCombatBySpecies.values()]
       .slice(0, 8);
 
   const bestBreeding =
@@ -2410,8 +2438,10 @@ function CapturedHumansView({
                     </p>
 
                     <h3 className="mt-1 text-base font-semibold">
-                      {human.nickname ??
-                        human.species}
+                      {humanizeSkill(
+                        human.nickname ??
+                          human.species,
+                      )}
                     </h3>
 
                     <p className="mt-1 text-xs text-neutral-500">
@@ -2469,7 +2499,7 @@ function SpecialView({
     <section>
       <SectionIntro
         title="Special & Protected"
-        description="Pals protected because of Alpha status, rare traits or strategic value."
+        description="Alpha Pals, invested copies, near-perfect overall IVs and genuinely high-value passives."
         count={pals.length}
       />
 
@@ -3795,14 +3825,24 @@ function CompactHorizontalCard({
   const metricGrade =
     metricLabel === "Breeding"
       ? score.breedingGrade
-      : metricLabel.startsWith(
-            "Work Lv.",
-          )
-        ? score.baseGrade
-        : metricLabel ===
-            "Protected"
-          ? null
-          : score.combatGrade;
+      : metricLabel === "Farming"
+        ? score.farmingGrade
+        : metricLabel === "Support"
+          ? score.supportGrade
+          : metricLabel.startsWith(
+                "Work Lv.",
+              )
+            ? score.baseGrade
+            : metricLabel ===
+                "Current Power"
+              ? score.currentPowerGrade
+              : metricLabel ===
+                  "Potential"
+                ? score.combatPotentialGrade
+                : metricLabel ===
+                    "Combat"
+                  ? score.combatGrade
+                  : null;
 
   return (
     <button
@@ -6426,31 +6466,61 @@ function getTopCombatReasons(
   );
 }
 
-function isSpecialProtected(
+const HIGH_VALUE_SPECIAL_PASSIVES =
+  new Set([
+    "legend",
+    "lucky",
+    "demon god",
+    "otherworldly cells",
+    "savior",
+    "remarkable craftsmanship",
+    "heart of the immovable king",
+    "serenity",
+    "burly body",
+    "artisan",
+    "philanthropist",
+    "vanguard",
+    "stronghold strategist",
+    "reload master",
+  ]);
+
+function getSpecialReason(
   entry: RankedRealPal,
-): boolean {
+): string | null {
   if (entry.pal.isAlpha) {
-    return true;
+    return "Alpha Pal";
   }
 
   const progression =
     entry.pal.progression;
 
-  const invested =
-    (progression?.condensation
-      .stars ?? 0) > 0 ||
+  const stars =
+    progression?.condensation
+      .stars ?? 0;
+
+  if (stars > 0) {
+    return `Invested Pal: ${stars}★ condensed`;
+  }
+
+  const soulTotal =
     Object.values(
       progression?.souls ?? {},
-    ).some(
-      (value) =>
-        Number(value) > 0,
-    ) ||
+    ).reduce(
+      (sum, value) =>
+        sum + Number(value),
+      0,
+    );
+
+  if (soulTotal > 0) {
+    return "Invested Pal: Pal Souls used";
+  }
+
+  if (
     (progression
       ?.workSuitabilityUpgrades
-      .length ?? 0) > 0;
-
-  if (invested) {
-    return true;
+      .length ?? 0) > 0
+  ) {
+    return "Invested Pal: Work Suitability upgraded";
   }
 
   const ivValues = [
@@ -6463,69 +6533,55 @@ function isSpecialProtected(
       "number",
   );
 
-  const exceptionalOverallIvs =
-    ivValues.length === 3 &&
-    ivValues.reduce(
-      (sum, value) =>
-        sum + value,
-      0,
-    ) /
-      ivValues.length >=
-      95;
+  const averageIv =
+    ivValues.length === 3
+      ? ivValues.reduce(
+          (sum, value) =>
+            sum + value,
+          0,
+        ) / 3
+      : 0;
 
-  if (exceptionalOverallIvs) {
-    return true;
+  if (averageIv >= 95) {
+    return `Exceptional overall IVs: ${averageIv.toFixed(0)} average`;
   }
 
-  return entry.score
-    .protectionReasons.some(
-      (reason) =>
-        reason ===
-          "Valuable passive trait" ||
-        (
-          reason.startsWith(
-            "Only ",
-          ) &&
-          reason.includes(
-            " copy with ",
-          )
-        ),
-    );
+  const highValuePassive =
+    [...entry.pal.passives]
+      .filter(
+        (passive) =>
+          (passive.rank ?? 0) >= 4 ||
+          HIGH_VALUE_SPECIAL_PASSIVES.has(
+            passive.name
+              .toLowerCase(),
+          ),
+      )
+      .sort(
+        (a, b) =>
+          (b.rank ?? 0) -
+          (a.rank ?? 0),
+      )[0];
+
+  if (highValuePassive) {
+    return `High-value passive: ${highValuePassive.name}`;
+  }
+
+  return null;
+}
+
+function isSpecialProtected(
+  entry: RankedRealPal,
+): boolean {
+  return Boolean(
+    getSpecialReason(entry),
+  );
 }
 
 function specialReason(
-  entry:
-    RankedRealPal,
+  entry: RankedRealPal,
 ): string {
-  if (
-    entry.pal.isAlpha
-  ) {
-    return "Alpha Pal";
-  }
-
-  const reason =
-    entry.score
-      .protectionReasons[0];
-
-  if (
-    reason ===
-    "Valuable passive trait"
-  ) {
-    const strongestPassive =
-      [...entry.pal.passives]
-        .sort(
-          (a, b) =>
-            (b.rank ?? 0) -
-            (a.rank ?? 0),
-        )[0];
-
-    if (strongestPassive) {
-      return `Valuable passive: ${strongestPassive.name}`;
-    }
-  }
-
   return (
-    reason ??
+    getSpecialReason(entry) ??
     "Protected Pal"
   );
 }
