@@ -2427,6 +2427,16 @@ function SpecialView({
     pal: RankedRealPal,
   ) => void;
 }) {
+  const [
+    showAll,
+    setShowAll,
+  ] = useState(false);
+
+  const visiblePals =
+    showAll
+      ? pals
+      : pals.slice(0, 20);
+
   return (
     <section>
       <SectionIntro
@@ -2436,7 +2446,7 @@ function SpecialView({
       />
 
       <div className="mt-5 grid gap-3 xl:grid-cols-2">
-        {pals.map(
+        {visiblePals.map(
           (
             entry,
             index,
@@ -2460,6 +2470,16 @@ function SpecialView({
           ),
         )}
       </div>
+
+      {pals.length > 20 && (
+        <button
+          type="button"
+          onClick={() => setShowAll((current) => !current)}
+          className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-base font-semibold text-neutral-200 transition hover:border-white/20 hover:bg-white/[0.08]"
+        >
+          {showAll ? "Show top 20" : `Show all ${pals.length} protected Pals`}
+        </button>
+      )}
     </section>
   );
 }
