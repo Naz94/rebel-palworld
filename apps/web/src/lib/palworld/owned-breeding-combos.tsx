@@ -125,6 +125,37 @@ function formatBreedingScore(value: number) {
   return Number(value.toFixed(1)).toString();
 }
 
+type IvKey = "hp" | "attack" | "defense";
+
+const IV_LABELS: Array<{ key: IvKey; label: string }> = [
+  { key: "hp", label: "HP" },
+  { key: "attack", label: "ATK" },
+  { key: "defense", label: "DEF" },
+];
+
+function inheritedIvProjection(
+  parentA: RankedRealPal,
+  parentB: RankedRealPal,
+  key: IvKey,
+) {
+  const first = parentA.pal.ivs[key];
+  const second = parentB.pal.ivs[key];
+  if (first == null || second == null) return null;
+
+  // Community measurements: 30% father, 30% mother, 40% random 0–100.
+  const expected = first * 0.3 + second * 0.3 + 50 * 0.4;
+  const randomChanceAtLeast90 = 11 / 101;
+  const chanceAtLeast90 =
+    (first >= 90 ? 0.3 : 0) +
+    (second >= 90 ? 0.3 : 0) +
+    0.4 * randomChanceAtLeast90;
+
+  return {
+    expected: Math.round(expected),
+    chanceAtLeast90: Math.round(chanceAtLeast90 * 100),
+  };
+}
+
 export function OwnedBreedingCombos({
   pals,
   onSelect,
@@ -244,6 +275,35 @@ export function OwnedBreedingCombos({
                   </button>
                 ))}
               </div>
+
+              {route.parentACopy && route.parentBCopy && route.gendersWork && (
+                <div className="mt-4 rounded-xl border border-sky-400/15 bg-sky-400/[0.06] px-4 py-3">
+                  <p className="text-sm font-semibold text-sky-200">Projected child IV inheritance</p>
+                  <div className="mt-2 grid grid-cols-3 gap-2">
+                    {IV_LABELS.map(({ key, label }) => {
+                      const projection = inheritedIvProjection(
+                        route.parentACopy!,
+                        route.parentBCopy!,
+                        key,
+                      );
+                      return (
+                        <div key={key} className="rounded-lg bg-black/20 px-3 py-2">
+                          <p className="text-sm text-neutral-400">{label}</p>
+                          <p className="mt-1 text-base font-semibold text-white">
+                            {projection
+                              ? `${projection.expected} expected · ${projection.chanceAtLeast90}% chance 90+`
+                              : "IV unavailable"}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-2 text-sm leading-5 text-neutral-400">
+                    Each stat rolls independently: 30% from either parent and 40% random from 0–100.
+                    This is a probability estimate, not a guaranteed egg result.
+                  </p>
+                </div>
+              )}
 
               {route.nextStep && (
                 <p className="mt-4 rounded-xl bg-white/[0.04] px-4 py-3 text-sm leading-6 text-neutral-300">
