@@ -6566,12 +6566,35 @@ function getSpecialReason(
   const highValuePassive =
     [...entry.pal.passives]
       .filter(
-        (passive) =>
-          (passive.rank ?? 0) >= 4 ||
-          HIGH_VALUE_SPECIAL_PASSIVES.has(
-            passive.name
-              .toLowerCase(),
-          ),
+        (passive) => {
+          if ((passive.rank ?? 0) >= 4) {
+            return true;
+          }
+
+          if (
+            !HIGH_VALUE_SPECIAL_PASSIVES.has(
+              passive.name.toLowerCase(),
+            )
+          ) {
+            return false;
+          }
+
+          const passiveName =
+            passive.name.toLowerCase();
+
+          return entry.score.protectionReasons.some(
+            (reason) => {
+              const normalized =
+                reason.toLowerCase();
+
+              return (
+                normalized.includes("only ") &&
+                normalized.includes("copy with") &&
+                normalized.includes(passiveName)
+              );
+            },
+          );
+        },
       )
       .sort(
         (a, b) =>
