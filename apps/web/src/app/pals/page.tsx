@@ -1393,6 +1393,16 @@ function CombatView({
 
   const elementGroups = getCombatElementGroups(scoredPals);
 
+  const visibleRanch =
+    showAllRanch
+      ? ranch
+      : ranch.slice(0, 20);
+
+  const visiblePlantation =
+    showAllPlantation
+      ? plantation
+      : plantation.slice(0, 20);
+
   return (
     <div className="space-y-12">
       {unscoredPals.length > 0 && (
@@ -1498,6 +1508,7 @@ function CombatSection({
   pals,
   onSelect,
   metric = "combat",
+  initialLimit = 20,
 }: {
   eyebrow: string;
   title: string;
@@ -1514,12 +1525,26 @@ function CombatSection({
     | "farming"
     | "attack"
     | "tank";
+  initialLimit?: number;
 }) {
+  const [
+    showAll,
+    setShowAll,
+  ] = useState(false);
+
   if (
     pals.length === 0
   ) {
     return null;
   }
+
+  const visiblePals =
+    showAll
+      ? pals
+      : pals.slice(
+          0,
+          initialLimit,
+        );
 
   return (
     <section>
@@ -1544,7 +1569,7 @@ function CombatSection({
       </div>
 
       <div className="grid gap-3 xl:grid-cols-2">
-        {pals.map(
+        {visiblePals.map(
           (
             entry,
             index,
@@ -1623,6 +1648,24 @@ function CombatSection({
           },
         )}
       </div>
+
+      {pals.length >
+        initialLimit && (
+        <button
+          type="button"
+          onClick={() =>
+            setShowAll(
+              (current) =>
+                !current,
+            )
+          }
+          className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-base font-semibold text-neutral-200 transition hover:border-white/20 hover:bg-white/[0.08]"
+        >
+          {showAll
+            ? `Show top ${initialLimit}`
+            : `Show all ${pals.length} Pals`}
+        </button>
+      )}
     </section>
   );
 }
@@ -1838,6 +1881,16 @@ function FarmingView({
   pals: RankedRealPal[];
   onSelect: (pal: RankedRealPal) => void;
 }) {
+  const [
+    showAllRanch,
+    setShowAllRanch,
+  ] = useState(false);
+
+  const [
+    showAllPlantation,
+    setShowAllPlantation,
+  ] = useState(false);
+
   const relevant = pals.filter((entry) => entry.score.farming > 0);
   const ranch = relevant
     .filter((entry) => (entry.pal.ranchDrops?.length ?? 0) > 0)
@@ -1869,7 +1922,7 @@ function FarmingView({
             count={ranch.length}
           />
           <div className="mt-5 grid gap-3 xl:grid-cols-2">
-            {ranch.map((entry, index) => (
+            {visibleRanch.map((entry, index) => (
               <CompactHorizontalCard
                 key={entry.pal.id ?? `${entry.pal.internalSpeciesId}-ranch-${index}`}
                 rankedPal={entry}
@@ -1885,6 +1938,15 @@ function FarmingView({
               />
             ))}
           </div>
+          {ranch.length > 20 && (
+            <button
+              type="button"
+              onClick={() => setShowAllRanch((current) => !current)}
+              className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-base font-semibold text-neutral-200 transition hover:border-white/20 hover:bg-white/[0.08]"
+            >
+              {showAllRanch ? "Show top 20" : `Show all ${ranch.length} Ranch producers`}
+            </button>
+          )}
         </section>
       )}
 
@@ -1896,7 +1958,7 @@ function FarmingView({
             count={plantation.length}
           />
           <div className="mt-5 grid gap-3 xl:grid-cols-2">
-            {plantation.map((entry, index) => (
+            {visiblePlantation.map((entry, index) => (
               <CompactHorizontalCard
                 key={entry.pal.id ?? `${entry.pal.internalSpeciesId}-plant-${index}`}
                 rankedPal={entry}
@@ -1911,6 +1973,15 @@ function FarmingView({
               />
             ))}
           </div>
+          {plantation.length > 20 && (
+            <button
+              type="button"
+              onClick={() => setShowAllPlantation((current) => !current)}
+              className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-base font-semibold text-neutral-200 transition hover:border-white/20 hover:bg-white/[0.08]"
+            >
+              {showAllPlantation ? "Show top 20" : `Show all ${plantation.length} plantation workers`}
+            </button>
+          )}
         </section>
       )}
     </div>
@@ -1927,12 +1998,22 @@ function SupportView({
     pal: RankedRealPal,
   ) => void;
 }) {
+  const [
+    showAll,
+    setShowAll,
+  ] = useState(false);
+
   const relevant =
     pals.filter(
       (entry) =>
         entry.score.support >
         0,
     );
+
+  const visiblePals =
+    showAll
+      ? relevant
+      : relevant.slice(0, 20);
 
   if (
     relevant.length === 0
@@ -1955,7 +2036,7 @@ function SupportView({
       />
 
       <div className="mt-5 grid gap-3 xl:grid-cols-2">
-        {relevant.map(
+        {visiblePals.map(
           (
             entry,
             index,
@@ -1982,6 +2063,16 @@ function SupportView({
           ),
         )}
       </div>
+
+      {relevant.length > 20 && (
+        <button
+          type="button"
+          onClick={() => setShowAll((current) => !current)}
+          className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-base font-semibold text-neutral-200 transition hover:border-white/20 hover:bg-white/[0.08]"
+        >
+          {showAll ? "Show top 20" : `Show all ${relevant.length} support Pals`}
+        </button>
+      )}
     </section>
   );
 }
@@ -2376,6 +2467,11 @@ function CleanupView({
   const [query, setQuery] =
     useState("");
 
+  const [
+    showAllSpecies,
+    setShowAllSpecies,
+  ] = useState(false);
+
   const duplicateGroups =
     groups.filter(
       (group) =>
@@ -2496,6 +2592,14 @@ function CleanupView({
           b.count - a.count
         );
       });
+
+  const visibleCleanupGroups =
+    showAllSpecies
+      ? cleanupGroups
+      : cleanupGroups.slice(
+          0,
+          20,
+        );
 
   const allDuplicatePals =
     duplicateGroups.flatMap(
@@ -2802,7 +2906,7 @@ function CleanupView({
           </div>
         ) : (
           <div className="mt-5 space-y-5">
-            {cleanupGroups.map(
+            {visibleCleanupGroups.map(
               (group) => (
                 <CleanupSpeciesCard
                   key={
@@ -2816,6 +2920,16 @@ function CleanupView({
               ),
             )}
           </div>
+        )}
+
+        {cleanupGroups.length > 20 && (
+          <button
+            type="button"
+            onClick={() => setShowAllSpecies((current) => !current)}
+            className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-base font-semibold text-neutral-200 transition hover:border-white/20 hover:bg-white/[0.08]"
+          >
+            {showAllSpecies ? "Show top 20 species" : `Show all ${cleanupGroups.length} species`}
+          </button>
         )}
       </div>
     </div>
@@ -6261,9 +6375,29 @@ function specialReason(
     return "Alpha Pal";
   }
 
-  return (
+  const reason =
     entry.score
-      .protectionReasons[0] ??
+      .protectionReasons[0];
+
+  if (
+    reason ===
+    "Valuable passive trait"
+  ) {
+    const strongestPassive =
+      [...entry.pal.passives]
+        .sort(
+          (a, b) =>
+            (b.rank ?? 0) -
+            (a.rank ?? 0),
+        )[0];
+
+    if (strongestPassive) {
+      return `Valuable passive: ${strongestPassive.name}`;
+    }
+  }
+
+  return (
+    reason ??
     "Protected Pal"
   );
 }
