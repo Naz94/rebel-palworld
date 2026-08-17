@@ -4420,7 +4420,7 @@
     ]
   },
   "RideJumpCount_Increase2": {
-    "name": "Skymarcher",
+    "name": "Sky Strider",
     "description": "Mounted Jump Count +2",
     "rank": 4,
     "effects": [
@@ -5218,7 +5218,7 @@
     ]
   },
   "WorldTree_FullStomach": {
-    "name": "World Tree Seedbed",
+    "name": "World Tree's Bounty",
     "description": "Decrease Hunger depletion rate by <NumBlue_13>+50.0%</> HP -20.0<NumRed_13>%</> World Tree resources will not vanish when approached.",
     "rank": 5,
     "effects": [
