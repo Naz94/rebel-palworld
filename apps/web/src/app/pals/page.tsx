@@ -397,7 +397,13 @@ export default function PalsPage() {
 
             {view === "special" && (
               <SpecialView
-                pals={rankings.rare}
+                pals={rankings.all.filter(
+                  (entry) =>
+                    entry.pal.isAlpha ||
+                    entry.score
+                      .protectionReasons
+                      .length > 0,
+                )}
                 onSelect={setSelectedPal}
               />
             )}
@@ -1069,7 +1075,14 @@ function Overview({
       .slice(0, 8);
 
   const special =
-    [...rankings.rare]
+    rankings.all
+      .filter(
+        (entry) =>
+          entry.pal.isAlpha ||
+          entry.score
+            .protectionReasons
+            .length > 0,
+      )
       .sort(
         (a, b) =>
           b.score
