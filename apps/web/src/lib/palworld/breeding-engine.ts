@@ -44,6 +44,18 @@ export const combos = combosJson as UniqueCombo[]
 export const palById = new Map<string, Pal>(pals.map(p => [p.id, p]))
 const palIdx = new Map<string, number>(pals.map((p, i) => [p.id, i]))
 
+function pairKey(aId: string, bId: string): string {
+  return aId < bId ? `${aId}\u0000${bId}` : `${bId}\u0000${aId}`
+}
+
+const combosByPair = new Map<string, UniqueCombo[]>()
+for (const combo of combos) {
+  const key = pairKey(combo.a, combo.b)
+  const existing = combosByPair.get(key)
+  if (existing) existing.push(combo)
+  else combosByPair.set(key, [combo])
+}
+
 export function label(p: Pal): string {
   return `#${p.zukan}${p.suffix} ${p.name}`
 }
@@ -105,7 +117,8 @@ export function breedOutcomes(aId: string, bId: string): Outcome[] {
   if (aId === bId) return [{ child: a }]
 
   const matches: Outcome[] = []
-  for (const c of combos) {
+  const pairCombos = combosByPair.get(pairKey(aId, bId)) ?? []
+  for (const c of pairCombos) {
     const m = comboMatches(c, aId, bId)
     if (!m) continue
     const child = palById.get(c.child)!
