@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import {
   breedOutcomes,
+  combos as specialCombos,
   findPath,
   label,
   palById,
@@ -28,12 +29,15 @@ function ownedSpeciesId(pal: RankedRealPal) {
   )?.id ?? null;
 }
 
-function bestOwnedCopy(pals: RankedRealPal[], speciesId: string) {
-  const species = palById.get(speciesId);
-  if (!species) return null;
+function ownedCopies(pals: RankedRealPal[], speciesId: string) {
+  if (!palById.has(speciesId)) return [];
   return pals
     .filter((pal) => ownedSpeciesId(pal) === speciesId)
-    .sort((a, b) => b.score.breeding - a.score.breeding)[0] ?? null;
+    .sort((a, b) => b.score.breeding - a.score.breeding);
+}
+
+function bestOwnedCopy(pals: RankedRealPal[], speciesId: string) {
+  return ownedCopies(pals, speciesId)[0] ?? null;
 }
 
 function oppositeGender(a: RankedRealPal, b: RankedRealPal) {
@@ -70,12 +74,38 @@ function inheritedIvProjection(
 }
 
 function pairOwnedStatus(pair: ParentPair, pals: RankedRealPal[]) {
-  const a = bestOwnedCopy(pals, pair.a.id);
-  const b = bestOwnedCopy(pals, pair.b.id);
+  const copiesA = ownedCopies(pals, pair.a.id);
+  const copiesB = ownedCopies(pals, pair.b.id);
+  let compatible:
+    | { a: RankedRealPal; b: RankedRealPal; score: number }
+    | null = null;
+
+  if (pair.a.id === pair.b.id) {
+    for (let i = 0; i < copiesA.length; i += 1) {
+      for (let j = i + 1; j < copiesA.length; j += 1) {
+        if (!oppositeGender(copiesA[i], copiesA[j])) continue;
+        const score = copiesA[i].score.breeding + copiesA[j].score.breeding;
+        if (!compatible || score > compatible.score) {
+          compatible = { a: copiesA[i], b: copiesA[j], score };
+        }
+      }
+    }
+  } else {
+    for (const a of copiesA) {
+      for (const b of copiesB) {
+        if (!oppositeGender(a, b)) continue;
+        const score = a.score.breeding + b.score.breeding;
+        if (!compatible || score > compatible.score) {
+          compatible = { a, b, score };
+        }
+      }
+    }
+  }
+
   return {
-    a,
-    b,
-    ready: Boolean(a && b && (pair.a.id === pair.b.id || oppositeGender(a, b))),
+    a: compatible?.a ?? copiesA[0] ?? null,
+    b: compatible?.b ?? copiesB[0] ?? null,
+    ready: Boolean(compatible),
   };
 }
 
@@ -184,7 +214,7 @@ export function OwnedBreedingCombos({
         <div className="mt-5 grid gap-3 sm:grid-cols-4">
           {[
             ["Breeding records", breedingPals.length],
-            ["Special overrides", 185],
+            ["Special override rows", specialCombos.length],
             ["Owned species matched", ownedIds.length],
             ["New Pals ready to breed", ownedOpportunities.length],
           ].map(([name, value]) => (
