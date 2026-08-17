@@ -170,7 +170,7 @@ export function OwnedBreedingCombos({
           {[
             ["Ready now", ready],
             ["Missing one", missingOne],
-            ["Verified routes", routes.length],
+            ["Game8-listed routes", routes.length],
           ].map(([label, value]) => (
             <div key={String(label)} className="rounded-xl border border-white/10 bg-black/20 p-3">
               <p className="text-sm text-neutral-400">{label}</p>
@@ -256,8 +256,8 @@ export function OwnedBreedingCombos({
       </div>
 
       <p className="mt-4 text-sm leading-6 text-neutral-500">
-        These are verified Palworld 1.0 starter routes. Rebel deliberately does not invent unverified
-        combinations; the complete calculator dataset can expand this same collection-aware engine.
+        These are Palworld 1.0 starter routes listed by Game8 and matched against your collection.
+        Rebel does not present this starter set as the complete in-game breeding calculator.
       </p>
     </section>
   );
