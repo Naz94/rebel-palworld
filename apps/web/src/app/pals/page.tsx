@@ -7,6 +7,7 @@ import Link from "next/link";
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -119,6 +120,9 @@ export default function PalsPage() {
       null,
     );
 
+  const lastSnapshotJson =
+    useRef<string | null>(null);
+
   useEffect(
     () => {
       let active =
@@ -172,16 +176,29 @@ export default function PalsPage() {
             return;
           }
 
-          setOwnedPals(
-            body.entities,
-          );
+          const snapshotJson =
+            JSON.stringify(
+              body.entities,
+            );
+
+          if (
+            snapshotJson !==
+            lastSnapshotJson.current
+          ) {
+            lastSnapshotJson.current =
+              snapshotJson;
+
+            setOwnedPals(
+              body.entities,
+            );
+
+            setSnapshotSyncedAt(
+              body.syncedAt,
+            );
+          }
 
           setSnapshotSource(
             body.source,
-          );
-
-          setSnapshotSyncedAt(
-            body.syncedAt,
           );
 
           setSnapshotError(
@@ -236,7 +253,7 @@ export default function PalsPage() {
               void loadSnapshot();
             }
           },
-          15000,
+          60000,
         );
 
       window.addEventListener(
@@ -333,8 +350,8 @@ export default function PalsPage() {
                 : snapshotError
                   ? `Snapshot unavailable: ${snapshotError}`
                   : snapshotSource === "cloud"
-                    ? `Cloud snapshot · automatically refreshes every 15 seconds${snapshotSyncedAt ? ` · synced ${new Date(snapshotSyncedAt).toLocaleTimeString()}` : ""}`
-                    : "Local live-save snapshot · automatically refreshes every 15 seconds"}
+                    ? `Cloud snapshot · checks for save changes every 60 seconds${snapshotSyncedAt ? ` · synced ${new Date(snapshotSyncedAt).toLocaleTimeString()}` : ""}`
+                    : "Local live-save snapshot · checks for save changes every 60 seconds"}
             </div>
           )}
 
