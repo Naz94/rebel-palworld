@@ -1393,16 +1393,6 @@ function CombatView({
 
   const elementGroups = getCombatElementGroups(scoredPals);
 
-  const visibleRanch =
-    showAllRanch
-      ? ranch
-      : ranch.slice(0, 20);
-
-  const visiblePlantation =
-    showAllPlantation
-      ? plantation
-      : plantation.slice(0, 20);
-
   return (
     <div className="space-y-12">
       {unscoredPals.length > 0 && (
@@ -1902,6 +1892,16 @@ function FarmingView({
       ),
     )
     .sort((a, b) => b.score.farming - a.score.farming);
+
+  const visibleRanch =
+    showAllRanch
+      ? ranch
+      : ranch.slice(0, 20);
+
+  const visiblePlantation =
+    showAllPlantation
+      ? plantation
+      : plantation.slice(0, 20);
 
   return (
     <div className="space-y-12">
