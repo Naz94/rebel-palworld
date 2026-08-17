@@ -866,6 +866,11 @@ function TopBar({
       description:
         "Broader breeding rankings for IV donors, passive inheritance and strong species copies.",
     },
+    skills: {
+      title: "Skill Fruit Intelligence",
+      description:
+        "Current 1.0 tree pools, farming odds and high-value moves without mixing loot data into Pal rankings.",
+    },
     special: {
       title: "Special & Protected",
       description:
