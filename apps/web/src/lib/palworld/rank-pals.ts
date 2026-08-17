@@ -1113,161 +1113,137 @@ function getPartnerSupportData(
   const reasons:
     string[] = [];
 
-  const playerEffect =
-    description.includes(
-      "player's attack",
-    ) ||
-    description.includes(
-      "player attack",
-    ) ||
-    description.includes(
-      "player's defense",
-    ) ||
-    description.includes(
-      "player defense",
-    ) ||
-    description.includes(
-      "player's health",
-    ) ||
-    description.includes(
-      "player health",
-    ) ||
-    description.includes(
-      "player's stamina",
-    ) ||
-    description.includes(
-      "player stamina",
-    ) ||
-    description.includes(
-      "player's work speed",
-    ) ||
-    description.includes(
-      "player work speed",
-    ) ||
-    description.includes(
-      "carrying capacity",
-    ) ||
-    description.includes(
-      "carry weight",
-    );
+  const playerCombatEffect =
+    description.includes("player's attack") ||
+    description.includes("player attack") ||
+    description.includes("player's defense") ||
+    description.includes("player defense") ||
+    description.includes("player's health") ||
+    description.includes("player health") ||
+    description.includes("player's stamina") ||
+    description.includes("player stamina") ||
+    description.includes("weak points");
+
+  const playerWorkEffect =
+    description.includes("player's work speed") ||
+    description.includes("player work speed") ||
+    description.includes("mining efficiency") ||
+    description.includes("logging efficiency") ||
+    description.includes("carrying capacity") ||
+    description.includes("carry weight");
 
   const partyPalEffect =
-    tags.has(
-      "party",
-    ) &&
+    tags.has("party") &&
     (
-      description.includes(
-        "pals",
-      ) ||
-      description.includes(
-        "pal's",
-      )
+      /(?:increase|increases|boosts).*?(?:attack|defense).*?pals/.test(description) ||
+      /(?:attack|defense) of .*?pals/.test(description) ||
+      /pals?(?:'s|')? (?:attack|defense)/.test(description)
     );
 
   const healingEffect =
-    tags.has(
-      "party",
-    ) &&
+    tags.has("party") &&
     (
-      description.includes(
-        "restore",
-      ) ||
-      description.includes(
-        "heal",
-      )
+      description.includes("restore") ||
+      description.includes("heal")
+    );
+
+  const lootEffect =
+    tags.has("party") &&
+    (
+      description.includes("drop") ||
+      description.includes("items obtained") ||
+      description.includes("acquisition increases") ||
+      description.includes("more items")
+    );
+
+  const hazardProtection =
+    tags.has("party") &&
+    (
+      description.includes("immunity") ||
+      description.includes("immune to") ||
+      description.includes("nullifies")
     );
 
   const genuinePartySupport =
-    tags.has(
-      "party",
-    ) &&
+    tags.has("party") &&
     (
-      playerEffect ||
+      playerCombatEffect ||
+      playerWorkEffect ||
       partyPalEffect ||
-      healingEffect
+      healingEffect ||
+      lootEffect ||
+      hazardProtection
     );
 
-  if (
-    !genuinePartySupport
-  ) {
+  if (!genuinePartySupport) {
     return {
       score: 0,
       reasons: [],
     };
   }
 
-  let score = 34;
+  let score = 15;
 
-  reasons.push(
-    getPartnerSkillName(
-      pal,
-    ) +
-      ": party support",
-  );
-
-  if (
-    playerEffect
-  ) {
-    score += 18;
-
+  if (playerCombatEffect) {
+    score += 25;
     reasons.push(
-      getPartnerSkillName(
-        pal,
-      ) +
-        ": directly supports the player",
+      getPartnerSkillName(pal) +
+        ": improves player combat",
     );
   }
 
-  if (
-    partyPalEffect
-  ) {
+  if (playerWorkEffect) {
+    score += 14;
+    reasons.push(
+      getPartnerSkillName(pal) +
+        ": improves player work or carrying utility",
+    );
+  }
+
+  if (partyPalEffect) {
+    score += 24;
+    reasons.push(
+      getPartnerSkillName(pal) +
+        ": directly buffs party Pal stats",
+    );
+  }
+
+  if (healingEffect) {
+    score += 22;
+    reasons.push(
+      getPartnerSkillName(pal) +
+        ": healing / survival support",
+    );
+  }
+
+  if (lootEffect) {
     score += 12;
-
     reasons.push(
-      getPartnerSkillName(
-        pal,
-      ) +
-        ": boosts party Pals",
+      getPartnerSkillName(pal) +
+        ": loot acquisition support",
     );
   }
 
-  if (
-    healingEffect
-  ) {
-    score += 8;
-
+  if (hazardProtection) {
+    score += 14;
     reasons.push(
-      getPartnerSkillName(
-        pal,
-      ) +
-        ": survival / healing utility",
+      getPartnerSkillName(pal) +
+        ": hazard protection",
     );
   }
 
-  if (
-    hasPartnerSkillScalingEvidence(
-      pal,
-    )
-  ) {
+  if (hasPartnerSkillScalingEvidence(pal)) {
     score +=
-      getPartnerSkillScalingBonus(
-        pal,
-      );
+      getPartnerSkillScalingBonus(pal);
 
     reasons.push(
-      getPartnerSkillName(
-        pal,
-      ) +
+      getPartnerSkillName(pal) +
         ": rank-scaled support effect",
     );
   }
 
   return {
-    score:
-      clamp(
-        score,
-      ),
-
+    score: clamp(score),
     reasons,
   };
 }
