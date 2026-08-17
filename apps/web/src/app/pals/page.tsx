@@ -28,6 +28,7 @@ import {
   type SpeciesGroup,
 } from "@/lib/palworld/rank-pals";
 
+// Keep the 1.0 breeding dataset out of the initial collection bundle.
 const OwnedBreedingCombos = dynamic(
   () =>
     import("@/lib/palworld/owned-breeding-combos").then(
