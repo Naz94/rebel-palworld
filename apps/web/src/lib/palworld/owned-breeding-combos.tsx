@@ -77,18 +77,52 @@ function matchesSpecies(pal: RankedRealPal, species: string) {
   ].some((value) => normalize(value) === wanted);
 }
 
-function bestCopy(pals: RankedRealPal[], species: string) {
+function copiesOf(pals: RankedRealPal[], species: string) {
   return pals
     .filter((pal) => matchesSpecies(pal, species))
-    .sort((a, b) => b.score.breeding - a.score.breeding)[0] ?? null;
+    .sort((a, b) => b.score.breeding - a.score.breeding);
 }
 
-function compatibleGender(a: RankedRealPal | null, b: RankedRealPal | null) {
-  if (!a || !b) return true;
+function compatibleGender(a: RankedRealPal, b: RankedRealPal) {
   const first = a.pal.gender?.toLocaleLowerCase();
   const second = b.pal.gender?.toLocaleLowerCase();
   if (!first || !second) return true;
   return first !== second;
+}
+
+function bestParentPair(
+  pals: RankedRealPal[],
+  parentA: string,
+  parentB: string,
+) {
+  const copiesA = copiesOf(pals, parentA);
+  const copiesB = copiesOf(pals, parentB);
+
+  const compatiblePairs = copiesA.flatMap((a) =>
+    copiesB
+      .filter((b) => compatibleGender(a, b))
+      .map((b) => ({
+        parentA: a,
+        parentB: b,
+        combinedScore: a.score.breeding + b.score.breeding,
+      })),
+  );
+
+  const bestCompatible = compatiblePairs.sort(
+    (a, b) => b.combinedScore - a.combinedScore,
+  )[0];
+
+  return {
+    parentA: bestCompatible?.parentA ?? copiesA[0] ?? null,
+    parentB: bestCompatible?.parentB ?? copiesB[0] ?? null,
+    hasCompatiblePair: Boolean(bestCompatible),
+    parentACount: copiesA.length,
+    parentBCount: copiesB.length,
+  };
+}
+
+function formatBreedingScore(value: number) {
+  return Number(value.toFixed(1)).toString();
 }
 
 export function OwnedBreedingCombos({
@@ -99,16 +133,16 @@ export function OwnedBreedingCombos({
   onSelect: (pal: RankedRealPal) => void;
 }) {
   const routes = VERIFIED_ROUTES.map((route) => {
-    const parentA = bestCopy(pals, route.parentA);
-    const parentB = bestCopy(pals, route.parentB);
-    const owned = Number(Boolean(parentA)) + Number(Boolean(parentB));
-    const gendersWork = compatibleGender(parentA, parentB);
+    const pair = bestParentPair(pals, route.parentA, route.parentB);
+    const owned = Number(Boolean(pair.parentA)) + Number(Boolean(pair.parentB));
     return {
       ...route,
-      parentACopy: parentA,
-      parentBCopy: parentB,
+      parentACopy: pair.parentA,
+      parentBCopy: pair.parentB,
+      parentACount: pair.parentACount,
+      parentBCount: pair.parentBCount,
       owned,
-      gendersWork,
+      gendersWork: owned < 2 || pair.hasCompatiblePair,
     };
   }).sort((a, b) => {
     if (a.owned !== b.owned) return b.owned - a.owned;
@@ -183,8 +217,16 @@ export function OwnedBreedingCombos({
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {[
-                  { name: route.parentA, pal: route.parentACopy },
-                  { name: route.parentB, pal: route.parentBCopy },
+                  {
+                    name: route.parentA,
+                    pal: route.parentACopy,
+                    copies: route.parentACount,
+                  },
+                  {
+                    name: route.parentB,
+                    pal: route.parentBCopy,
+                    copies: route.parentBCount,
+                  },
                 ].map((parent) => (
                   <button
                     key={parent.name}
@@ -196,7 +238,7 @@ export function OwnedBreedingCombos({
                     <p className="text-base font-semibold">{parent.name}</p>
                     <p className="mt-1 text-sm text-neutral-400">
                       {parent.pal
-                        ? `Owned · ${parent.pal.pal.gender ?? "gender unknown"} · Breeding ${parent.pal.score.breeding}`
+                        ? `Best compatible of ${parent.copies} owned · ${parent.pal.pal.gender ?? "gender unknown"} · Breeding ${formatBreedingScore(parent.pal.score.breeding)}`
                         : "Not found in your synced collection"}
                     </p>
                   </button>
