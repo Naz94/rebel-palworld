@@ -398,11 +398,7 @@ export default function PalsPage() {
             {view === "special" && (
               <SpecialView
                 pals={rankings.all.filter(
-                  (entry) =>
-                    entry.pal.isAlpha ||
-                    entry.score
-                      .protectionReasons
-                      .length > 0,
+                  isSpecialProtected,
                 )}
                 onSelect={setSelectedPal}
               />
@@ -1077,11 +1073,7 @@ function Overview({
   const special =
     rankings.all
       .filter(
-        (entry) =>
-          entry.pal.isAlpha ||
-          entry.score
-            .protectionReasons
-            .length > 0,
+        isSpecialProtected,
       )
       .sort(
         (a, b) =>
@@ -2016,12 +2008,48 @@ function SupportView({
     setShowAll,
   ] = useState(false);
 
+  const supportCandidates =
+    pals
+      .filter(
+        (entry) =>
+          entry.score.support >
+          0,
+      )
+      .sort(
+        (a, b) =>
+          b.score.support -
+            a.score.support ||
+          b.score.overall -
+            a.score.overall,
+      );
+
+  const bestBySpecies =
+    new Map<
+      string,
+      RankedRealPal
+    >();
+
+  for (const entry of supportCandidates) {
+    const speciesKey =
+      entry.pal
+        .referenceIdentity
+        ?.canonicalName ??
+      entry.pal.species;
+
+    if (
+      !bestBySpecies.has(
+        speciesKey,
+      )
+    ) {
+      bestBySpecies.set(
+        speciesKey,
+        entry,
+      );
+    }
+  }
+
   const relevant =
-    pals.filter(
-      (entry) =>
-        entry.score.support >
-        0,
-    );
+    [...bestBySpecies.values()];
 
   const visiblePals =
     showAll
@@ -2044,7 +2072,7 @@ function SupportView({
     <section>
       <SectionIntro
         title="Player & Party Support"
-        description="Vanguard, Stronghold Strategist and similar passives are scored here instead of being mislabeled as self-combat damage."
+        description="The best owned support copy per species, ranked by player buffs, party buffs, healing and practical utility."
         count={relevant.length}
       />
 
@@ -6396,6 +6424,73 @@ function getTopCombatReasons(
     0,
     3,
   );
+}
+
+function isSpecialProtected(
+  entry: RankedRealPal,
+): boolean {
+  if (entry.pal.isAlpha) {
+    return true;
+  }
+
+  const progression =
+    entry.pal.progression;
+
+  const invested =
+    (progression?.condensation
+      .stars ?? 0) > 0 ||
+    Object.values(
+      progression?.souls ?? {},
+    ).some(
+      (value) =>
+        Number(value) > 0,
+    ) ||
+    (progression
+      ?.workSuitabilityUpgrades
+      .length ?? 0) > 0;
+
+  if (invested) {
+    return true;
+  }
+
+  const ivValues = [
+    entry.pal.ivs.hp,
+    entry.pal.ivs.attack,
+    entry.pal.ivs.defense,
+  ].filter(
+    (value): value is number =>
+      typeof value ===
+      "number",
+  );
+
+  const exceptionalOverallIvs =
+    ivValues.length === 3 &&
+    ivValues.reduce(
+      (sum, value) =>
+        sum + value,
+      0,
+    ) /
+      ivValues.length >=
+      95;
+
+  if (exceptionalOverallIvs) {
+    return true;
+  }
+
+  return entry.score
+    .protectionReasons.some(
+      (reason) =>
+        reason ===
+          "Valuable passive trait" ||
+        (
+          reason.startsWith(
+            "Only ",
+          ) &&
+          reason.includes(
+            " copy with ",
+          )
+        ),
+    );
 }
 
 function specialReason(
