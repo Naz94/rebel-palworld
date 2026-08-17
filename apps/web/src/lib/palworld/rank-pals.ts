@@ -1140,20 +1140,29 @@ function getPartnerSupportData(
       /pals?(?:'s|')? (?:attack|defense)/.test(description)
     );
 
-  const healingEffect =
+  const hungerSupport =
     tags.has("party") &&
     (
-      description.includes("restore") ||
+      description.includes("hunger") ||
+      description.includes("fullness")
+    );
+
+  const healingEffect =
+    tags.has("party") &&
+    !hungerSupport &&
+    (
+      description.includes("restore health") ||
+      description.includes("restores health") ||
       description.includes("heal")
     );
 
   const lootEffect =
     tags.has("party") &&
     (
-      description.includes("drop") ||
       description.includes("items obtained") ||
       description.includes("acquisition increases") ||
-      description.includes("more items")
+      description.includes("more items when defeated") ||
+      description.includes("drop items obtained")
     );
 
   const hazardProtection =
@@ -1170,6 +1179,7 @@ function getPartnerSupportData(
       playerCombatEffect ||
       playerWorkEffect ||
       partyPalEffect ||
+      hungerSupport ||
       healingEffect ||
       lootEffect ||
       hazardProtection
@@ -1205,6 +1215,14 @@ function getPartnerSupportData(
     reasons.push(
       getPartnerSkillName(pal) +
         ": directly buffs party Pal stats",
+    );
+  }
+
+  if (hungerSupport) {
+    score += 16;
+    reasons.push(
+      getPartnerSkillName(pal) +
+        ": party hunger sustain",
     );
   }
 
