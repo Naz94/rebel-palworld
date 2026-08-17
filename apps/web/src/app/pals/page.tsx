@@ -12,6 +12,7 @@ import {
 
 import { getPassiveTraitIntelligence } from "@/lib/palworld/passive-intelligence";
 import { OwnedBreedingCombos } from "@/lib/palworld/owned-breeding-combos";
+import { SkillFruitIntelligence } from "@/lib/palworld/skill-fruit-intelligence";
 import {
   auditPalCollection,
   type AuditSeverity,
@@ -40,6 +41,7 @@ type View =
   | "farming"
   | "support"
   | "breeding"
+  | "skills"
   | "humans"
   | "special"
   | "cleanup"
@@ -389,6 +391,10 @@ export default function PalsPage() {
               />
             )}
 
+            {view === "skills" && (
+              <SkillFruitIntelligence />
+            )}
+
             {view === "humans" && (
               <CapturedHumansView
                 humans={rankings.humans}
@@ -697,6 +703,12 @@ function Sidebar({
       label: "Breeding",
       description:
         "Best breeding stock",
+    },
+    {
+      id: "skills",
+      label: "Skill Fruits",
+      description:
+        "Fruit farming & moves",
     },
     {
       id: "humans",
