@@ -1132,8 +1132,15 @@ function getPartnerSupportData(
     description.includes("carrying capacity") ||
     description.includes("carry weight");
 
+  const selfOnlyPartyScaling =
+    description.includes("this pal's attack") ||
+    description.includes("this pal’s attack") ||
+    description.includes("this pal's defense") ||
+    description.includes("this pal’s defense");
+
   const partyPalEffect =
     tags.has("party") &&
+    !selfOnlyPartyScaling &&
     (
       /(?:increase|increases|boosts).*?(?:attack|defense).*?pals/.test(description) ||
       /(?:attack|defense) of .*?pals/.test(description) ||
