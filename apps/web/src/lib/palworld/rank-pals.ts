@@ -1,4 +1,9 @@
 // PARTNER_CLASSIFICATION_V2_SAFE
+import {
+  calculateCombatIntelligenceV2,
+  type PalCombatIntelligenceV2,
+} from "./combat-intelligence-v2";
+
 export type PalPassive = {
   internalId: string;
   name: string;
@@ -296,6 +301,12 @@ export type RealPalScore = {
    */
   currentPower: number;
 
+  /**
+   * Transparent Combat V2 breakdown. This keeps offense,
+   * durability, passive fit and current investment separate.
+   */
+  combatIntelligenceV2: PalCombatIntelligenceV2;
+
   base: number;
 
   farming: number;
@@ -497,7 +508,7 @@ function hasRarePassive(
 
       return (
         rank >= 4 ||
-        IMPORTANT_PASSIVE_NAMES.has(
+        ["legend", "lucky"].includes(
           passive.name.toLowerCase(),
         )
       );
@@ -586,6 +597,23 @@ function getSoulInvestmentTotal(
     Math.max(0, souls.attack) +
     Math.max(0, souls.defense) +
     Math.max(0, souls.workSpeed)
+  );
+}
+
+function getCombatSoulInvestmentTotal(
+  pal: RealOwnedPal,
+): number {
+  const souls =
+    pal.progression?.souls;
+
+  if (!souls) {
+    return 0;
+  }
+
+  return (
+    Math.max(0, souls.hp) +
+    Math.max(0, souls.attack) +
+    Math.max(0, souls.defense)
   );
 }
 
@@ -1026,8 +1054,13 @@ function hasPartnerSkillScalingEvidence(
       ?.description ??
     "";
 
-  return description.includes(
-    "~",
+  return (
+    /\([^)]*\d+(?:\.\d+)?\s*[~–-]\s*\d+(?:\.\d+)?[^)]*\)/.test(
+      description,
+    ) ||
+    /\+\(\d+(?:\.\d+)?\s*[~–-]\s*\d+(?:\.\d+)?\)%/.test(
+      description,
+    )
   );
 }
 
@@ -1080,161 +1113,162 @@ function getPartnerSupportData(
   const reasons:
     string[] = [];
 
-  const playerEffect =
-    description.includes(
-      "player's attack",
-    ) ||
-    description.includes(
-      "player attack",
-    ) ||
-    description.includes(
-      "player's defense",
-    ) ||
-    description.includes(
-      "player defense",
-    ) ||
-    description.includes(
-      "player's health",
-    ) ||
-    description.includes(
-      "player health",
-    ) ||
-    description.includes(
-      "player's stamina",
-    ) ||
-    description.includes(
-      "player stamina",
-    ) ||
-    description.includes(
-      "player's work speed",
-    ) ||
-    description.includes(
-      "player work speed",
-    ) ||
-    description.includes(
-      "carrying capacity",
-    ) ||
-    description.includes(
-      "carry weight",
-    );
+  const playerCombatEffect =
+    description.includes("player's attack") ||
+    description.includes("player attack") ||
+    description.includes("player's defense") ||
+    description.includes("player defense") ||
+    description.includes("player's health") ||
+    description.includes("player health") ||
+    description.includes("player's stamina") ||
+    description.includes("player stamina") ||
+    description.includes("weak points");
+
+  const playerWorkEffect =
+    description.includes("player's work speed") ||
+    description.includes("player work speed") ||
+    description.includes("mining efficiency") ||
+    description.includes("logging efficiency") ||
+    description.includes("carrying capacity") ||
+    description.includes("carry weight");
+
+  const selfOnlyPartyScaling =
+    description.includes("this pal's attack") ||
+    description.includes("this pal’s attack") ||
+    description.includes("this pal's defense") ||
+    description.includes("this pal’s defense");
 
   const partyPalEffect =
-    tags.has(
-      "party",
-    ) &&
+    tags.has("party") &&
+    !selfOnlyPartyScaling &&
     (
-      description.includes(
-        "pals",
-      ) ||
-      description.includes(
-        "pal's",
-      )
+      /(?:increase|increases|boosts).*?(?:attack|defense).*?pals/.test(description) ||
+      /(?:attack|defense) of .*?pals/.test(description) ||
+      /pals?(?:'s|')? (?:attack|defense)/.test(description)
+    );
+
+  const hungerSupport =
+    tags.has("party") &&
+    (
+      description.includes("hunger") ||
+      description.includes("fullness")
     );
 
   const healingEffect =
-    tags.has(
-      "party",
-    ) &&
+    tags.has("party") &&
+    !hungerSupport &&
     (
-      description.includes(
-        "restore",
-      ) ||
-      description.includes(
-        "heal",
-      )
+      description.includes("restore health") ||
+      description.includes("restores health") ||
+      description.includes("heal")
+    );
+
+  const lootEffect =
+    tags.has("party") &&
+    (
+      description.includes("items obtained") ||
+      description.includes("acquisition increases") ||
+      description.includes("more items when defeated") ||
+      description.includes("drop items obtained")
+    );
+
+  const hazardProtection =
+    tags.has("party") &&
+    (
+      description.includes("immunity") ||
+      description.includes("immune to") ||
+      description.includes("nullifies")
     );
 
   const genuinePartySupport =
-    tags.has(
-      "party",
-    ) &&
+    tags.has("party") &&
     (
-      playerEffect ||
+      playerCombatEffect ||
+      playerWorkEffect ||
       partyPalEffect ||
-      healingEffect
+      hungerSupport ||
+      healingEffect ||
+      lootEffect ||
+      hazardProtection
     );
 
-  if (
-    !genuinePartySupport
-  ) {
+  if (!genuinePartySupport) {
     return {
       score: 0,
       reasons: [],
     };
   }
 
-  let score = 34;
+  let score = 15;
 
-  reasons.push(
-    getPartnerSkillName(
-      pal,
-    ) +
-      ": party support",
-  );
-
-  if (
-    playerEffect
-  ) {
-    score += 18;
-
+  if (playerCombatEffect) {
+    score += 25;
     reasons.push(
-      getPartnerSkillName(
-        pal,
-      ) +
-        ": directly supports the player",
+      getPartnerSkillName(pal) +
+        ": improves player combat",
     );
   }
 
-  if (
-    partyPalEffect
-  ) {
+  if (playerWorkEffect) {
+    score += 14;
+    reasons.push(
+      getPartnerSkillName(pal) +
+        ": improves player work or carrying utility",
+    );
+  }
+
+  if (partyPalEffect) {
+    score += 24;
+    reasons.push(
+      getPartnerSkillName(pal) +
+        ": directly buffs party Pal stats",
+    );
+  }
+
+  if (hungerSupport) {
+    score += 16;
+    reasons.push(
+      getPartnerSkillName(pal) +
+        ": party hunger sustain",
+    );
+  }
+
+  if (healingEffect) {
+    score += 22;
+    reasons.push(
+      getPartnerSkillName(pal) +
+        ": healing / survival support",
+    );
+  }
+
+  if (lootEffect) {
     score += 12;
-
     reasons.push(
-      getPartnerSkillName(
-        pal,
-      ) +
-        ": boosts party Pals",
+      getPartnerSkillName(pal) +
+        ": loot acquisition support",
     );
   }
 
-  if (
-    healingEffect
-  ) {
-    score += 8;
-
+  if (hazardProtection) {
+    score += 14;
     reasons.push(
-      getPartnerSkillName(
-        pal,
-      ) +
-        ": survival / healing utility",
+      getPartnerSkillName(pal) +
+        ": hazard protection",
     );
   }
 
-  if (
-    hasPartnerSkillScalingEvidence(
-      pal,
-    )
-  ) {
+  if (hasPartnerSkillScalingEvidence(pal)) {
     score +=
-      getPartnerSkillScalingBonus(
-        pal,
-      );
+      getPartnerSkillScalingBonus(pal);
 
     reasons.push(
-      getPartnerSkillName(
-        pal,
-      ) +
+      getPartnerSkillName(pal) +
         ": rank-scaled support effect",
     );
   }
 
   return {
-    score:
-      clamp(
-        score,
-      ),
-
+    score: clamp(score),
     reasons,
   };
 }
@@ -1446,6 +1480,18 @@ function getPartnerCombatUtilityBonus(
       ) ||
       description.includes(
         "attack damage",
+      ) ||
+      description.includes(
+        "increases attack by",
+      ) ||
+      description.includes(
+        "changes the player's attack type",
+      ) ||
+      description.includes(
+        "increases damage player deals",
+      ) ||
+      description.includes(
+        "weak points",
       )
     )
   ) {
@@ -2720,9 +2766,11 @@ function getBestRole(
   pal: RealOwnedPal,
   combat: number,
   combatPotential: number,
+  combatCeiling: number,
   base: number,
   farming: number,
   support: number,
+  breeding: number,
   workRoles: PalRoleScore[],
 ): string {
   const combatUse =
@@ -2796,6 +2844,36 @@ function getBestRole(
     );
   }
 
+  if (combatCeiling < 50) {
+    const alternative =
+      Math.max(
+        base,
+        farming,
+        support,
+        breeding,
+      );
+
+    if (alternative === support) {
+      return "Player Support";
+    }
+
+    if (alternative === farming) {
+      return "Farming";
+    }
+
+    if (alternative === base) {
+      const bestWorkRole =
+        workRoles[0]?.role;
+
+      return (
+        bestWorkRole ??
+        "Base Work"
+      );
+    }
+
+    return "Breeding";
+  }
+
   return "Combat";
 }
 
@@ -2852,6 +2930,11 @@ function scorePal(
 
   const combat =
     currentPower;
+
+  const combatIntelligenceV2 =
+    calculateCombatIntelligenceV2(
+      pal,
+    );
 
   const combatReasons =
     getCombatReasons(pal);
@@ -3049,6 +3132,7 @@ function scorePal(
     combat,
     combatPotential,
     currentPower,
+    combatIntelligenceV2,
     base,
     farming,
     breeding,
@@ -3119,9 +3203,11 @@ function scorePal(
         pal,
         combat,
         combatPotential,
+        combatIntelligenceV2.generalCeiling,
         base,
         farming,
         support,
+        breeding,
         workRoles,
       ),
 
@@ -4087,7 +4173,8 @@ function buildInvestmentPlan(
   const reasons: string[] = [];
   const combatGap = Math.max(
     0,
-    score.combatPotential - score.currentPower,
+    score.combatIntelligenceV2.generalCeiling -
+      score.combatIntelligenceV2.currentReadiness,
   );
   const fruitNeeds = [
     pal.ivs.hp,
@@ -4107,15 +4194,22 @@ function buildInvestmentPlan(
     (pal.ranchDrops?.length ?? 0) > 0 ||
     getPartnerFarmingBonus(pal) > 0;
 
+  const combatCeiling =
+    score.combatIntelligenceV2.generalCeiling;
+
   const combatWinner =
-    score.bestOfSpecies.combat &&
-    score.combatPotential >= 65;
+    (
+      score.bestOfSpecies.combat ||
+      score.bestOfSpecies.overall
+    ) &&
+    combatCeiling >= 60;
 
   const combatInvestmentCandidate =
     combatWinner &&
     (
       score.bestRole === "Combat" ||
-      score.combatPotential >= 85
+      pal.location.type === "PARTY" ||
+      combatCeiling >= 72
     );
 
   const baseWinner =
@@ -4127,17 +4221,27 @@ function buildInvestmentPlan(
     (score.bestOfSpecies.overall ||
       score.bestRole === "Player Support");
 
+  const strategicBreedingReason =
+    score.breedingReasons.some(
+      (reason) =>
+        /exceptional .* iv donor/i.test(reason) ||
+        /best .* breeder/i.test(reason) ||
+        /only .* breeding option/i.test(reason),
+    );
+
   const breedingCandidate =
-    score.breeding >= 65;
+    score.breeding >= 65 ||
+    strategicBreedingReason;
 
   const level =
     combatInvestmentCandidate &&
+    getLevelReadiness(pal) < 95 &&
     combatGap >= 8;
 
   const ivFruit =
     combatInvestmentCandidate &&
     fruitNeeds > 0 &&
-    score.combatPotential >= 70;
+    combatCeiling >= 70;
 
   const partnerSupportScaling =
     getPartnerSupportData(pal).score > 0;
@@ -4151,22 +4255,34 @@ function buildInvestmentPlan(
   const partnerCombatScaling =
     getPartnerCombatUtilityBonus(pal) > 0;
 
+  const partnerDescription =
+    getPartnerSkillDescription(pal);
+  const partnerLootScaling =
+    partnerDescription.includes("acquisition increases") ||
+    partnerDescription.includes("more items when defeated") ||
+    partnerDescription.includes("meat cleaver");
+  const lootCandidate =
+    score.bestOfSpecies.overall &&
+    partnerLootScaling;
+
   const condense =
     scalablePartner &&
     (
-      (supportWinner &&
+      ((supportWinner || combatInvestmentCandidate) &&
         partnerSupportScaling) ||
       (baseWinner &&
         partnerBaseScaling) ||
       (ranchCandidate &&
         partnerFarmingScaling) ||
       (combatInvestmentCandidate &&
-        partnerCombatScaling)
+        partnerCombatScaling) ||
+      lootCandidate
     );
 
   const souls =
     combatInvestmentCandidate &&
-    score.combatPotential >= 72;
+    combatCeiling >= 65 &&
+    getCombatSoulInvestmentTotal(pal) < 60;
 
   const workUpgrades =
     baseWinner &&
@@ -4188,16 +4304,27 @@ function buildInvestmentPlan(
   }
 
   if (condense) {
+    const palTeamScaling =
+      partnerSupportScaling &&
+      (
+        partnerDescription.includes("attack of") &&
+        partnerDescription.includes("pals")
+      );
+
     const scalingRole =
-      supportWinner &&
-      partnerSupportScaling
-        ? "Player Support"
-        : baseWinner &&
-            partnerBaseScaling
-          ? "base work"
-          : ranchCandidate &&
-              partnerFarmingScaling
-            ? "ranch / farming"
+      lootCandidate
+        ? "resource gathering"
+        : ranchCandidate &&
+      partnerFarmingScaling
+        ? "ranch / farming"
+        : (supportWinner || combatInvestmentCandidate) &&
+            partnerSupportScaling
+          ? palTeamScaling
+            ? "Pal team support"
+            : "Player Support"
+          : baseWinner &&
+              partnerBaseScaling
+            ? "base work"
             : "combat";
 
     reasons.push(

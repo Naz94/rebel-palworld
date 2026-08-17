@@ -1,4 +1,26 @@
+import passiveSkillReferenceJson from "./passive-skill-reference.json";
 import type { PalPassive } from "./rank-pals";
+
+type PassiveReferenceEntry = {
+  name: string;
+  description: string | null;
+  rank: number | null;
+  effects: {
+    type: string;
+    value: number;
+    target: string;
+  }[];
+};
+
+const PASSIVE_REFERENCE =
+  passiveSkillReferenceJson as Record<string, PassiveReferenceEntry>;
+
+const PASSIVE_REFERENCE_BY_NAME = new Map(
+  Object.values(PASSIVE_REFERENCE).map((entry) => [
+    entry.name.toLowerCase(),
+    entry,
+  ]),
+);
 
 export type PassiveDisposition =
   | "GOOD"
@@ -74,10 +96,30 @@ const NEGATIVE_NAMES = new Set([
   "glutton",
 ]);
 
+const ELEMENTAL_COMBAT_PASSIVES: Record<string, string> = {
+  "earth emperor": "Ground",
+  "flame emperor": "Fire",
+  "lord of lightning": "Electric",
+  "lord of the sea": "Water",
+  "spirit emperor": "Grass",
+  "ice emperor": "Ice",
+  "divine dragon": "Dragon",
+  "lord of the underworld": "Dark",
+  "celestial emperor": "Neutral",
+};
+
 const VERIFIED_DESCRIPTION_FALLBACKS:
   Record<string, string> = {
     artisan:
       "Work Speed +50% (applies to this Pal).",
+    ...Object.fromEntries(
+      Object.entries(ELEMENTAL_COMBAT_PASSIVES).map(
+        ([name, element]) => [
+          name,
+          "Increases " + element + " attack damage.",
+        ],
+      ),
+    ),
   };
 
 function addUnique(values: string[], value: string): void {
@@ -89,23 +131,44 @@ export function getPassiveTraitIntelligence(
 ): PassiveTraitIntelligence {
   const name = passive.name || "Unknown Passive";
   const key = name.toLowerCase();
+  const reference =
+    PASSIVE_REFERENCE[passive.internalId ?? ""] ??
+    PASSIVE_REFERENCE_BY_NAME.get(key);
   const description =
     passive.description?.trim() ||
+    reference?.description?.trim() ||
     VERIFIED_DESCRIPTION_FALLBACKS[key] ||
     "No effect description is available in the current reference data.";
   const text = description.toLowerCase();
-  const tier = passive.rank;
+  const tier =
+    passive.rank ??
+    reference?.rank ??
+    null;
 
   const categories: string[] = [];
   const bestFor: string[] = [];
 
+  const breedingFarm =
+    text.includes("breeding farm") ||
+    text.includes("breeding speed");
+
+  const playerWorkBonus =
+    text.includes("player work speed") ||
+    text.includes("player's work speed");
+
   const work =
     WORK_NAMES.has(key) ||
-    text.includes("work speed") ||
-    text.includes("work efficiency");
+    (
+      !playerWorkBonus &&
+      (
+        text.includes("work speed") ||
+        text.includes("work efficiency")
+      )
+    );
 
   const movement =
     MOVEMENT_NAMES.has(key) ||
+    key === "ace swimmer" ||
     text.includes("movement speed") ||
     text.includes("sprint speed") ||
     text.includes("stamina");
@@ -121,15 +184,32 @@ export function getPassiveTraitIntelligence(
     text.includes("mining efficiency") ||
     text.includes("logging efficiency");
 
+  const incomingDamageResistance =
+    /decrease in incoming .* damage/.test(text) ||
+    /incoming .* damage (?:is )?(?:decreased|reduced)/.test(text);
+
+  const selfDefense =
+    text.includes("defense") &&
+    !text.includes("player defense") &&
+    !text.includes("player's defense");
+
   const survival =
-    text.includes("defense") ||
+    selfDefense ||
     text.includes("damage reduction") ||
+    incomingDamageResistance ||
     text.includes("max health") ||
     text.includes("health regeneration");
 
   const elemental =
-    /(?:fire|water|grass|electric|ice|ground|dark|dragon|neutral) (?:attack )?damage/.test(text) ||
-    /increase in (?:fire|water|grass|electric|ice|ground|dark|dragon|neutral) attack/.test(text);
+    !incomingDamageResistance &&
+    (
+      key in ELEMENTAL_COMBAT_PASSIVES ||
+      /(?:fire|water|grass|electric|ice|ground|dark|dragon|neutral) (?:attack )?damage/.test(text) ||
+      /increase in (?:fire|water|grass|electric|ice|ground|dark|dragon|neutral) attack/.test(text)
+    );
+
+  const elementalRole =
+    ELEMENTAL_COMBAT_PASSIVES[key];
 
   const combat =
     COMBAT_NAMES.has(key) ||
@@ -146,7 +226,10 @@ export function getPassiveTraitIntelligence(
     NEGATIVE_NAMES.has(key) ||
     (tier ?? 0) < 0 ||
     /(?:attack|defense|work speed|movement speed)\s*-\s*\d/.test(text) ||
-    text.includes("decrease") ||
+    (
+      text.includes("decrease") &&
+      !incomingDamageResistance
+    ) ||
     text.includes("increased hunger") ||
     text.includes("san drops faster");
 
@@ -173,12 +256,24 @@ export function getPassiveTraitIntelligence(
 
   if (combat) {
     addUnique(categories, elemental ? "Elemental Combat" : "Combat");
-    addUnique(bestFor, elemental ? "Matching-element combat builds" : "Combat builds");
+    addUnique(
+      bestFor,
+      elementalRole
+        ? elementalRole + " combat builds"
+        : elemental
+          ? "Matching-element combat builds"
+          : "Combat builds",
+    );
   }
 
   if (movement) {
     addUnique(categories, "Movement / Traversal");
-    addUnique(bestFor, "Mounts and traversal Pals");
+    addUnique(
+      bestFor,
+      key === "ace swimmer"
+        ? "Swimming mounts"
+        : "Mounts and traversal Pals",
+    );
   }
 
   if (playerSupport) {
@@ -191,9 +286,28 @@ export function getPassiveTraitIntelligence(
     addUnique(bestFor, "Durable combat Pals");
   }
 
+  if (breedingFarm) {
+    addUnique(categories, "Breeding");
+    addUnique(bestFor, "Breeding Farm pairs");
+  }
+
+  if (disposition === "CONDITIONAL") {
+    bestFor.splice(
+      0,
+      bestFor.length,
+      text.includes("attack +") && text.includes("defense -")
+        ? "Glass-cannon offensive builds"
+        : "Builds that deliberately accept the trade-off",
+    );
+  }
+
   if (categories.length === 0) {
     addUnique(categories, disposition === "BAD" ? "Negative Trait" : "General Utility");
     addUnique(bestFor, disposition === "BAD" ? "Avoid inheriting where possible" : "Specialised builds");
+  }
+
+  if (disposition === "BAD") {
+    bestFor.splice(0, bestFor.length, "Avoid on role-focused builds");
   }
 
   const breedingUseful =

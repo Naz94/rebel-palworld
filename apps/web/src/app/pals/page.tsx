@@ -11,6 +11,12 @@ import {
 } from "react";
 
 import { getPassiveTraitIntelligence } from "@/lib/palworld/passive-intelligence";
+import { OwnedBreedingCombos } from "@/lib/palworld/owned-breeding-combos";
+import { SkillFruitIntelligence } from "@/lib/palworld/skill-fruit-intelligence";
+import {
+  auditPalCollection,
+  type AuditSeverity,
+} from "@/lib/palworld/audit-pal-intelligence";
 
 import {
   rankRealPals,
@@ -35,9 +41,11 @@ type View =
   | "farming"
   | "support"
   | "breeding"
+  | "skills"
   | "humans"
   | "special"
-  | "cleanup";
+  | "cleanup"
+  | "audit";
 
 type BaseWinnerGroup = {
   pal: RankedRealPal;
@@ -383,6 +391,10 @@ export default function PalsPage() {
               />
             )}
 
+            {view === "skills" && (
+              <SkillFruitIntelligence />
+            )}
+
             {view === "humans" && (
               <CapturedHumansView
                 humans={rankings.humans}
@@ -391,7 +403,9 @@ export default function PalsPage() {
 
             {view === "special" && (
               <SpecialView
-                pals={rankings.rare}
+                pals={rankings.all.filter(
+                  isSpecialProtected,
+                )}
                 onSelect={setSelectedPal}
               />
             )}
@@ -401,6 +415,13 @@ export default function PalsPage() {
                 groups={
                   rankings.speciesGroups
                 }
+                onSelect={setSelectedPal}
+              />
+            )}
+
+            {view === "audit" && (
+              <AuditView
+                pals={rankings.all}
                 onSelect={setSelectedPal}
               />
             )}
@@ -419,6 +440,215 @@ export default function PalsPage() {
         )}
       </div>
     </main>
+  );
+}
+
+function AuditView({
+  pals,
+  onSelect,
+}: {
+  pals: RankedRealPal[];
+  onSelect: (pal: RankedRealPal) => void;
+}) {
+  const report =
+    useMemo(
+      () =>
+        auditPalCollection(pals),
+      [pals],
+    );
+
+  const severityOrder: AuditSeverity[] = [
+    "ERROR",
+    "WARNING",
+    "REVIEW",
+    "INFO",
+  ];
+
+  const copyReport = async () => {
+    const lines = [
+      `REBEL COLLECTION AUDIT — ${report.scanned} PALS`,
+      `Errors: ${report.counts.ERROR} · Warnings: ${report.counts.WARNING} · Review: ${report.counts.REVIEW} · Info: ${report.counts.INFO}`,
+      "",
+      ...report.findings.map(
+        (finding) =>
+          `[${finding.severity}] ${finding.pal.pal.species} copy ${finding.pal.score.speciesRank ?? "?"}: ${finding.title} — ${finding.detail}`,
+      ),
+    ];
+    const reportText = lines.join("\n");
+
+    try {
+      if (
+        navigator.clipboard &&
+        window.isSecureContext
+      ) {
+        await navigator.clipboard.writeText(
+          reportText,
+        );
+      } else {
+        const textArea =
+          document.createElement(
+            "textarea",
+          );
+        textArea.value = reportText;
+        textArea.setAttribute(
+          "readonly",
+          "",
+        );
+        textArea.style.position =
+          "fixed";
+        textArea.style.left =
+          "-9999px";
+        textArea.style.opacity =
+          "0";
+        document.body.appendChild(
+          textArea,
+        );
+        textArea.select();
+        textArea.setSelectionRange(
+          0,
+          textArea.value.length,
+        );
+
+        const copied =
+          document.execCommand(
+            "copy",
+          );
+        textArea.remove();
+
+        if (!copied) {
+          throw new Error(
+            "Clipboard copy was blocked",
+          );
+        }
+      }
+
+      window.alert(
+        "Full report copied to your clipboard.",
+      );
+    } catch {
+      window.prompt(
+        "Automatic copying was blocked. Press Ctrl+C to copy the full report:",
+        reportText,
+      );
+    }
+  };
+
+  return (
+    <div className="space-y-8">
+      <section className="rounded-2xl border border-cyan-400/20 bg-cyan-400/[0.04] p-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-[15px] uppercase tracking-[0.16em] text-cyan-300">
+              Full Collection Scan
+            </p>
+            <h3 className="mt-2 text-2xl font-semibold">
+              {report.scanned} Pals checked
+            </h3>
+            <p className="mt-2 max-w-3xl text-[17px] leading-relaxed text-neutral-400">
+              Errors are direct contradictions. Warnings need a rule review.
+              Information items explain valid but potentially confusing cases,
+              such as dual-element two-way matchups.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={copyReport}
+            className="rounded-xl border border-white/15 bg-white/[0.06] px-4 py-2.5 text-[17px] text-neutral-200 transition hover:bg-white/[0.1]"
+          >
+            Copy Full Report
+          </button>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-2 lg:grid-cols-4">
+          {severityOrder.map((severity) => (
+            <div
+              key={severity}
+              className="rounded-xl border border-white/10 bg-black/20 p-3"
+            >
+              <p className="text-[15px] uppercase tracking-wide text-neutral-500">
+                {severity}
+              </p>
+              <p className="mt-1 text-2xl font-semibold">
+                {report.counts[severity]}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {report.findings.length === 0 ? (
+        <section className="rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.05] p-5">
+          <p className="text-xl font-semibold text-emerald-200">
+            No audit contradictions found
+          </p>
+          <p className="mt-2 text-[17px] text-neutral-400">
+            Every loaded Pal passed the current automated checks.
+          </p>
+        </section>
+      ) : (
+        severityOrder.map((severity) => {
+          const findings =
+            report.findings.filter(
+              (finding) =>
+                finding.severity === severity,
+            );
+
+          if (findings.length === 0) {
+            return null;
+          }
+
+          return (
+            <section key={severity}>
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-xl font-semibold">
+                  {severity}
+                </h3>
+                <span className="text-[17px] text-neutral-500">
+                  {findings.length} findings
+                </span>
+              </div>
+              <div className="space-y-2">
+                {findings.map((finding) => (
+                  <button
+                    key={finding.id}
+                    type="button"
+                    onClick={() =>
+                      onSelect(finding.pal)
+                    }
+                    className="w-full rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-left transition hover:border-white/20 hover:bg-white/[0.06]"
+                  >
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                      <div>
+                        <p className="text-[17px] font-semibold">
+                          {finding.pal.pal.nickname ??
+                            finding.pal.pal.species}
+                        </p>
+                        <p className="mt-1 text-[15px] text-neutral-500">
+                          {finding.pal.pal.nickname
+                            ? `${finding.pal.pal.species} · `
+                            : ""}
+                          Copy {finding.pal.score.speciesRank ?? "?"} of{" "}
+                          {finding.pal.score.speciesCopyCount}
+                        </p>
+                      </div>
+                      <span className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[15px] text-neutral-400">
+                        {finding.code}
+                      </span>
+                    </div>
+                    <p className="mt-3 text-[17px] font-medium text-neutral-200">
+                      {finding.title}
+                    </p>
+                    <p className="mt-1 text-[17px] leading-relaxed text-neutral-400">
+                      {finding.detail}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </section>
+          );
+        })
+      )}
+    </div>
   );
 }
 
@@ -475,6 +705,12 @@ function Sidebar({
         "Best breeding stock",
     },
     {
+      id: "skills",
+      label: "Skill Fruits",
+      description:
+        "Fruit farming & moves",
+    },
+    {
       id: "humans",
       label: "Captured Humans",
       description:
@@ -491,6 +727,12 @@ function Sidebar({
       label: "Cleanup",
       description:
         "Redundant copies",
+    },
+    {
+      id: "audit",
+      label: "Audit All Pals",
+      description:
+        "Find intelligence issues",
     },
   ];
 
@@ -555,7 +797,7 @@ function Sidebar({
       </nav>
 
       <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-        <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">
+        <p className="text-[15px] uppercase tracking-[0.14em] text-neutral-300">
           Collection
         </p>
 
@@ -624,6 +866,11 @@ function TopBar({
       description:
         "Broader breeding rankings for IV donors, passive inheritance and strong species copies.",
     },
+    skills: {
+      title: "Skill Fruit Intelligence",
+      description:
+        "Current 1.0 tree pools, farming odds and high-value moves without mixing loot data into Pal rankings.",
+    },
     special: {
       title: "Special & Protected",
       description:
@@ -633,6 +880,11 @@ function TopBar({
       title: "Collection Cleanup",
       description:
         "Species-by-species decisions showing what to keep, conditionally keep and safely remove.",
+    },
+    audit: {
+      title: "Collection Intelligence Audit",
+      description:
+        "Checks every loaded Pal for contradictory recommendations, incomplete data and classification problems.",
     },
   };
 
@@ -804,23 +1056,78 @@ function Overview({
     view: View,
   ) => void;
 }) {
+  const combatCandidates =
+    [...rankings.all]
+      .filter(
+        (entry) =>
+          Boolean(
+            entry.pal
+              .combatStats,
+          ) &&
+          entry.score
+            .combat > 0,
+      )
+      .sort(
+        (a, b) =>
+          b.score
+            .combat -
+          a.score
+            .combat,
+      );
+
+  const bestCombatBySpecies =
+    new Map<
+      string,
+      RankedRealPal
+    >();
+
+  for (const entry of combatCandidates) {
+    const speciesKey =
+      entry.pal
+        .referenceIdentity
+        ?.canonicalName ??
+      entry.pal.species;
+
+    if (
+      !bestCombatBySpecies.has(
+        speciesKey,
+      )
+    ) {
+      bestCombatBySpecies.set(
+        speciesKey,
+        entry,
+      );
+    }
+  }
+
   const bestCombat =
-    rankings.combatKeepers.slice(
-      0,
-      8,
-    );
+    [...bestCombatBySpecies.values()]
+      .slice(0, 8);
 
   const bestBreeding =
-    rankings.breedingKeepers.slice(
-      0,
-      8,
-    );
+    [...rankings.breedingKeepers]
+      .sort(
+        (a, b) =>
+          b.score
+            .breeding -
+          a.score
+            .breeding,
+      )
+      .slice(0, 8);
 
   const special =
-    rankings.rare.slice(
-      0,
-      8,
-    );
+    rankings.all
+      .filter(
+        isSpecialProtected,
+      )
+      .sort(
+        (a, b) =>
+          b.score
+            .overall -
+          a.score
+            .overall,
+      )
+      .slice(0, 8);
 
   const baseWinners =
     getDeduplicatedBaseWinners(
@@ -1072,40 +1379,67 @@ function CombatView({
     );
 
   const currentPower = [...scoredPals].sort(
-    (a, b) => b.score.currentPower - a.score.currentPower,
+    (a, b) =>
+      b.score.combatIntelligenceV2.currentReadiness -
+      a.score.combatIntelligenceV2.currentReadiness,
   );
 
   const potential = [...scoredPals].sort(
-    (a, b) => b.score.combatPotential - a.score.combatPotential,
+    (a, b) =>
+      b.score.combatIntelligenceV2.generalCeiling -
+      a.score.combatIntelligenceV2.generalCeiling,
   );
 
   const attackMonsters = [...scoredPals]
-    .filter((entry) => (entry.pal.ivs.attack ?? 0) >= 85)
+    .filter(
+      (entry) =>
+        entry.score.combatIntelligenceV2.individualOffense >= 60,
+    )
     .sort(
       (a, b) =>
-        (b.pal.ivs.attack ?? 0) - (a.pal.ivs.attack ?? 0) ||
-        b.score.combatPotential - a.score.combatPotential,
+        b.score.combatIntelligenceV2.individualOffense -
+        a.score.combatIntelligenceV2.individualOffense,
     );
 
   const tanks = [...scoredPals]
     .filter(
       (entry) =>
-        (entry.pal.ivs.hp ?? 0) >= 80 ||
-        (entry.pal.ivs.defense ?? 0) >= 80,
+        entry.score.combatIntelligenceV2.individualDurability >= 60,
     )
-    .sort((a, b) => {
-      const aTank = (a.pal.ivs.hp ?? 0) * 0.55 + (a.pal.ivs.defense ?? 0) * 0.45;
-      const bTank = (b.pal.ivs.hp ?? 0) * 0.55 + (b.pal.ivs.defense ?? 0) * 0.45;
-      return bTank - aTank;
-    });
+    .sort(
+      (a, b) =>
+        b.score.combatIntelligenceV2.individualDurability -
+        a.score.combatIntelligenceV2.individualDurability,
+    );
 
   const alphaFighters = [...scoredPals]
     .filter((entry) => entry.pal.isAlpha)
-    .sort((a, b) => b.score.currentPower - a.score.currentPower);
+    .sort(
+      (a, b) =>
+        b.score.combatIntelligenceV2.currentReadiness -
+        a.score.combatIntelligenceV2.currentReadiness,
+    );
 
-  const bestBySpecies = [...scoredPals]
-    .filter((entry) => entry.score.bestOfSpecies.combat)
-    .sort((a, b) => b.score.combatPotential - a.score.combatPotential);
+  const bestCombatBySpecies = new Map<string, RankedRealPal>();
+
+  for (const entry of scoredPals) {
+    const speciesKey = entry.pal.internalSpeciesId;
+    const current = bestCombatBySpecies.get(speciesKey);
+
+    if (
+      !current ||
+      entry.score.combatIntelligenceV2.generalCeiling >
+        current.score.combatIntelligenceV2.generalCeiling
+    ) {
+      bestCombatBySpecies.set(speciesKey, entry);
+    }
+  }
+
+  const bestBySpecies = [...bestCombatBySpecies.values()].sort(
+    (a, b) =>
+      b.score.combatIntelligenceV2.generalCeiling -
+      a.score.combatIntelligenceV2.generalCeiling,
+  );
 
   const elementGroups = getCombatElementGroups(scoredPals);
 
@@ -1186,7 +1520,7 @@ function CombatView({
                 key={`${element}-${pal.pal.id ?? pal.pal.internalSpeciesId}`}
                 rankedPal={pal}
                 metricLabel={element}
-                metricValue={pal.score.combatPotential}
+                metricValue={pal.score.combatIntelligenceV2.generalCeiling}
                 reasons={getTopCombatReasons(pal, element)}
                 onClick={() => onSelect(pal)}
               />
@@ -1214,6 +1548,7 @@ function CombatSection({
   pals,
   onSelect,
   metric = "combat",
+  initialLimit = 20,
 }: {
   eyebrow: string;
   title: string;
@@ -1230,12 +1565,26 @@ function CombatSection({
     | "farming"
     | "attack"
     | "tank";
+  initialLimit?: number;
 }) {
+  const [
+    showAll,
+    setShowAll,
+  ] = useState(false);
+
   if (
     pals.length === 0
   ) {
     return null;
   }
+
+  const visiblePals =
+    showAll
+      ? pals
+      : pals.slice(
+          0,
+          initialLimit,
+        );
 
   return (
     <section>
@@ -1260,7 +1609,7 @@ function CombatSection({
       </div>
 
       <div className="grid gap-3 xl:grid-cols-2">
-        {pals.map(
+        {visiblePals.map(
           (
             entry,
             index,
@@ -1274,12 +1623,14 @@ function CombatSection({
 
             if (metric === "currentPower") {
               metricLabel = "Current Power";
-              metricValue = entry.score.currentPower;
+              metricValue =
+                entry.score.combatIntelligenceV2.currentReadiness;
             }
 
             if (metric === "potential") {
               metricLabel = "Potential";
-              metricValue = entry.score.combatPotential;
+              metricValue =
+                entry.score.combatIntelligenceV2.generalCeiling;
             }
 
             if (metric === "farming") {
@@ -1292,12 +1643,10 @@ function CombatSection({
               "attack"
             ) {
               metricLabel =
-                "Attack IV";
+                "Offense";
 
               metricValue =
-                entry.pal.ivs
-                  .attack ??
-                0;
+                entry.score.combatIntelligenceV2.individualOffense;
             }
 
             if (
@@ -1305,17 +1654,10 @@ function CombatSection({
               "tank"
             ) {
               metricLabel =
-                "Tank IV";
+                "Durability";
 
               metricValue =
-                (entry.pal.ivs
-                  .hp ??
-                  0) *
-                  0.55 +
-                (entry.pal.ivs
-                  .defense ??
-                  0) *
-                  0.45;
+                entry.score.combatIntelligenceV2.individualDurability;
             }
 
             return (
@@ -1346,6 +1688,24 @@ function CombatSection({
           },
         )}
       </div>
+
+      {pals.length >
+        initialLimit && (
+        <button
+          type="button"
+          onClick={() =>
+            setShowAll(
+              (current) =>
+                !current,
+            )
+          }
+          className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-base font-semibold text-neutral-200 transition hover:border-white/20 hover:bg-white/[0.08]"
+        >
+          {showAll
+            ? `Show top ${initialLimit}`
+            : `Show all ${pals.length} Pals`}
+        </button>
+      )}
     </section>
   );
 }
@@ -1561,6 +1921,16 @@ function FarmingView({
   pals: RankedRealPal[];
   onSelect: (pal: RankedRealPal) => void;
 }) {
+  const [
+    showAllRanch,
+    setShowAllRanch,
+  ] = useState(false);
+
+  const [
+    showAllPlantation,
+    setShowAllPlantation,
+  ] = useState(false);
+
   const relevant = pals.filter((entry) => entry.score.farming > 0);
   const ranch = relevant
     .filter((entry) => (entry.pal.ranchDrops?.length ?? 0) > 0)
@@ -1572,6 +1942,16 @@ function FarmingView({
       ),
     )
     .sort((a, b) => b.score.farming - a.score.farming);
+
+  const visibleRanch =
+    showAllRanch
+      ? ranch
+      : ranch.slice(0, 20);
+
+  const visiblePlantation =
+    showAllPlantation
+      ? plantation
+      : plantation.slice(0, 20);
 
   return (
     <div className="space-y-12">
@@ -1588,11 +1968,11 @@ function FarmingView({
         <section>
           <SectionIntro
             title="Ranch Producers"
-            description="Owned Pals with ranch drops, ranked by farming value."
+            description="Owned Pals with documented possible Ranch drops, ranked by farming value."
             count={ranch.length}
           />
           <div className="mt-5 grid gap-3 xl:grid-cols-2">
-            {ranch.map((entry, index) => (
+            {visibleRanch.map((entry, index) => (
               <CompactHorizontalCard
                 key={entry.pal.id ?? `${entry.pal.internalSpeciesId}-ranch-${index}`}
                 rankedPal={entry}
@@ -1601,13 +1981,22 @@ function FarmingView({
                 metricValue={entry.score.farming}
                 detail={
                   entry.pal.ranchDrops?.length
-                    ? `Drops: ${entry.pal.ranchDrops.join(", ")}`
+                    ? `Possible drops: ${entry.pal.ranchDrops.join(", ")}`
                     : "Ranch producer"
                 }
                 onClick={() => onSelect(entry)}
               />
             ))}
           </div>
+          {ranch.length > 20 && (
+            <button
+              type="button"
+              onClick={() => setShowAllRanch((current) => !current)}
+              className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-base font-semibold text-neutral-200 transition hover:border-white/20 hover:bg-white/[0.08]"
+            >
+              {showAllRanch ? "Show top 20" : `Show all ${ranch.length} Ranch producers`}
+            </button>
+          )}
         </section>
       )}
 
@@ -1619,7 +2008,7 @@ function FarmingView({
             count={plantation.length}
           />
           <div className="mt-5 grid gap-3 xl:grid-cols-2">
-            {plantation.map((entry, index) => (
+            {visiblePlantation.map((entry, index) => (
               <CompactHorizontalCard
                 key={entry.pal.id ?? `${entry.pal.internalSpeciesId}-plant-${index}`}
                 rankedPal={entry}
@@ -1634,6 +2023,15 @@ function FarmingView({
               />
             ))}
           </div>
+          {plantation.length > 20 && (
+            <button
+              type="button"
+              onClick={() => setShowAllPlantation((current) => !current)}
+              className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-base font-semibold text-neutral-200 transition hover:border-white/20 hover:bg-white/[0.08]"
+            >
+              {showAllPlantation ? "Show top 20" : `Show all ${plantation.length} plantation workers`}
+            </button>
+          )}
         </section>
       )}
     </div>
@@ -1650,12 +2048,62 @@ function SupportView({
     pal: RankedRealPal,
   ) => void;
 }) {
+  const [
+    showAll,
+    setShowAll,
+  ] = useState(false);
+
+  const supportCandidates =
+    pals
+      .filter(
+        (entry) =>
+          entry.score.support > 0 &&
+          entry.score.supportReasons.some(
+            (reason) =>
+              /^(Vanguard|Stronghold Strategist|Healing Coach|Wellness Watcher|Idiosyncratic):/i.test(reason) ||
+              /improves player combat|directly buffs party Pal stats|healing \/ survival support|party hunger sustain|hazard protection/i.test(reason),
+          ),
+      )
+      .sort(
+        (a, b) =>
+          b.score.support -
+            a.score.support ||
+          b.score.overall -
+            a.score.overall,
+      );
+
+  const bestBySpecies =
+    new Map<
+      string,
+      RankedRealPal
+    >();
+
+  for (const entry of supportCandidates) {
+    const speciesKey =
+      entry.pal
+        .referenceIdentity
+        ?.canonicalName ??
+      entry.pal.species;
+
+    if (
+      !bestBySpecies.has(
+        speciesKey,
+      )
+    ) {
+      bestBySpecies.set(
+        speciesKey,
+        entry,
+      );
+    }
+  }
+
   const relevant =
-    pals.filter(
-      (entry) =>
-        entry.score.support >
-        0,
-    );
+    [...bestBySpecies.values()];
+
+  const visiblePals =
+    showAll
+      ? relevant
+      : relevant.slice(0, 20);
 
   if (
     relevant.length === 0
@@ -1673,12 +2121,12 @@ function SupportView({
     <section>
       <SectionIntro
         title="Player & Party Support"
-        description="Vanguard, Stronghold Strategist and similar passives are scored here instead of being mislabeled as self-combat damage."
+        description="The best owned support copy per species for combat buffs, party Pal bonuses, healing, hunger sustain and hazard protection. Work-efficiency traits remain in the Pal inspector."
         count={relevant.length}
       />
 
       <div className="mt-5 grid gap-3 xl:grid-cols-2">
-        {relevant.map(
+        {visiblePals.map(
           (
             entry,
             index,
@@ -1705,6 +2153,16 @@ function SupportView({
           ),
         )}
       </div>
+
+      {relevant.length > 20 && (
+        <button
+          type="button"
+          onClick={() => setShowAll((current) => !current)}
+          className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-base font-semibold text-neutral-200 transition hover:border-white/20 hover:bg-white/[0.08]"
+        >
+          {showAll ? "Show top 20" : `Show all ${relevant.length} support Pals`}
+        </button>
+      )}
     </section>
   );
 }
@@ -1805,11 +2263,18 @@ function BreedingView({
 
   return (
     <div className="space-y-12">
+      <OwnedBreedingCombos
+        pals={pals}
+        onSelect={onSelect}
+      />
+
       <BreedingSection
         title="Best Overall Breeders"
         description="Your strongest breeding candidates overall."
         pals={topOverall}
         onSelect={onSelect}
+        countLabel="breeding candidates"
+        initialLimit={20}
       />
 
       <BreedingSection
@@ -1819,6 +2284,8 @@ function BreedingView({
           exceptionalIvDonors
         }
         onSelect={onSelect}
+        countLabel="IV donors"
+        initialLimit={20}
       />
 
       <BreedingSection
@@ -1828,6 +2295,8 @@ function BreedingView({
           passiveDonors
         }
         onSelect={onSelect}
+        countLabel="passive donors"
+        initialLimit={20}
       />
 
       <BreedingSection
@@ -1835,6 +2304,8 @@ function BreedingView({
         description="Rebel's preferred breeding copy for each species."
         pals={bestBySpecies}
         onSelect={onSelect}
+        countLabel="species winners"
+        initialLimit={20}
       />
     </div>
   );
@@ -1845,6 +2316,8 @@ function BreedingSection({
   description,
   pals,
   onSelect,
+  countLabel = "Pals",
+  initialLimit,
 }: {
   title: string;
   description: string;
@@ -1853,12 +2326,28 @@ function BreedingSection({
   onSelect: (
     pal: RankedRealPal,
   ) => void;
+  countLabel?: string;
+  initialLimit?: number;
 }) {
+  const [
+    showAll,
+    setShowAll,
+  ] = useState(false);
+
   if (
     pals.length === 0
   ) {
     return null;
   }
+
+  const visiblePals =
+    initialLimit &&
+    !showAll
+      ? pals.slice(
+          0,
+          initialLimit,
+        )
+      : pals;
 
   return (
     <section>
@@ -1868,10 +2357,11 @@ function BreedingSection({
           description
         }
         count={pals.length}
+        countLabel={countLabel}
       />
 
       <div className="mt-5 grid gap-3 xl:grid-cols-2">
-        {pals.map(
+        {visiblePals.map(
           (
             entry,
             index,
@@ -1903,6 +2393,25 @@ function BreedingSection({
           ),
         )}
       </div>
+
+      {initialLimit &&
+        pals.length >
+          initialLimit && (
+          <button
+            type="button"
+            onClick={() =>
+              setShowAll(
+                (current) =>
+                  !current,
+              )
+            }
+            className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-base font-semibold text-neutral-200 transition hover:border-white/20 hover:bg-white/[0.08]"
+          >
+            {showAll
+              ? `Show top ${initialLimit}`
+              : `Show all ${pals.length} ${countLabel}`}
+          </button>
+        )}
     </section>
   );
 }
@@ -1950,8 +2459,10 @@ function CapturedHumansView({
                     </p>
 
                     <h3 className="mt-1 text-base font-semibold">
-                      {human.nickname ??
-                        human.species}
+                      {humanizeSkill(
+                        human.nickname ??
+                          human.species,
+                      )}
                     </h3>
 
                     <p className="mt-1 text-xs text-neutral-500">
@@ -1995,16 +2506,26 @@ function SpecialView({
     pal: RankedRealPal,
   ) => void;
 }) {
+  const [
+    showAll,
+    setShowAll,
+  ] = useState(false);
+
+  const visiblePals =
+    showAll
+      ? pals
+      : pals.slice(0, 20);
+
   return (
     <section>
       <SectionIntro
         title="Special & Protected"
-        description="Pals protected because of Alpha status, rare traits or strategic value."
+        description="Alpha Pals, invested copies, near-perfect overall IVs and genuinely high-value passives."
         count={pals.length}
       />
 
       <div className="mt-5 grid gap-3 xl:grid-cols-2">
-        {pals.map(
+        {visiblePals.map(
           (
             entry,
             index,
@@ -2028,6 +2549,16 @@ function SpecialView({
           ),
         )}
       </div>
+
+      {pals.length > 20 && (
+        <button
+          type="button"
+          onClick={() => setShowAll((current) => !current)}
+          className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-base font-semibold text-neutral-200 transition hover:border-white/20 hover:bg-white/[0.08]"
+        >
+          {showAll ? "Show top 20" : `Show all ${pals.length} protected Pals`}
+        </button>
+      )}
     </section>
   );
 }
@@ -2047,6 +2578,11 @@ function CleanupView({
 
   const [query, setQuery] =
     useState("");
+
+  const [
+    showAllSpecies,
+    setShowAllSpecies,
+  ] = useState(false);
 
   const duplicateGroups =
     groups.filter(
@@ -2168,6 +2704,14 @@ function CleanupView({
           b.count - a.count
         );
       });
+
+  const visibleCleanupGroups =
+    showAllSpecies
+      ? cleanupGroups
+      : cleanupGroups.slice(
+          0,
+          20,
+        );
 
   const allDuplicatePals =
     duplicateGroups.flatMap(
@@ -2474,7 +3018,7 @@ function CleanupView({
           </div>
         ) : (
           <div className="mt-5 space-y-5">
-            {cleanupGroups.map(
+            {visibleCleanupGroups.map(
               (group) => (
                 <CleanupSpeciesCard
                   key={
@@ -2488,6 +3032,16 @@ function CleanupView({
               ),
             )}
           </div>
+        )}
+
+        {cleanupGroups.length > 20 && (
+          <button
+            type="button"
+            onClick={() => setShowAllSpecies((current) => !current)}
+            className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-base font-semibold text-neutral-200 transition hover:border-white/20 hover:bg-white/[0.08]"
+          >
+            {showAllSpecies ? "Show top 20 species" : `Show all ${cleanupGroups.length} species`}
+          </button>
         )}
       </div>
     </div>
@@ -3292,14 +3846,24 @@ function CompactHorizontalCard({
   const metricGrade =
     metricLabel === "Breeding"
       ? score.breedingGrade
-      : metricLabel.startsWith(
-            "Work Lv.",
-          )
-        ? score.baseGrade
-        : metricLabel ===
-            "Protected"
-          ? null
-          : score.combatGrade;
+      : metricLabel === "Farming"
+        ? score.farmingGrade
+        : metricLabel === "Support"
+          ? score.supportGrade
+          : metricLabel.startsWith(
+                "Work Lv.",
+              )
+            ? score.baseGrade
+            : metricLabel ===
+                "Current Power"
+              ? score.currentPowerGrade
+              : metricLabel ===
+                  "Potential"
+                ? score.combatPotentialGrade
+                : metricLabel ===
+                    "Combat"
+                  ? score.combatGrade
+                  : null;
 
   return (
     <button
@@ -3617,12 +4181,35 @@ function getPartnerSkillDisplay(
     text.includes("restore") ||
     text.includes("heal");
 
+  const hazardProtection =
+    text.includes("grants immunity") ||
+    text.includes("immune to") ||
+    text.includes("immunity to") ||
+    text.includes("nullifies the effects") ||
+    text.includes("toxic gas") ||
+    text.includes("explosive spores");
+
+  const baseDefense =
+    base &&
+    (
+      text.includes("patrols") ||
+      text.includes("intruders") ||
+      text.includes("bombards") ||
+      text.includes("defends the base")
+    );
+
   const playerSupport =
     text.includes(
       "player's attack",
     ) ||
     text.includes(
       "player attack",
+    ) ||
+    text.includes(
+      "player's damage",
+    ) ||
+    text.includes(
+      "player attack damage",
     ) ||
     text.includes(
       "carrying capacity",
@@ -3633,36 +4220,118 @@ function getPartnerSkillDisplay(
     text.includes(
       "player's health",
     ) ||
+    hazardProtection ||
     healing;
 
+  const playerMobility =
+    text.includes("additional jump") ||
+    text.includes("mid-air dash") ||
+    text.includes("air dash") ||
+    text.includes("jump height");
+
+  const partyPalSupport =
+    text.includes("while in party") &&
+    (
+      /increases? (?:the )?(?:attack|defense) of .*pals/.test(text) ||
+      text.includes("pal team") ||
+      text.includes("party pals")
+    );
+
   const combat =
-    tags.has("active") &&
+    (
+      tags.has("active") ||
+      mount
+    ) &&
     (
       text.includes("enemy") ||
       text.includes("attack") ||
       text.includes("damage") ||
       text.includes("gun") ||
       text.includes("weapon") ||
-      text.includes("explosion")
+      text.includes("explosion") ||
+      text.includes("rapidly fire") ||
+      text.includes("additional damage") ||
+      text.includes("bombards") ||
+      text.includes("intruders")
     );
+
+  const alphaEggUtility =
+    text.includes("alpha pal egg") ||
+    (
+      text.includes("pal eggs") &&
+      text.includes("alpha")
+    );
+
+  const butchering =
+    text.includes("meat cleaver") ||
+    text.includes("butcher");
+
+  const resourceDetection =
+    text.includes("detect nearby") ||
+    text.includes("chromite acquisition") ||
+    text.includes("resource acquisition");
 
   const loot =
     text.includes("drop") ||
     text.includes("dig") ||
-    text.includes("items when defeated");
+    text.includes("amount of items obtained") ||
+    text.includes("acquisition increases") ||
+    butchering ||
+    resourceDetection ||
+    text.includes("items when defeated") ||
+    alphaEggUtility;
 
   let type =
     "Special Utility";
 
-  if (glider) {
+  if (
+    baseDefense &&
+    mount
+  ) {
+    type =
+      "Base Defense / Flying Mount";
+  } else if (baseDefense) {
+    type =
+      "Base Defense";
+  } else if (butchering) {
+    type =
+      "Butchering / Loot Utility";
+  } else if (resourceDetection) {
+    type =
+      "Resource Detection / Loot Utility";
+  } else if (glider) {
     type =
       "Glider / Traversal Utility";
+  } else if (playerMobility) {
+    type =
+      "Player Mobility / Traversal";
+  } else if (
+    ranch &&
+    partyPalSupport
+  ) {
+    type =
+      "Ranch Production / Pal Team Support";
+  } else if (partyPalSupport) {
+    type =
+      "Pal Team Support";
+  } else if (
+    mount &&
+    alphaEggUtility
+  ) {
+    type =
+      "Mount / Alpha Egg Utility";
   } else if (
     mount &&
     combat
   ) {
     type =
       "Mounted Combat / Traversal";
+  } else if (
+    mount &&
+    partyPalSupport
+  ) {
+    type =
+      "Mount / Pal Team Support";
   } else if (mount) {
     type =
       "Ground Mount / Traversal";
@@ -3678,6 +4347,9 @@ function getPartnerSkillDisplay(
   } else if (ranch) {
     type =
       "Ranch Production";
+  } else if (base && combat) {
+    type =
+      "Base Utility / Active Combat";
   } else if (base) {
     type =
       "Base Utility";
@@ -3692,7 +4364,7 @@ function getPartnerSkillDisplay(
   const bestUses: string[] =
     [];
 
-  if (glider || mount) {
+  if (glider || mount || playerMobility) {
     bestUses.push(
       "World traversal",
     );
@@ -3704,15 +4376,53 @@ function getPartnerSkillDisplay(
     );
   }
 
+  if (alphaEggUtility) {
+    bestUses.push(
+      "Finding Alpha Pal Eggs",
+    );
+  }
+
+  if (butchering) {
+    bestUses.push(
+      "Increasing Meat Cleaver item yields",
+    );
+  }
+
+  if (resourceDetection) {
+    bestUses.push(
+      text.includes("chromite")
+        ? "Finding and farming Chromite"
+        : "Finding and farming resources",
+    );
+  }
+
   if (combat) {
     bestUses.push(
       "Combat utility",
     );
   }
 
+  if (baseDefense) {
+    bestUses.push(
+      "Defending the base from raids",
+    );
+  }
+
+  if (hazardProtection) {
+    bestUses.push(
+      "Hazard and status protection",
+    );
+  }
+
   if (playerSupport) {
     bestUses.push(
-      "Player or party support",
+      "Player support",
+    );
+  }
+
+  if (partyPalSupport) {
+    bestUses.push(
+      "Element-focused Pal teams",
     );
   }
 
@@ -3728,7 +4438,12 @@ function getPartnerSkillDisplay(
     );
   }
 
-  if (loot) {
+  if (
+    loot &&
+    !alphaEggUtility &&
+    !butchering &&
+    !resourceDetection
+  ) {
     bestUses.push(
       "Resource collection",
     );
@@ -3748,6 +4463,11 @@ function getPartnerSkillDisplay(
   if (glider) {
     interpretation +=
       " It is traversal utility, not a player combat or stat-support effect.";
+  } else if (baseDefense) {
+    interpretation +=
+      text.includes("only 1 can be summoned")
+        ? " It is a one-per-base aerial defender, so assigning additional copies to the same base does not add this defensive effect."
+        : " Its Partner Skill directly contributes to defending the base.";
   } else if (
     playerSupport
   ) {
@@ -3781,9 +4501,11 @@ function getPartnerSkillDisplay(
 
     affects: {
       travel:
-        glider || mount,
+        glider || mount || playerMobility,
       combat,
       playerSupport,
+      partySupport:
+        partyPalSupport,
       base,
       farming: ranch,
       loot,
@@ -3848,8 +4570,20 @@ function PalDetailPanel({
   const bestCopy =
     sameSpecies[0] ?? null;
 
+  const getPalIdentity = (
+    entry: RankedRealPal,
+  ) =>
+    entry.pal.id ??
+    [
+      entry.pal.internalSpeciesId,
+      entry.pal.location.containerId,
+      entry.pal.location.slotIndex,
+    ].join(":");
+
   const isBestCopy =
-    bestCopy === rankedPal;
+    bestCopy !== null &&
+    getPalIdentity(bestCopy) ===
+      getPalIdentity(rankedPal);
 
   const slotNumber =
     pal.location.displaySlot ??
@@ -3893,6 +4627,40 @@ function PalDetailPanel({
       rankedPal,
     );
 
+  const combatV2 =
+    score.combatIntelligenceV2;
+
+  const displayedPrimaryUse =
+    pal.location.type === "PARTY" &&
+    combatV2.generalCeiling >= 60
+      ? "Combat"
+      : score.bestRole;
+
+  const tradeMatchups =
+    combatV2.strongAgainst.filter(
+      (element) =>
+        combatV2.weakAgainst.includes(element),
+    );
+
+  const partyOnlySupport =
+    Boolean(partnerSkillDisplay?.affects.partySupport) &&
+    !partnerSkillDisplay?.affects.playerSupport;
+
+  const displayedSpeciesPrimaryUtility =
+    partyOnlySupport &&
+    pal.speciesUtility?.primaryUtility === "Player / party support"
+      ? "Pal team support"
+      : pal.speciesUtility?.primaryUtility;
+
+  const displayedSpeciesBestUses =
+    pal.speciesUtility?.bestUsedFor.filter(
+      (use) =>
+        !(
+          pal.speciesUtility?.recommendations.base === "LIMITED" &&
+          use.endsWith("-focused bases")
+        ),
+    ) ?? [];
+
   const comparison =
     bestCopy &&
     !isBestCopy
@@ -3922,24 +4690,24 @@ function PalDetailPanel({
           <button
             type="button"
             onClick={onClose}
-            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-sm"
+            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-[17px]"
           >
             ×
           </button>
 
           {pal.isAlpha && (
-            <span className="absolute left-4 top-4 rounded-full bg-amber-400 px-3 py-1 text-[10px] font-bold uppercase text-black">
+            <span className="absolute left-4 top-4 rounded-full bg-amber-400 px-3 py-1 text-[17px] font-bold uppercase text-black">
               Alpha
             </span>
           )}
 
-          <span className="absolute bottom-4 left-4 rounded-lg border border-white/10 bg-black/60 px-3 py-1.5 text-[9px] uppercase tracking-[0.14em] text-neutral-300">
+          <span className="absolute bottom-4 left-4 rounded-lg border border-white/10 bg-black/60 px-3 py-1.5 text-[15px] uppercase tracking-[0.14em] text-neutral-300">
             {bucketLabel}
           </span>
         </div>
 
         <div className="p-6">
-          <p className="text-[10px] uppercase tracking-[0.25em] text-neutral-500">
+          <p className="text-[17px] uppercase tracking-[0.25em] text-neutral-500">
             Pal Inspector
           </p>
 
@@ -3949,12 +4717,12 @@ function PalDetailPanel({
           </h2>
 
           {pal.nickname && (
-            <p className="mt-1 text-sm text-neutral-500">
+            <p className="mt-1 text-[17px] text-neutral-500">
               {pal.species}
             </p>
           )}
 
-          <p className="mt-2 text-sm text-neutral-400">
+          <p className="mt-2 text-[17px] text-neutral-400">
             {pal.level !==
             null
               ? `Level ${pal.level}`
@@ -3971,7 +4739,7 @@ function PalDetailPanel({
 
           {pal.elements
             .length > 0 && (
-            <p className="mt-1 text-xs text-neutral-500">
+            <p className="mt-1 text-[17px] text-neutral-500">
               {pal.elements.join(
                 " / ",
               )}
@@ -3985,11 +4753,11 @@ function PalDetailPanel({
                   In-game Identity
                 </PanelHeading>
 
-                <p className="mt-2 text-sm font-medium">
+                <p className="mt-2 text-[17px] font-medium">
                   {locationTitle}
                 </p>
 
-                <p className="mt-1 text-xs text-neutral-400">
+                <p className="mt-1 text-[17px] text-neutral-400">
                   {slotNumber !== null
                     ? `${slotLabel} ${slotNumber}`
                     : `${slotLabel} unavailable`}
@@ -3998,14 +4766,14 @@ function PalDetailPanel({
                     : ""}
                 </p>
 
-                <p className="mt-1 text-[10px] text-neutral-500">
+                <p className="mt-1 text-[17px] text-neutral-500">
                   {containerLabel
                     ? `Container ${containerLabel}`
                     : "Container unavailable"}
                 </p>
               </div>
 
-              <span className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[9px] text-neutral-400">
+              <span className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[15px] text-neutral-400">
                 {score.speciesRank
                   ? `#${score.speciesRank}`
                   : "—"}
@@ -4018,7 +4786,7 @@ function PalDetailPanel({
                   pal.slot
                     .containerId
                 }
-                className="mt-3 break-all text-[9px] leading-relaxed text-neutral-600"
+                className="mt-3 break-all text-[15px] leading-relaxed text-neutral-600"
               >
                 Container ID:{" "}
                 {
@@ -4028,7 +4796,7 @@ function PalDetailPanel({
               </p>
             )}
 
-            <p className="mt-3 text-[9px] leading-relaxed text-neutral-600">
+            <p className="mt-3 text-[15px] leading-relaxed text-neutral-600">
               Rebel resolved this location directly from the current Palworld save data.
               {pal.location.type === "BASE" && pal.location.baseId
                 ? ` Base record: ${pal.location.baseId}.`
@@ -4036,44 +4804,122 @@ function PalDetailPanel({
             </p>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
-            <DetailMetric label="Overall" value={score.overall} />
+          <div className="mt-6 rounded-2xl border border-cyan-400/20 bg-cyan-400/[0.04] p-4">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <PanelHeading>
+                  Rebel Recommendation
+                </PanelHeading>
+                <p className="mt-2 text-lg font-semibold">
+                  {bucketLabel}
+                </p>
+                <p className="mt-1 text-[17px] text-neutral-400">
+                  Primary use: {displayedPrimaryUse}
+                </p>
+              </div>
+              <span className="rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-3 py-1.5 text-[15px] uppercase tracking-wide text-cyan-100">
+                {humanizeAction(score.action)}
+              </span>
+            </div>
+
+            <div className="mt-3 space-y-1">
+              {recommendationReasons.slice(0, 3).map((reason) => (
+                <p key={reason} className="text-[17px] leading-relaxed text-neutral-300">
+                  ✓ {reason}
+                </p>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            <DetailMetric label="Collection Value" value={score.overall} />
             <DetailMetric
-              label="Combat Readiness"
-              value={
-                pal.combatStats
-                  ? score.currentPower
-                  : "N/A"
-              }
+              label="Combat Now"
+              value={pal.combatStats ? combatV2.currentReadiness : "N/A"}
             />
             <DetailMetric
               label="Combat Ceiling"
-              value={
-                pal.combatStats
-                  ? score.combatPotential
-                  : "N/A"
-              }
+              value={pal.combatStats ? combatV2.generalCeiling : "N/A"}
             />
             <DetailMetric
-              label="Expedition"
-              value={
-                pal.combatStats
-                  ? score.expeditionFirepower
-                  : "N/A"
-              }
+              label="Offense"
+              value={pal.combatStats ? combatV2.individualOffense : "N/A"}
             />
-            <DetailMetric label="Base" value={score.base} />
-            <DetailMetric label="Farming" value={score.farming} />
-            <DetailMetric label="Support" value={score.support} />
-            <DetailMetric label="Breeding" value={score.breeding} />
-            <DetailMetric label="Invest Priority" value={score.investmentPriority} />
+            <DetailMetric
+              label="Durability"
+              value={pal.combatStats ? combatV2.individualDurability : "N/A"}
+            />
+            <DetailMetric
+              label="Combat Role"
+              value={combatV2.archetype}
+            />
           </div>
 
-          <p className="mt-2 text-[9px] leading-relaxed text-neutral-600">
-            {pal.combatStats
-              ? "Combat Readiness is a Rebel 0–100 readiness index. Combat Ceiling assumes fixable IV Potential can be raised to 100 with fruit while keeping this Pal's current passive set. Expedition is a priority index, not the exact in-game Firepower number."
-              : "Combat metrics are intentionally shown as N/A because Rebel does not yet have species combat reference data for this Pal. IV, breeding, base and farming intelligence remain valid."}
-          </p>
+          {pal.combatStats && (
+            <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <PanelHeading>
+                  Combat V2
+                </PanelHeading>
+                <span className="rounded-md border border-white/10 bg-black/20 px-2 py-1 text-[15px] text-neutral-400">
+                  {combatV2.confidence}
+                </span>
+              </div>
+
+              <p className="mt-2 text-[17px] font-semibold">
+                {combatV2.archetype}
+              </p>
+
+              <div className="mt-2 space-y-1">
+                {combatV2.bestUsedFor.map((use) => (
+                  <p key={use} className="text-[17px] text-neutral-300">
+                    ✓ {use}
+                  </p>
+                ))}
+              </div>
+
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                <div className="rounded-xl border border-emerald-400/15 bg-emerald-400/[0.04] p-3">
+                  <p className="text-[15px] uppercase tracking-[0.14em] text-emerald-300">
+                    Naturally Strong Against
+                  </p>
+                  <p className="mt-1 text-[17px] text-neutral-300">
+                    {combatV2.strongAgainst.length > 0
+                      ? combatV2.strongAgainst.join(" · ")
+                      : "No natural type advantage"}
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-red-400/15 bg-red-400/[0.04] p-3">
+                  <p className="text-[15px] uppercase tracking-[0.14em] text-red-300">
+                    Threatened By
+                  </p>
+                  <p className="mt-1 text-[17px] text-neutral-300">
+                    {combatV2.weakAgainst.length > 0
+                      ? combatV2.weakAgainst.join(" · ")
+                      : "No listed type weakness"}
+                  </p>
+                </div>
+              </div>
+
+              {tradeMatchups.length > 0 && (
+                <div className="mt-3 rounded-xl border border-amber-400/20 bg-amber-400/[0.05] p-3">
+                  <p className="text-[15px] uppercase tracking-[0.14em] text-amber-300">
+                    Two-way Type Matchup
+                  </p>
+                  <p className="mt-1 text-[17px] leading-relaxed text-neutral-300">
+                    Against {tradeMatchups.join(" · ")}, this dual-element Pal
+                    can deal advantageous damage but is also vulnerable to that
+                    element. Choose moves and positioning carefully.
+                  </p>
+                </div>
+              )}
+
+              <p className="mt-3 text-[15px] leading-relaxed text-neutral-600">
+                Data-backed general score using species stats, IVs, passives, Partner Skill utility and the equipped skill loadout. Apply the displayed elemental matchup when choosing a fighter for a specific enemy.
+              </p>
+            </div>
+          )}
 
           <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
             <PanelHeading>Progression & Investment</PanelHeading>
@@ -4095,10 +4941,10 @@ function PalDetailPanel({
 
             <div className="mt-3 rounded-xl border border-violet-400/20 bg-violet-400/[0.04] p-3">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                <p className="text-[15px] uppercase tracking-[0.16em] text-neutral-500">
                   Investment Plan V2
                 </p>
-                <span className="rounded-md border border-violet-400/20 bg-violet-400/10 px-2 py-1 text-[9px] text-violet-200">
+                <span className="rounded-md border border-violet-400/20 bg-violet-400/10 px-2 py-1 text-[15px] text-violet-200">
                   {score.investmentPlan.decision.replaceAll("_", " ")}
                 </span>
               </div>
@@ -4111,7 +4957,7 @@ function PalDetailPanel({
                       ? "rounded-lg border border-emerald-400/20 bg-emerald-400/[0.06] px-2 py-1.5"
                       : "rounded-lg border border-white/5 bg-black/20 px-2 py-1.5"}
                   >
-                    <p className={recommended ? "text-[9px] text-emerald-200" : "text-[9px] text-neutral-600"}>
+                    <p className={recommended ? "text-[15px] text-emerald-200" : "text-[15px] text-neutral-600"}>
                       {humanizeSkill(action)}: {recommended ? "YES" : "NO"}
                     </p>
                   </div>
@@ -4120,7 +4966,7 @@ function PalDetailPanel({
 
               <div className="mt-3 space-y-1">
                 {score.investmentPlan.reasons.map((reason) => (
-                  <p key={reason} className="text-[10px] leading-relaxed text-neutral-400">
+                  <p key={reason} className="text-[17px] leading-relaxed text-neutral-400">
                     • {reason}
                   </p>
                 ))}
@@ -4130,30 +4976,41 @@ function PalDetailPanel({
             {score.investmentReasons.length > 0 && (
               <div className="mt-3 space-y-1">
                 {score.investmentReasons.map((reason) => (
-                  <p key={reason} className="text-[10px] text-neutral-300">✓ {reason}</p>
+                  <p key={reason} className="text-[17px] text-neutral-300">✓ {reason}</p>
                 ))}
               </div>
             )}
 
             {(pal.skills?.equipped?.length ?? 0) > 0 && (
               <div className="mt-4">
-                <p className="text-[9px] uppercase tracking-[0.18em] text-neutral-500">Equipped Skills</p>
+                <p className="text-[15px] uppercase tracking-[0.18em] text-neutral-500">Equipped Skills</p>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {pal.skills?.equipped.map((skill) => (
-                    <span key={skill} className="rounded-lg border border-white/10 bg-black/20 px-2 py-1 text-[9px] text-neutral-300">
-                      {humanizeSkill(skill)}
-                    </span>
-                  ))}
+                  {pal.skills?.equipped.map((skill) => {
+                    const skillInfo =
+                      combatV2.equippedSkills.find(
+                        (entry) =>
+                          entry.internalId === skill,
+                      );
+
+                    return (
+                      <span key={skill} className="rounded-lg border border-white/10 bg-black/20 px-2 py-1 text-[15px] text-neutral-300">
+                        {skillInfo?.name ?? humanizeSkill(skill)}
+                        {skillInfo
+                          ? ` · ${skillInfo.power} power · ${skillInfo.cooldown}s`
+                          : ""}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             )}
 
             {(pal.progression?.workSuitabilityUpgrades?.length ?? 0) > 0 && (
               <div className="mt-4">
-                <p className="text-[9px] uppercase tracking-[0.18em] text-neutral-500">Permanent Work Upgrades</p>
+                <p className="text-[15px] uppercase tracking-[0.18em] text-neutral-500">Permanent Work Upgrades</p>
                 <div className="mt-2 space-y-1">
                   {pal.progression?.workSuitabilityUpgrades.map((upgrade) => (
-                    <p key={`${upgrade.workSuitability}-${upgrade.rank}`} className="text-[10px] text-neutral-300">
+                    <p key={`${upgrade.workSuitability}-${upgrade.rank}`} className="text-[17px] text-neutral-300">
                       {upgrade.workSuitability} +{upgrade.rank}
                     </p>
                   ))}
@@ -4169,77 +5026,54 @@ function PalDetailPanel({
 
               <div className="mt-3 flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-base font-semibold">
+                  <p className="text-[17px] font-semibold">
                     {partnerSkillDisplay.name}
                   </p>
-                  <p className="mt-1 text-[9px] uppercase tracking-[0.16em] text-cyan-300">
+                  <p className="mt-1 text-[15px] uppercase tracking-[0.16em] text-cyan-300">
                     {partnerSkillDisplay.type}
                   </p>
                 </div>
-                <span className="rounded-md border border-white/10 bg-black/20 px-2 py-1 text-[9px] text-neutral-400">
+                <span className="rounded-md border border-white/10 bg-black/20 px-2 py-1 text-[15px] text-neutral-400">
                   Rank {partnerSkillDisplay.rank}
                 </span>
               </div>
 
-              <p className="mt-2 text-xs leading-relaxed text-neutral-400">
+              <p className="mt-2 text-[17px] leading-relaxed text-neutral-400">
                 {partnerSkillDisplay.description}
               </p>
 
               {partnerSkillDisplay.tags.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {partnerSkillDisplay.tags.map((tag) => (
-                    <span key={tag} className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[9px] uppercase tracking-wide text-neutral-300">
+                    <span key={tag} className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[15px] uppercase tracking-wide text-neutral-300">
                       {tag}
                     </span>
                   ))}
                 </div>
               )}
 
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+              {partnerSkillDisplay.bestUses.length > 0 && (
+                <div className="mt-3">
+                  <p className="text-[15px] uppercase tracking-[0.16em] text-neutral-500">
                     Best Used For
                   </p>
-                  <div className="mt-2 space-y-1">
+                  <div className="mt-2 flex flex-wrap gap-2">
                     {partnerSkillDisplay.bestUses.map((use) => (
-                      <p key={use} className="text-[10px] text-neutral-300">✓ {use}</p>
+                      <span key={use} className="rounded-lg border border-cyan-400/15 bg-cyan-400/[0.05] px-2.5 py-1 text-[15px] text-neutral-300">
+                        ✓ {use}
+                      </span>
                     ))}
                   </div>
                 </div>
+              )}
 
-                <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
-                    Affects
-                  </p>
-                  <div className="mt-2 space-y-1">
-                    {Object.entries(partnerSkillDisplay.affects).map(([area, active]) => (
-                      <p key={area} className={active ? "text-[10px] text-neutral-200" : "text-[10px] text-neutral-600"}>
-                        {humanizeSkill(area)}: {active ? "YES" : "NO"}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
-                <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
-                  Condensation Benefit
+              {partnerSkillDisplay.scales && (
+                <p className="mt-3 text-[17px] text-violet-200">
+                  {score.investmentPlan.actions.condense
+                    ? `✓ Condensation recommended · Current rank ${partnerSkillDisplay.rank}`
+                    : `Rank scaling documented, but condensation is not recommended for this copy's ${displayedPrimaryUse.toLowerCase()} role.`}
                 </p>
-                <p className="mt-1 text-[10px] leading-relaxed text-neutral-300">
-                  {partnerSkillDisplay.scales
-                    ? `The documented numeric effect improves with Partner Skill rank. Current rank: ${partnerSkillDisplay.rank}.`
-                    : "No rank-scaled numeric range is documented, so Rebel does not invent a condensation benefit."}
-                </p>
-              </div>
-
-              <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
-                <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
-                  Rebel Interpretation
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-neutral-300">
-                  {partnerSkillDisplay.interpretation}
-                </p>
-              </div>
+              )}
             </div>
           )}
 
@@ -4254,6 +5088,20 @@ function PalDetailPanel({
                 {pal.passives.map((passive, index) => {
                   const intelligence =
                     getPassiveTraitIntelligence(passive);
+
+                  const elementalMatch =
+                    intelligence.description.match(
+                      /(?:increase|increases).*?(Fire|Water|Grass|Electric|Ice|Ground|Dark|Dragon|Neutral) attack/i,
+                    );
+                  const mismatchedElement =
+                    elementalMatch?.[1] &&
+                    !pal.elements.some(
+                      (element) =>
+                        element.toLowerCase() ===
+                        elementalMatch[1].toLowerCase(),
+                    )
+                      ? elementalMatch[1]
+                      : null;
 
                   const dispositionStyle =
                     intelligence.disposition === "GOOD"
@@ -4271,71 +5119,48 @@ function PalDetailPanel({
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-sm font-medium">
+                          <p className="text-[17px] font-medium">
                             {intelligence.name}
                           </p>
-                          <p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-neutral-500">
+                          <p className="mt-1 text-[15px] uppercase tracking-[0.14em] text-neutral-500">
                             {intelligence.categories.join(" · ")}
                           </p>
                         </div>
 
                         <div className="flex shrink-0 flex-col items-end gap-1">
-                          <span className={`rounded-md border px-2 py-1 text-[9px] ${dispositionStyle}`}>
+                          <span className={`rounded-md border px-2 py-1 text-[15px] ${dispositionStyle}`}>
                             {intelligence.disposition}
                           </span>
                           {intelligence.tier !== null && (
-                            <span className="text-[9px] text-neutral-600">
+                            <span className="text-[15px] text-neutral-600">
                               Trait Tier {intelligence.tier}
                             </span>
                           )}
                         </div>
                       </div>
 
-                      <p className="mt-2 text-xs leading-relaxed text-neutral-400">
+                      <p className="mt-2 text-[17px] leading-relaxed text-neutral-400">
                         {intelligence.description}
                       </p>
 
-                      <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                        <div className="rounded-lg border border-white/10 bg-black/20 p-2.5">
-                          <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
-                            Best For
-                          </p>
-                          <div className="mt-1.5 space-y-1">
-                            {intelligence.bestFor.map((role) => (
-                              <p key={role} className="text-[10px] text-neutral-300">
-                                ✓ {role}
-                              </p>
-                            ))}
-                          </div>
+                      {mismatchedElement && (
+                        <p className="mt-2 text-[15px] leading-relaxed text-amber-300">
+                          ⚠ This boosts {mismatchedElement}, but this Pal is{" "}
+                          {pal.elements.join(" / ")}. It does not improve this
+                          copy's same-element attacks; keep it only as an
+                          inheritance option for a compatible offspring.
+                        </p>
+                      )}
+
+                      {intelligence.bestFor.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {intelligence.bestFor.map((role) => (
+                            <span key={role} className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-[15px] text-neutral-300">
+                              ✓ {role}
+                            </span>
+                          ))}
                         </div>
-
-                        <div className="rounded-lg border border-white/10 bg-black/20 p-2.5">
-                          <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
-                            Rebel Score Category
-                          </p>
-                          <p className="mt-1.5 text-[10px] text-neutral-300">
-                            {intelligence.scoreCategory}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="mt-2 rounded-lg border border-white/10 bg-black/20 p-2.5">
-                        <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
-                          Breeding Usefulness
-                        </p>
-                        <p className="mt-1 text-[10px] leading-relaxed text-neutral-400">
-                          {intelligence.breedingUsefulness}
-                        </p>
-                      </div>
-
-                      <div className="mt-2 rounded-lg border border-white/10 bg-black/20 p-2.5">
-                        <p className="text-[9px] uppercase tracking-[0.14em] text-neutral-600">
-                          Rebel Interpretation
-                        </p>
-                        <p className="mt-1 text-[10px] leading-relaxed text-neutral-300">
-                          {intelligence.interpretation}
-                        </p>
-                      </div>
+                      )}
                     </div>
                   );
                 })}
@@ -4347,7 +5172,7 @@ function PalDetailPanel({
                 Passives
               </PanelHeading>
 
-              <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-neutral-500">
+              <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-[17px] text-neutral-500">
                 No passive skills recorded.
               </div>
             </div>
@@ -4356,15 +5181,15 @@ function PalDetailPanel({
           {pal.speciesUtility && (
             <div className="mt-6 rounded-2xl border border-emerald-400/15 bg-emerald-400/[0.03] p-4">
               <PanelHeading>
-                Species Intelligence
+                Natural Species Baseline
               </PanelHeading>
 
               <div className="mt-3">
-                <p className="text-[9px] uppercase tracking-[0.16em] text-emerald-300">
+                <p className="text-[15px] uppercase tracking-[0.16em] text-emerald-300">
                   Primary Utility
                 </p>
-                <p className="mt-1 text-sm font-semibold text-neutral-100">
-                  {pal.speciesUtility.primaryUtility}
+                <p className="mt-1 text-[17px] font-semibold text-neutral-100">
+                  {displayedSpeciesPrimaryUtility}
                 </p>
               </div>
 
@@ -4373,7 +5198,7 @@ function PalDetailPanel({
                   {pal.speciesUtility.speciesRoles.map((role) => (
                     <span
                       key={role}
-                      className="rounded-lg border border-emerald-400/15 bg-emerald-400/[0.06] px-2.5 py-1 text-[9px] text-emerald-100"
+                      className="rounded-lg border border-emerald-400/15 bg-emerald-400/[0.06] px-2.5 py-1 text-[15px] text-emerald-100"
                     >
                       {role}
                     </span>
@@ -4383,12 +5208,12 @@ function PalDetailPanel({
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                  <p className="text-[15px] uppercase tracking-[0.16em] text-neutral-500">
                     Best Used For
                   </p>
                   <div className="mt-2 space-y-1">
-                    {pal.speciesUtility.bestUsedFor.map((use) => (
-                      <p key={use} className="text-[10px] leading-relaxed text-neutral-300">
+                    {displayedSpeciesBestUses.map((use) => (
+                      <p key={use} className="text-[17px] leading-relaxed text-neutral-300">
                         ✓ {use}
                       </p>
                     ))}
@@ -4396,15 +5221,33 @@ function PalDetailPanel({
                 </div>
 
                 <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
+                  <p className="text-[15px] uppercase tracking-[0.16em] text-neutral-500">
                     Rebel Recommendation
                   </p>
                   <div className="mt-2 space-y-1">
-                    {Object.entries(pal.speciesUtility.recommendations).map(
+                    {Object.entries({
+                      ...pal.speciesUtility.recommendations,
+                      playerSupport:
+                        partnerSkillDisplay?.affects.playerSupport
+                          ? "YES"
+                          : partyOnlySupport
+                            ? "NO"
+                            : pal.speciesUtility.recommendations.playerSupport,
+                      ...(partnerSkillDisplay?.affects.partySupport
+                        ? { partySupport: "YES" }
+                        : {}),
+                      traversal:
+                        partnerSkillDisplay?.affects.travel
+                          ? "YES"
+                          : pal.speciesUtility.recommendations.traversal,
+                      ...(pal.speciesUtility.ranchDrops.length > 0
+                        ? { farming: "PRIMARY" }
+                        : {}),
+                    }).map(
                       ([area, recommendation]) => (
                         <p
                           key={area}
-                          className="text-[10px] text-neutral-300"
+                          className="text-[17px] text-neutral-300"
                         >
                           {humanizeSkill(area)}: {recommendation}
                         </p>
@@ -4416,17 +5259,22 @@ function PalDetailPanel({
 
               {pal.speciesUtility.ranchDrops.length > 0 && (
                 <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
-                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
-                    Ranch Production
+                  <p className="text-[15px] uppercase tracking-[0.16em] text-neutral-500">
+                    Potential Ranch Production
                   </p>
-                  <p className="mt-1 text-[10px] text-neutral-300">
+                  <p className="mt-1 text-[17px] text-neutral-300">
                     {pal.speciesUtility.ranchDrops.join(" · ")}
+                  </p>
+                  <p className="mt-2 text-[15px] leading-relaxed text-neutral-500">
+                    These are documented possible drops across Partner Skill ranks.
+                    Rebel does not yet claim that every item is available at the
+                    current Rank {pal.progression?.condensation?.rank ?? 1}.
                   </p>
                 </div>
               )}
 
-              <p className="mt-3 text-[9px] leading-relaxed text-neutral-600">
-                Species intelligence describes what every {pal.species} is naturally useful for. Individual IVs, passives and investment below determine how valuable this specific copy is.
+              <p className="mt-3 text-[15px] leading-relaxed text-neutral-600">
+                This baseline describes what an ordinary {pal.species} is naturally useful for. The recommendation and Combat V2 sections above evaluate this specific copy using its IVs, passives, moves and investment.
               </p>
             </div>
           )}
@@ -4474,66 +5322,7 @@ function PalDetailPanel({
             </div>
           </div>
 
-          <div className="mt-6">
-            <PanelHeading>
-              Rebel Decision
-            </PanelHeading>
 
-            <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.04] p-4">
-              <div className="flex items-center justify-between gap-3">
-                <p className="font-semibold">
-                  {bucketLabel}
-                </p>
-
-                <span className="rounded-md bg-black/25 px-2 py-1 text-[9px] text-neutral-400">
-                  {humanizeAction(
-                    score.action,
-                  )}
-                </span>
-              </div>
-
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
-                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-600">
-                    Primary Use
-                  </p>
-                  <p className="mt-1 text-xs font-semibold text-neutral-200">
-                    {score.bestRole}
-                  </p>
-                </div>
-
-                <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
-                  <p className="text-[9px] uppercase tracking-[0.16em] text-neutral-600">
-                    Strategic Value
-                  </p>
-                  <p className="mt-1 text-xs font-semibold text-neutral-200">
-                    {score.breeding >= 80
-                      ? "Excellent Breeding Stock"
-                      : score.breeding >= 65
-                        ? "Strong Breeding Stock"
-                        : score.breeding >= 50
-                          ? "Useful Breeding Stock"
-                          : "Limited Breeding Value"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-4 space-y-2">
-                {recommendationReasons
-                  .slice(0, 4)
-                  .map(
-                    (reason) => (
-                      <p
-                        key={reason}
-                        className="text-xs leading-relaxed text-neutral-300"
-                      >
-                        • {reason}
-                      </p>
-                    ),
-                  )}
-              </div>
-            </div>
-          </div>
 
           {bestCopy &&
             !isBestCopy && (
@@ -4562,7 +5351,7 @@ function PalDetailPanel({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold">
+                      <p className="text-[17px] font-semibold">
                         {
                           bestCopy.pal
                             .nickname ??
@@ -4571,7 +5360,7 @@ function PalDetailPanel({
                         }
                       </p>
 
-                      <p className="mt-1 text-[10px] text-neutral-500">
+                      <p className="mt-1 text-[17px] text-neutral-500">
                         Best overall copy · Copy{" "}
                         {
                           bestCopy.score
@@ -4580,7 +5369,7 @@ function PalDetailPanel({
                       </p>
                     </div>
 
-                    <span className="rounded-md bg-white/[0.06] px-2 py-1 text-xs font-semibold">
+                    <span className="rounded-md bg-white/[0.06] px-2 py-1 text-[17px] font-semibold">
                       {
                         bestCopy.score.overall.toFixed(
                           0,
@@ -4629,7 +5418,7 @@ function PalDetailPanel({
 
                   {comparison.length >
                     0 && (
-                    <p className="mt-3 text-[10px] leading-relaxed text-neutral-500">
+                    <p className="mt-3 text-[17px] leading-relaxed text-neutral-500">
                       {
                         comparison[0]
                       }
@@ -4647,11 +5436,11 @@ function PalDetailPanel({
                 Best Same-species Copy
               </PanelHeading>
 
-              <p className="mt-2 text-sm font-medium">
+              <p className="mt-2 text-[17px] font-medium">
                 This is already the copy Rebel would keep first.
               </p>
 
-              <p className="mt-1 text-xs leading-relaxed text-neutral-500">
+              <p className="mt-1 text-[17px] leading-relaxed text-neutral-500">
                 Other copies may still be useful for breeding, base work or role backup, but none rank higher overall.
               </p>
             </div>
@@ -4663,86 +5452,13 @@ function PalDetailPanel({
                 Only Copy
               </PanelHeading>
 
-              <p className="mt-2 text-sm font-medium">
+              <p className="mt-2 text-[17px] font-medium">
                 This is your only copy of this species, so Rebel protects it without pretending it won a same-species comparison.
               </p>
             </div>
           )}
 
-          {score.combatReasons
-            .length > 0 && (
-            <DetailReasonSection
-              title="Combat Intelligence"
-              reasons={
-                score.combatReasons
-              }
-            />
-          )}
 
-          {score.supportReasons
-            .length > 0 && (
-            <DetailReasonSection
-              title="Player Support Intelligence"
-              reasons={
-                score.supportReasons
-              }
-            />
-          )}
-
-          {score.firepowerReasons
-            .length > 0 && (
-            <DetailReasonSection
-              title="Expedition Firepower Intelligence"
-              reasons={
-                score.firepowerReasons
-              }
-            />
-          )}
-
-          {score.breedingReasons
-            .length > 0 && (
-            <DetailReasonSection
-              title="Breeding Intelligence"
-              reasons={
-                score.breedingReasons
-              }
-            />
-          )}
-
-          {score.reviewCategory &&
-            score.reviewReasons
-              .length > 0 && (
-            <div className="mt-6">
-              <PanelHeading>
-                Decision Intelligence
-              </PanelHeading>
-
-              <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-                <ReviewCategoryBadge
-                  category={
-                    score.reviewCategory
-                  }
-                />
-
-                <p className="mt-3 text-sm font-medium">
-                  Why Rebel assigned this decision
-                </p>
-
-                <div className="mt-3 space-y-2">
-                  {score.reviewReasons.map(
-                    (reason) => (
-                      <p
-                        key={reason}
-                        className="text-xs leading-relaxed text-neutral-400"
-                      >
-                        • {reason}
-                      </p>
-                    ),
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
 
           {score.workRoles
             .length > 0 && (
@@ -4758,7 +5474,7 @@ function PalDetailPanel({
                       key={
                         role.role
                       }
-                      className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs"
+                      className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-[17px]"
                     >
                       {
                         role.role
@@ -4779,25 +5495,64 @@ function PalDetailPanel({
             </div>
           )}
 
-          {score.protectionReasons
-            .length > 0 && (
-            <DetailReasonSection
-              title="Why Keep It"
-              reasons={
-                score.protectionReasons
-              }
-            />
-          )}
+          <details className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-3">
+            <summary className="cursor-pointer text-[17px] font-medium text-neutral-300">
+              More technical details
+            </summary>
 
-          {score.redundantReasons
-            .length > 0 && (
-            <DetailReasonSection
-              title="Collection Notes"
-              reasons={
-                score.redundantReasons
-              }
-            />
-          )}
+            <div className="mt-4">
+              {score.combatReasons.length > 0 && (
+                <DetailReasonSection
+                  title="Combat Intelligence"
+                  reasons={score.combatReasons}
+                />
+              )}
+
+              {score.supportReasons.length > 0 && (
+                <DetailReasonSection
+                  title="Player Support Intelligence"
+                  reasons={score.supportReasons}
+                />
+              )}
+
+              {score.firepowerReasons.length > 0 && (
+                <DetailReasonSection
+                  title="Expedition Intelligence"
+                  reasons={score.firepowerReasons}
+                />
+              )}
+
+              {score.breedingReasons.length > 0 && (
+                <DetailReasonSection
+                  title="Breeding Intelligence"
+                  reasons={score.breedingReasons}
+                />
+              )}
+
+              {score.reviewCategory && score.reviewReasons.length > 0 && (
+                <DetailReasonSection
+                  title="Decision Intelligence"
+                  reasons={score.reviewReasons}
+                />
+              )}
+
+              {score.protectionReasons.length > 0 && (
+                <DetailReasonSection
+                  title="Why Keep It"
+                  reasons={score.protectionReasons}
+                />
+              )}
+
+              {score.redundantReasons.length > 0 && (
+                <DetailReasonSection
+                  title="Collection Notes"
+                  reasons={score.redundantReasons}
+                />
+              )}
+            </div>
+          </details>
+
+
         </div>
       </aside>
     </div>
@@ -5060,11 +5815,11 @@ function TinyStat({
 }) {
   return (
     <div className="rounded-lg bg-black/25 px-2 py-2 text-center">
-      <p className="text-[8px] uppercase tracking-wide text-neutral-500">
+      <p className="text-[14px] uppercase tracking-wide text-neutral-300">
         {label}
       </p>
 
-      <p className="mt-1 text-xs font-medium">
+      <p className="mt-1 text-[17px] font-medium">
         {value}
       </p>
     </div>
@@ -5565,10 +6320,8 @@ function getCombatElementGroups(
 
       if (
         !existing ||
-        entry.score
-          .combat >
-          existing.score
-            .combat
+        entry.score.combatIntelligenceV2.generalCeiling >
+          existing.score.combatIntelligenceV2.generalCeiling
       ) {
         bestByElement.set(
           element,
@@ -5592,10 +6345,8 @@ function getCombatElementGroups(
     )
     .sort(
       (a, b) =>
-        b.pal.score
-          .combat -
-        a.pal.score
-          .combat,
+        b.pal.score.combatIntelligenceV2.generalCeiling -
+        a.pal.score.combatIntelligenceV2.generalCeiling,
     );
 }
 
@@ -5604,9 +6355,10 @@ function getTopCombatReasons(
     RankedRealPal,
   element?: string,
 ): string[] {
-  const source =
-    entry.score
-      .combatReasons;
+  const source = [
+    ...entry.score.combatIntelligenceV2.strengths,
+    ...entry.score.combatReasons,
+  ];
 
   const selected:
     string[] = [];
@@ -5735,19 +6487,123 @@ function getTopCombatReasons(
   );
 }
 
-function specialReason(
-  entry:
-    RankedRealPal,
-): string {
-  if (
-    entry.pal.isAlpha
-  ) {
+const HIGH_VALUE_SPECIAL_PASSIVES =
+  new Set([
+    "legend",
+    "lucky",
+    "dimensional leap",
+    "twin-edged holy blade",
+    "god of destruction",
+    "sanctified meat shield",
+    "demon’s hand",
+    "demon's hand",
+    "hermit sage",
+    "world tree's bounty",
+    "world tree seedbed",
+    "babysitter",
+    "heavily armored",
+    "idiosyncratic",
+    "immortality",
+    "sky strider",
+    "skymarcher",
+  ]);
+
+function getSpecialReason(
+  entry: RankedRealPal,
+): string | null {
+  if (entry.pal.isAlpha) {
     return "Alpha Pal";
   }
 
+  const progression =
+    entry.pal.progression;
+
+  const stars =
+    progression?.condensation
+      .stars ?? 0;
+
+  if (stars > 0) {
+    return `Invested Pal: ${stars}★ condensed`;
+  }
+
+  const soulTotal =
+    Object.values(
+      progression?.souls ?? {},
+    ).reduce(
+      (sum, value) =>
+        sum + Number(value),
+      0,
+    );
+
+  if (soulTotal > 0) {
+    return "Invested Pal: Pal Souls used";
+  }
+
+  if (
+    (progression
+      ?.workSuitabilityUpgrades
+      .length ?? 0) > 0
+  ) {
+    return "Invested Pal: Work Suitability upgraded";
+  }
+
+  const ivValues = [
+    entry.pal.ivs.hp,
+    entry.pal.ivs.attack,
+    entry.pal.ivs.defense,
+  ].filter(
+    (value): value is number =>
+      typeof value ===
+      "number",
+  );
+
+  const averageIv =
+    ivValues.length === 3
+      ? ivValues.reduce(
+          (sum, value) =>
+            sum + value,
+          0,
+        ) / 3
+      : 0;
+
+  if (averageIv >= 95) {
+    return `Exceptional overall IVs: ${averageIv.toFixed(0)} average`;
+  }
+
+  const highValuePassive =
+    [...entry.pal.passives]
+      .filter(
+        (passive) =>
+          HIGH_VALUE_SPECIAL_PASSIVES.has(
+            passive.name.toLowerCase(),
+          ),
+      )
+      .sort(
+        (a, b) =>
+          (b.rank ?? 0) -
+          (a.rank ?? 0),
+      )[0];
+
+  if (highValuePassive) {
+    return `High-value passive: ${highValuePassive.name}`;
+  }
+
+  return null;
+}
+
+function isSpecialProtected(
+  entry: RankedRealPal,
+): boolean {
+  return Boolean(
+    getSpecialReason(entry),
+  );
+}
+
+function specialReason(
+  entry: RankedRealPal,
+): string {
   return (
-    entry.score
-      .protectionReasons[0] ??
+    getSpecialReason(entry) ??
     "Protected Pal"
   );
 }

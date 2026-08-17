@@ -1,6 +1,6 @@
 {
  "meta": {
-  "source": "paldb.cc/en/Partner_Skill, retrieved 2026-07-26; tags derived from trigger phrases (base/ranch/party/active/mount/passive), rules corrected 2026-07-27",
+  "source": "paldb.cc/en/Partner_Skill, retrieved 2026-07-26; tags derived from trigger phrases (base/ranch/party/active/mount/passive), rules corrected 2026-07-27; secondary wording/classification cross-check: Game8 All Partner Skills Effects (updated 2025-12-17), reviewed 2026-08-17—legacy pre-1.0 wording is not allowed to override newer 1.0 reference data",
   "excluded": "Astralym (paldex #204) omitted: final story boss, cannot be caught or bred"
  },
  "pals": {
@@ -28,7 +28,7 @@
   },
   "Lifmunk": {
    "skill": "Lifmunk Recoil",
-   "desc": "When activated, leaps onto the player's head and uses a submachine gun to follows up player attacks.",
+   "desc": "When activated, leaps onto the player's head and uses a submachine gun to follow up player attacks.",
    "tags": [
     "active"
    ]
@@ -42,7 +42,7 @@
   },
   "Fuack Ignis": {
    "skill": "Fire Tackle",
-   "desc": "When activated, Fuack Ignis fire surfs towards an enemy and slams into them.",
+   "desc": "When activated, Fuack Ignis surfs on fire towards an enemy and slams into them.",
    "tags": [
     "active"
    ]
@@ -78,7 +78,7 @@
   },
   "Croajiro": {
    "skill": "Leap Stance",
-   "desc": "When activated, Croajiro Noct channels its loyalty and puffs up its abdomen to store energy. Climbing on top will propel the player high into the air. While airborne before landing, the player's Attack is increased by (50~86)%.",
+   "desc": "When activated, Croajiro channels its loyalty and puffs up its abdomen to store energy. Climbing on top will propel the player high into the air. While airborne before landing, the player's Attack is increased by (50~86)%.",
    "tags": [
     "active"
    ]
@@ -1853,7 +1853,7 @@
   },
   "Eidrolon Ignis": {
    "skill": "Resentful Pterosaur",
-   "desc": "Can be ridden as a flying mount. This Pal's Attack and Movement Speed increase by (2~6)% or each other Dragon or Fire Pal in your party. (Excluding Eidrolon Ignis)",
+   "desc": "Can be ridden as a flying mount. This Pal's Attack and Movement Speed increase by (2~6)% for each other Dragon or Fire Pal in your party. (Excluding Eidrolon Ignis)",
    "tags": [
     "party",
     "mount"
