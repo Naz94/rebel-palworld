@@ -2079,6 +2079,8 @@ function BreedingView({
           exceptionalIvDonors
         }
         onSelect={onSelect}
+        countLabel="IV donors"
+        initialLimit={20}
       />
 
       <BreedingSection
@@ -2088,6 +2090,8 @@ function BreedingView({
           passiveDonors
         }
         onSelect={onSelect}
+        countLabel="passive donors"
+        initialLimit={20}
       />
 
       <BreedingSection
@@ -2095,6 +2099,8 @@ function BreedingView({
         description="Rebel's preferred breeding copy for each species."
         pals={bestBySpecies}
         onSelect={onSelect}
+        countLabel="species winners"
+        initialLimit={20}
       />
     </div>
   );
@@ -2198,7 +2204,7 @@ function BreedingSection({
           >
             {showAll
               ? `Show top ${initialLimit}`
-              : `Show all ${pals.length} breeding candidates`}
+              : `Show all ${pals.length} ${countLabel}`}
           </button>
         )}
     </section>
