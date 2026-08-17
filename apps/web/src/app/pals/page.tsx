@@ -6487,18 +6487,21 @@ const HIGH_VALUE_SPECIAL_PASSIVES =
   new Set([
     "legend",
     "lucky",
-    "demon god",
-    "otherworldly cells",
-    "savior",
-    "remarkable craftsmanship",
-    "heart of the immovable king",
-    "serenity",
-    "burly body",
-    "artisan",
-    "philanthropist",
-    "vanguard",
-    "stronghold strategist",
-    "reload master",
+    "dimensional leap",
+    "twin-edged holy blade",
+    "god of destruction",
+    "sanctified meat shield",
+    "demon’s hand",
+    "demon's hand",
+    "hermit sage",
+    "world tree's bounty",
+    "world tree seedbed",
+    "babysitter",
+    "heavily armored",
+    "idiosyncratic",
+    "immortality",
+    "sky strider",
+    "skymarcher",
   ]);
 
 function getSpecialReason(
@@ -6566,35 +6569,10 @@ function getSpecialReason(
   const highValuePassive =
     [...entry.pal.passives]
       .filter(
-        (passive) => {
-          if ((passive.rank ?? 0) >= 4) {
-            return true;
-          }
-
-          if (
-            !HIGH_VALUE_SPECIAL_PASSIVES.has(
-              passive.name.toLowerCase(),
-            )
-          ) {
-            return false;
-          }
-
-          const passiveName =
-            passive.name.toLowerCase();
-
-          return entry.score.protectionReasons.some(
-            (reason) => {
-              const normalized =
-                reason.toLowerCase();
-
-              return (
-                normalized.includes("only ") &&
-                normalized.includes("copy with") &&
-                normalized.includes(passiveName)
-              );
-            },
-          );
-        },
+        (passive) =>
+          HIGH_VALUE_SPECIAL_PASSIVES.has(
+            passive.name.toLowerCase(),
+          ),
       )
       .sort(
         (a, b) =>
