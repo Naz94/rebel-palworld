@@ -1038,22 +1038,46 @@ function Overview({
   ) => void;
 }) {
   const bestCombat =
-    rankings.combatKeepers.slice(
-      0,
-      8,
-    );
+    [...rankings.all]
+      .filter(
+        (entry) =>
+          Boolean(
+            entry.pal
+              .combatStats,
+          ) &&
+          entry.score
+            .combat > 0,
+      )
+      .sort(
+        (a, b) =>
+          b.score
+            .combat -
+          a.score
+            .combat,
+      )
+      .slice(0, 8);
 
   const bestBreeding =
-    rankings.breedingKeepers.slice(
-      0,
-      8,
-    );
+    [...rankings.breedingKeepers]
+      .sort(
+        (a, b) =>
+          b.score
+            .breeding -
+          a.score
+            .breeding,
+      )
+      .slice(0, 8);
 
   const special =
-    rankings.rare.slice(
-      0,
-      8,
-    );
+    [...rankings.rare]
+      .sort(
+        (a, b) =>
+          b.score
+            .overall -
+          a.score
+            .overall,
+      )
+      .slice(0, 8);
 
   const baseWinners =
     getDeduplicatedBaseWinners(
