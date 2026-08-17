@@ -29,6 +29,7 @@ import {
 } from "@/lib/palworld/rank-pals";
 
 // Keep the 1.0 breeding dataset out of the initial collection bundle.
+// Production performance revision: indexed breeding lookups and deferred loading.
 const OwnedBreedingCombos = dynamic(
   () =>
     import("@/lib/palworld/owned-breeding-combos").then(
