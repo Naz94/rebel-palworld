@@ -2057,8 +2057,12 @@ function SupportView({
     pals
       .filter(
         (entry) =>
-          entry.score.support >
-          0,
+          entry.score.support > 0 &&
+          entry.score.supportReasons.some(
+            (reason) =>
+              /^(Vanguard|Stronghold Strategist|Healing Coach|Wellness Watcher|Idiosyncratic):/i.test(reason) ||
+              /improves player combat|directly buffs party Pal stats|healing \/ survival support|party hunger sustain|hazard protection/i.test(reason),
+          ),
       )
       .sort(
         (a, b) =>
@@ -2117,7 +2121,7 @@ function SupportView({
     <section>
       <SectionIntro
         title="Player & Party Support"
-        description="The best owned support copy per species, ranked by player buffs, party buffs, healing and practical utility."
+        description="The best owned support copy per species for combat buffs, party Pal bonuses, healing, hunger sustain and hazard protection. Work-efficiency traits remain in the Pal inspector."
         count={relevant.length}
       />
 
