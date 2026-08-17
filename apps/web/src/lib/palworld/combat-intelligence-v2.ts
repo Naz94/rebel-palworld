@@ -144,31 +144,36 @@ function getPassiveFit(
           )
         : false;
 
+    const incomingResistance =
+      description.includes("decrease in incoming") ||
+      description.includes("incoming damage reduction");
+
     const offense =
-      matchingElement ||
-      description.includes(
-        "attack",
-      ) ||
-      description.includes(
-        "damage",
-      ) ||
-      [
-        "legend",
-        "musclehead",
-        "ferocious",
-        "demon god",
-        "serenity",
-        "impatient",
-        "otherworldly cells",
-        "savior",
-      ].includes(name);
+      !incomingResistance &&
+      (
+        matchingElement ||
+        description.includes(
+          "attack",
+        ) ||
+        description.includes(
+          "damage dealt",
+        ) ||
+        [
+          "legend",
+          "musclehead",
+          "ferocious",
+          "demon god",
+          "serenity",
+          "impatient",
+          "otherworldly cells",
+          "savior",
+        ].includes(name)
+      );
 
     const defense =
+      incomingResistance ||
       description.includes(
         "defense",
-      ) ||
-      description.includes(
-        "incoming",
       ) ||
       description.includes(
         "resist",
@@ -177,10 +182,6 @@ function getPassiveFit(
         "legend",
         "burly body",
       ].includes(name);
-
-    const incomingResistance =
-      description.includes("decrease in incoming") ||
-      description.includes("incoming damage reduction");
 
     const negative =
       rank < 0 ||
