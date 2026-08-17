@@ -2068,6 +2068,8 @@ function BreedingView({
         description="Your strongest breeding candidates overall."
         pals={topOverall}
         onSelect={onSelect}
+        countLabel="breeding candidates"
+        initialLimit={20}
       />
 
       <BreedingSection
@@ -2103,6 +2105,8 @@ function BreedingSection({
   description,
   pals,
   onSelect,
+  countLabel = "Pals",
+  initialLimit,
 }: {
   title: string;
   description: string;
@@ -2111,12 +2115,28 @@ function BreedingSection({
   onSelect: (
     pal: RankedRealPal,
   ) => void;
+  countLabel?: string;
+  initialLimit?: number;
 }) {
+  const [
+    showAll,
+    setShowAll,
+  ] = useState(false);
+
   if (
     pals.length === 0
   ) {
     return null;
   }
+
+  const visiblePals =
+    initialLimit &&
+    !showAll
+      ? pals.slice(
+          0,
+          initialLimit,
+        )
+      : pals;
 
   return (
     <section>
@@ -2126,10 +2146,11 @@ function BreedingSection({
           description
         }
         count={pals.length}
+        countLabel={countLabel}
       />
 
       <div className="mt-5 grid gap-3 xl:grid-cols-2">
-        {pals.map(
+        {visiblePals.map(
           (
             entry,
             index,
@@ -2161,6 +2182,25 @@ function BreedingSection({
           ),
         )}
       </div>
+
+      {initialLimit &&
+        pals.length >
+          initialLimit && (
+          <button
+            type="button"
+            onClick={() =>
+              setShowAll(
+                (current) =>
+                  !current,
+              )
+            }
+            className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-base font-semibold text-neutral-200 transition hover:border-white/20 hover:bg-white/[0.08]"
+          >
+            {showAll
+              ? `Show top ${initialLimit}`
+              : `Show all ${pals.length} breeding candidates`}
+          </button>
+        )}
     </section>
   );
 }
