@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import { getPassiveTraitIntelligence } from "@/lib/palworld/passive-intelligence";
+import { OwnedBreedingCombos } from "@/lib/palworld/owned-breeding-combos";
 import {
   auditPalCollection,
   type AuditSeverity,
@@ -2057,6 +2058,11 @@ function BreedingView({
 
   return (
     <div className="space-y-12">
+      <OwnedBreedingCombos
+        pals={pals}
+        onSelect={onSelect}
+      />
+
       <BreedingSection
         title="Best Overall Breeders"
         description="Your strongest breeding candidates overall."
