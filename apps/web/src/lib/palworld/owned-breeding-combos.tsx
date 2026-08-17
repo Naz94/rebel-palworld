@@ -103,7 +103,13 @@ export function OwnedBreedingCombos({
     const parentB = bestCopy(pals, route.parentB);
     const owned = Number(Boolean(parentA)) + Number(Boolean(parentB));
     const gendersWork = compatibleGender(parentA, parentB);
-    return { ...route, parentA, parentB, owned, gendersWork };
+    return {
+      ...route,
+      parentACopy: parentA,
+      parentBCopy: parentB,
+      owned,
+      gendersWork,
+    };
   }).sort((a, b) => {
     if (a.owned !== b.owned) return b.owned - a.owned;
     if (a.gendersWork !== b.gendersWork) return Number(b.gendersWork) - Number(a.gendersWork);
@@ -177,8 +183,8 @@ export function OwnedBreedingCombos({
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {[
-                  { name: route.parentA, pal: route.parentA },
-                  { name: route.parentB, pal: route.parentB },
+                  { name: route.parentA, pal: route.parentACopy },
+                  { name: route.parentB, pal: route.parentBCopy },
                 ].map((parent) => (
                   <button
                     key={parent.name}
