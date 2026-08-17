@@ -3869,12 +3869,35 @@ function getPartnerSkillDisplay(
     text.includes("restore") ||
     text.includes("heal");
 
+  const hazardProtection =
+    text.includes("grants immunity") ||
+    text.includes("immune to") ||
+    text.includes("immunity to") ||
+    text.includes("nullifies the effects") ||
+    text.includes("toxic gas") ||
+    text.includes("explosive spores");
+
+  const baseDefense =
+    base &&
+    (
+      text.includes("patrols") ||
+      text.includes("intruders") ||
+      text.includes("bombards") ||
+      text.includes("defends the base")
+    );
+
   const playerSupport =
     text.includes(
       "player's attack",
     ) ||
     text.includes(
       "player attack",
+    ) ||
+    text.includes(
+      "player's damage",
+    ) ||
+    text.includes(
+      "player attack damage",
     ) ||
     text.includes(
       "carrying capacity",
@@ -3885,6 +3908,7 @@ function getPartnerSkillDisplay(
     text.includes(
       "player's health",
     ) ||
+    hazardProtection ||
     healing;
 
   const playerMobility =
@@ -3913,7 +3937,10 @@ function getPartnerSkillDisplay(
       text.includes("gun") ||
       text.includes("weapon") ||
       text.includes("explosion") ||
-      text.includes("rapidly fire")
+      text.includes("rapidly fire") ||
+      text.includes("additional damage") ||
+      text.includes("bombards") ||
+      text.includes("intruders")
     );
 
   const alphaEggUtility =
@@ -3945,7 +3972,16 @@ function getPartnerSkillDisplay(
   let type =
     "Special Utility";
 
-  if (butchering) {
+  if (
+    baseDefense &&
+    mount
+  ) {
+    type =
+      "Base Defense / Flying Mount";
+  } else if (baseDefense) {
+    type =
+      "Base Defense";
+  } else if (butchering) {
     type =
       "Butchering / Loot Utility";
   } else if (resourceDetection) {
@@ -4054,6 +4090,18 @@ function getPartnerSkillDisplay(
     );
   }
 
+  if (baseDefense) {
+    bestUses.push(
+      "Defending the base from raids",
+    );
+  }
+
+  if (hazardProtection) {
+    bestUses.push(
+      "Hazard and status protection",
+    );
+  }
+
   if (playerSupport) {
     bestUses.push(
       "Player support",
@@ -4103,6 +4151,11 @@ function getPartnerSkillDisplay(
   if (glider) {
     interpretation +=
       " It is traversal utility, not a player combat or stat-support effect.";
+  } else if (baseDefense) {
+    interpretation +=
+      text.includes("only 1 can be summoned")
+        ? " It is a one-per-base aerial defender, so assigning additional copies to the same base does not add this defensive effect."
+        : " Its Partner Skill directly contributes to defending the base.";
   } else if (
     playerSupport
   ) {
