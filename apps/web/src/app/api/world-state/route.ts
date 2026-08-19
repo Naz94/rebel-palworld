@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server";
 
 import {
@@ -60,11 +61,11 @@ type DerivedFromEntities = {
     }>;
   };
   party: Array<{
-    id: string;
+    id: string | null;
     entityType: string;
     species: string;
     nickname: string | null;
-    level: number;
+    level: number | null;
     gender: string | null;
     slot: number | null;
   }>;
