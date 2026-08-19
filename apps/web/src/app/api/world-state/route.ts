@@ -1,4 +1,3 @@
-
 import { NextResponse } from "next/server";
 
 import {
@@ -272,8 +271,16 @@ export async function GET() {
           ).getTime()
         : Number.POSITIVE_INFINITY;
 
+    // Your connector only uploads a full snapshot when Palworld's
+    // save file actually changes (game autosave), not on a fixed
+    // timer — autosaves are commonly 5-15 min apart. A 15-second
+    // "alive" window meant this showed Offline almost all the time
+    // even when the connector was working perfectly. 20 minutes
+    // covers realistic autosave gaps while still catching a genuinely
+    // dead connector.
     const watcherAlive =
-      heartbeatAgeMs < 15000;
+      heartbeatAgeMs <
+      20 * 60 * 1000;
 
     const effectiveStatus =
       watcherAlive
