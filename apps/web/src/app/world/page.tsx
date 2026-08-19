@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -166,9 +167,22 @@ export default function WorldPage() {
       [],
     );
 
+  // Guards against overlapping polls: if a request is still in flight
+  // when the next interval tick fires, skip that tick instead of
+  // stacking another fetch on top of it.
+  const fetchInFlight =
+    useRef(false);
+
   const fetchWorldState =
     useCallback(
       async () => {
+        if (fetchInFlight.current) {
+          return;
+        }
+
+        fetchInFlight.current =
+          true;
+
         try {
           const response =
             await fetch(
@@ -205,6 +219,9 @@ export default function WorldPage() {
                   fetchError,
                 ),
           );
+        } finally {
+          fetchInFlight.current =
+            false;
         }
       },
       [],
@@ -361,12 +378,18 @@ export default function WorldPage() {
       void fetchWorldState();
       void fetchWorldPreferences();
 
+      // Was 2000ms — that's 30 requests/min, each one re-running the
+      // full Pal ranking engine server-side if the cache missed, which
+      // pegged the Next.js dev server and made the tab unresponsive.
+      // 10s still feels live for a dashboard and cuts load ~5x, and
+      // the server-side cache in /api/world-state means most of these
+      // polls are now cheap anyway since they hit the same cache key.
       const timer =
         window.setInterval(
           () => {
             void fetchWorldState();
           },
-          2000,
+          10000,
         );
 
       return () => {
