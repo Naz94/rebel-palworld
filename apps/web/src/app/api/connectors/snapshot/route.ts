@@ -11,6 +11,11 @@ import {
   createAdminClient,
 } from "@/lib/supabase/admin";
 
+import {
+  rankRealPals,
+  type RealOwnedPal,
+} from "@/lib/palworld/rank-pals";
+
 export const dynamic =
   "force-dynamic";
 
@@ -66,6 +71,54 @@ function optionalString(
   }
 
   return trimmed;
+}
+
+// Keep the stored rankings well clear of the 4MB snapshot cap even
+// on large collections — if it's implausibly huge or scoring throws,
+// skip storing it rather than fail the whole sync. The connector's
+// heartbeat must never break just because scoring had a bad day.
+const MAX_RANKINGS_BYTES =
+  3_000_000;
+
+function computeRankingsSafely(
+  entities: RealOwnedPal[],
+): unknown | null {
+  try {
+    const rankings =
+      rankRealPals(
+        entities,
+      );
+
+    const serialized =
+      JSON.stringify(
+        rankings,
+      );
+
+    if (
+      Buffer.byteLength(
+        serialized,
+        "utf8",
+      ) >
+      MAX_RANKINGS_BYTES
+    ) {
+      console.error(
+        "RANKINGS TOO LARGE, skipping precompute for this snapshot",
+      );
+
+      return null;
+    }
+
+    return rankings;
+  } catch (
+    rankingError
+  ) {
+    console.error(
+      "RANKING COMPUTE ERROR:",
+      rankingError,
+    );
+
+    return null;
+  }
 }
 
 export async function POST(
@@ -196,6 +249,18 @@ export async function POST(
         ? body.watcher
         : {};
 
+    // Compute Pal rankings ONCE here, at upload time, instead of
+    // leaving every dashboard visitor's browser to redo this scoring
+    // pass whenever the collection changes. Never let a scoring bug
+    // or an oversized result block the actual snapshot sync — worst
+    // case, rankings stays null and readers fall back to computing
+    // it client-side themselves.
+    const rankings =
+      computeRankingsSafely(
+        body.entities as
+          RealOwnedPal[],
+      );
+
     const admin =
       createAdminClient();
 
@@ -320,6 +385,8 @@ export async function POST(
               body.entities,
 
             watcher,
+
+            rankings,
 
             pal_count:
               body.entities.length,
