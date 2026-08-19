@@ -85,6 +85,71 @@ const IV_LABELS: Array<{ key: IvKey; label: string }> = [
   { key: "defense", label: "DEF" },
 ];
 
+type PassiveInheritanceEntry = {
+  internalId: string;
+  name: string;
+  description: string | null;
+  rank: number | null;
+  negative: boolean;
+  fromParentA: boolean;
+  fromParentB: boolean;
+};
+
+// What Palworld's breeding actually does with passives is: both
+// parents' passive skills get pooled together, and the child's up-to-4
+// slots are filled by random draws from that pool (with slots left
+// over filled by random unrelated passives if the pool is smaller than
+// 4). The exact per-passive odds aren't something Pocketpair has
+// published and community-measured numbers vary between sources and
+// patches — same situation as the mutation odds already labeled
+// "community-measured estimates" elsewhere on this page.
+//
+// Rather than inventing a precise-looking percentage we can't stand
+// behind, this shows the actual POOL: every passive either parent
+// carries, whether it appears on both (meaningfully more likely to
+// show up, since it only needs one successful draw regardless of
+// which parent's copy gets picked), and flags negative passives
+// clearly — those inherit through the exact same pool and are an easy
+// thing to accidentally breed into a lineage without noticing.
+function passiveInheritancePool(
+  parentA: RankedRealPal | null,
+  parentB: RankedRealPal | null,
+): PassiveInheritanceEntry[] {
+  const byId = new Map<string, PassiveInheritanceEntry>();
+
+  function addFrom(pal: RankedRealPal | null, side: "A" | "B") {
+    if (!pal) return;
+    for (const passive of pal.pal.passives) {
+      const existing = byId.get(passive.internalId);
+      if (existing) {
+        if (side === "A") existing.fromParentA = true;
+        else existing.fromParentB = true;
+      } else {
+        byId.set(passive.internalId, {
+          internalId: passive.internalId,
+          name: passive.name,
+          description: passive.description,
+          rank: passive.rank,
+          negative: (passive.rank ?? 0) < 0,
+          fromParentA: side === "A",
+          fromParentB: side === "B",
+        });
+      }
+    }
+  }
+
+  addFrom(parentA, "A");
+  addFrom(parentB, "B");
+
+  return [...byId.values()].sort((a, b) => {
+    const aShared = a.fromParentA && a.fromParentB;
+    const bShared = b.fromParentA && b.fromParentB;
+    if (aShared !== bShared) return aShared ? -1 : 1;
+    if (a.negative !== b.negative) return a.negative ? 1 : -1;
+    return (b.rank ?? 0) - (a.rank ?? 0);
+  });
+}
+
 function inheritedIvProjection(
   parentA: RankedRealPal,
   parentB: RankedRealPal,
@@ -328,6 +393,53 @@ export function OwnedBreedingCombos({
               </p>
             </div>
           )}
+          {selectedA && selectedB && (() => {
+            const pool = passiveInheritancePool(selectedA, selectedB);
+            const negatives = pool.filter((entry) => entry.negative);
+            return (
+              <div className="mt-4 rounded-xl border border-violet-400/15 bg-violet-400/[0.06] p-4">
+                <p className="text-sm font-semibold text-violet-200">
+                  Possible inherited passives ({pool.length} in the pool)
+                </p>
+                <p className="mt-1 text-sm leading-5 text-neutral-400">
+                  The child draws up to 4 passives from this shared pool. Exact per-passive odds
+                  aren&apos;t published by Pocketpair and vary by patch — this shows what&apos;s
+                  actually possible, not a guaranteed percentage.
+                </p>
+                {pool.length === 0 ? (
+                  <p className="mt-3 text-sm text-neutral-400">Neither selected parent has any passives.</p>
+                ) : (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {pool.map((entry) => {
+                      const shared = entry.fromParentA && entry.fromParentB;
+                      return (
+                        <span
+                          key={entry.internalId}
+                          title={entry.description ?? entry.name}
+                          className={`rounded-lg border px-2.5 py-1 text-sm font-medium ${
+                            entry.negative
+                              ? "border-red-400/30 bg-red-400/10 text-red-200"
+                              : shared
+                                ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-200"
+                                : "border-white/10 bg-black/20 text-neutral-300"
+                          }`}
+                        >
+                          {entry.name}
+                          {shared && " · both parents"}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+                {negatives.length > 0 && (
+                  <p className="mt-3 text-sm leading-5 text-amber-200">
+                    Heads up: {negatives.length} negative passive{negatives.length === 1 ? "" : "s"} in this pool
+                    (in red above) could pass to the child through the same draw.
+                  </p>
+                )}
+              </div>
+            );
+          })()}
         </article>
 
         <article className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
