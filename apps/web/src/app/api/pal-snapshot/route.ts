@@ -84,6 +84,11 @@ function tryLocalSnapshot() {
 
     watcher,
 
+    // Local mode never gets a precomputed pass — there's no upload
+    // step to compute it at. Caller falls back to client-side scoring.
+    rankings:
+      null,
+
     syncedAt:
       new Date()
         .toISOString(),
@@ -132,6 +137,7 @@ export async function GET() {
               `
                 entities,
                 watcher,
+                rankings,
                 pal_count,
                 world_id,
                 save_modified_at,
@@ -182,6 +188,13 @@ export async function GET() {
 
               watcher:
                 snapshot.watcher,
+
+              // Precomputed at snapshot-upload time by the connector
+              // route. Null on older snapshots or if scoring failed —
+              // callers should fall back to computing client-side.
+              rankings:
+                snapshot.rankings ??
+                null,
 
               syncedAt:
                 snapshot.synced_at,
