@@ -1,6 +1,3 @@
-
-
-
 "use client";
 
 import dynamic from "next/dynamic";
@@ -45,9 +42,18 @@ const OwnedBreedingCombos = dynamic(
   },
 );
 
+// Shape returned by rankRealPals() — kept as a type alias so the
+// precomputed-vs-client-computed paths can share one variable type.
+type Rankings = ReturnType<
+  typeof rankRealPals
+>;
+
 type PalSnapshotResponse = {
   source: "local" | "cloud";
   entities: RealOwnedPal[];
+  // Precomputed server-side at snapshot-upload time. Null for local
+  // mode or older snapshots — falls back to client-side computation.
+  rankings: Rankings | null;
   syncedAt: string | null;
   error?: string;
 };
@@ -140,6 +146,14 @@ export default function PalsPage() {
   const lastSnapshotJson =
     useRef<string | null>(null);
 
+  const [
+    precomputedRankings,
+    setPrecomputedRankings,
+  ] =
+    useState<
+      Rankings | null
+    >(null);
+
   useEffect(
     () => {
       let active =
@@ -211,6 +225,11 @@ export default function PalsPage() {
 
             setSnapshotSyncedAt(
               body.syncedAt,
+            );
+
+            setPrecomputedRankings(
+              body.rankings ??
+                null,
             );
           }
 
@@ -305,12 +324,18 @@ export default function PalsPage() {
     [],
   );
 
+  // Prefer the server-precomputed rankings (cloud mode — computed once
+  // at snapshot-upload time). Only fall back to scoring in the browser
+  // when there's nothing precomputed, e.g. local mode, or an older
+  // snapshot uploaded before this existed.
   const rankings = useMemo(
     () =>
+      precomputedRankings ??
       rankRealPals(
         ownedPals,
       ),
     [
+      precomputedRankings,
       ownedPals,
     ],
   );
