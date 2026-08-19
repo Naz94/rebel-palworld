@@ -362,6 +362,3 @@ export async function GET() {
     );
   }
 }
-    );
-  }
-}
