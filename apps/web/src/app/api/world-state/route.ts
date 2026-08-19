@@ -32,6 +32,223 @@ type WatcherFile = {
   updatedAt: string | null;
 };
 
+// Everything below is derived purely from `entities` and is expensive
+// to compute (rankRealPals scores every owned pal). It does NOT depend
+// on the current time, so it's safe to cache and only recompute when
+// the underlying snapshot has actually changed.
+type DerivedFromEntities = {
+  collection: {
+    ownedPals: number;
+    capturedHumans: number;
+    unknownEntities: number;
+    species: unknown;
+    coreKeep: number;
+    usefulBackup: number;
+    borderlineCleanup: number;
+    safeCleanup: number;
+    unknown: number;
+  };
+  locations: {
+    partyCount: number;
+    partyCapacity: number;
+    palboxCount: number;
+    palboxCapacity: number;
+    bases: Array<{
+      baseIndex: number;
+      count: number;
+      capacity: number;
+    }>;
+  };
+  party: Array<{
+    id: string;
+    entityType: string;
+    species: string;
+    nickname: string | null;
+    level: number;
+    gender: string | null;
+    slot: number | null;
+  }>;
+};
+
+// Module-level cache. Persists across requests within the same server
+// process (fine for a single-user dev/self-hosted setup like this).
+// Keyed on whatever uniquely identifies "the data hasn't changed":
+// prefer the watcher's save signature, fall back to snapshot.syncedAt.
+let derivedCache:
+  | {
+      key: string;
+      value: DerivedFromEntities;
+    }
+  | null = null;
+
+function computeDerivedFromEntities(
+  entities: RealOwnedPal[],
+): DerivedFromEntities {
+  const rankings =
+    rankRealPals(
+      entities,
+    );
+
+  const party =
+    entities
+      .filter(
+        (entry) =>
+          entry.location.type ===
+          "PARTY",
+      )
+      .sort(
+        (a, b) =>
+          (a.location.slotIndex ?? 999) -
+          (b.location.slotIndex ?? 999),
+      )
+      .map(
+        (entry) => ({
+          id: entry.id,
+          entityType:
+            entry.entityType ??
+            "PAL",
+          species: entry.species,
+          nickname: entry.nickname,
+          level: entry.level,
+          gender: entry.gender,
+          slot:
+            entry.location.displaySlot,
+        }),
+      );
+
+  const palboxCount =
+    entities.filter(
+      (entry) =>
+        entry.location.type ===
+        "PALBOX",
+    ).length;
+
+  const discoveredBaseIndexes =
+    [
+      ...new Set(
+        entities
+          .filter(
+            (entry) =>
+              entry.location.type ===
+                "BASE" &&
+              typeof entry.location
+                .baseIndex ===
+                "number",
+          )
+          .map(
+            (entry) =>
+              entry.location
+                .baseIndex as number,
+          ),
+      ),
+    ].sort(
+      (a, b) =>
+        a - b,
+    );
+
+  const expectedBaseIndexes =
+    [1, 2, 3, 4];
+
+  const allBaseIndexes =
+    [
+      ...new Set([
+        ...expectedBaseIndexes,
+        ...discoveredBaseIndexes,
+      ]),
+    ].sort(
+      (a, b) =>
+        a - b,
+    );
+
+  const bases =
+    allBaseIndexes.map(
+      (baseIndex) => {
+        const baseEntities =
+          entities.filter(
+            (entry) =>
+              entry.location.type ===
+                "BASE" &&
+              entry.location.baseIndex ===
+                baseIndex,
+          );
+
+        const detectedCapacity =
+          baseEntities.find(
+            (entry) =>
+              typeof entry.location
+                .capacity ===
+                "number",
+          )?.location.capacity;
+
+        return {
+          baseIndex,
+          count:
+            baseEntities.length,
+          capacity:
+            detectedCapacity ??
+            26,
+        };
+      },
+    );
+
+  const unknownCount =
+    entities.filter(
+      (entry) =>
+        entry.location.type ===
+          "UNKNOWN" ||
+        entry.location.type ===
+          "OTHER",
+    ).length;
+
+  return {
+    collection: {
+      ownedPals:
+        rankings.summary
+          .totalPals,
+
+      capturedHumans:
+        rankings.summary
+          .capturedHumans,
+
+      unknownEntities:
+        rankings.summary
+          .unknownEntities,
+
+      species:
+        rankings.summary.species,
+
+      coreKeep:
+        rankings.coreKeep.length,
+
+      usefulBackup:
+        rankings.usefulBackup.length,
+
+      borderlineCleanup:
+        rankings.borderlineCleanup
+          .length,
+
+      safeCleanup:
+        rankings.safeCleanup.length,
+
+      unknown:
+        unknownCount,
+    },
+
+    locations: {
+      partyCount:
+        party.length,
+      partyCapacity:
+        5,
+      palboxCount,
+      palboxCapacity:
+        960,
+      bases,
+    },
+
+    party,
+  };
+}
+
 export async function GET() {
   try {
     const snapshot =
@@ -62,121 +279,32 @@ export async function GET() {
         ? watcher.status
         : "offline";
 
-    const rankings =
-      rankRealPals(
-        entities,
-      );
+    // Cache key: prefer the save-file signature (changes only when the
+    // actual save contents change), then syncedAt, then fall back to
+    // entity count as a weak signal so we never crash on a missing key.
+    const cacheKey =
+      watcher.signature ??
+      snapshot.syncedAt ??
+      `count:${entities.length}`;
 
-    const party =
-      entities
-        .filter(
-          (entry) =>
-            entry.location.type ===
-            "PARTY",
-        )
-        .sort(
-          (a, b) =>
-            (a.location.slotIndex ?? 999) -
-            (b.location.slotIndex ?? 999),
-        )
-        .map(
-          (entry) => ({
-            id: entry.id,
-            entityType:
-              entry.entityType ??
-              "PAL",
-            species: entry.species,
-            nickname: entry.nickname,
-            level: entry.level,
-            gender: entry.gender,
-            slot:
-              entry.location.displaySlot,
-          }),
+    let derived: DerivedFromEntities;
+
+    if (
+      derivedCache &&
+      derivedCache.key === cacheKey
+    ) {
+      derived = derivedCache.value;
+    } else {
+      derived =
+        computeDerivedFromEntities(
+          entities,
         );
 
-    const palboxCount =
-      entities.filter(
-        (entry) =>
-          entry.location.type ===
-          "PALBOX",
-      ).length;
-
-    const discoveredBaseIndexes =
-      [
-        ...new Set(
-          entities
-            .filter(
-              (entry) =>
-                entry.location.type ===
-                  "BASE" &&
-                typeof entry.location
-                  .baseIndex ===
-                  "number",
-            )
-            .map(
-              (entry) =>
-                entry.location
-                  .baseIndex as number,
-            ),
-        ),
-      ].sort(
-        (a, b) =>
-          a - b,
-      );
-
-    const expectedBaseIndexes =
-      [1, 2, 3, 4];
-
-    const allBaseIndexes =
-      [
-        ...new Set([
-          ...expectedBaseIndexes,
-          ...discoveredBaseIndexes,
-        ]),
-      ].sort(
-        (a, b) =>
-          a - b,
-      );
-
-    const bases =
-      allBaseIndexes.map(
-        (baseIndex) => {
-          const baseEntities =
-            entities.filter(
-              (entry) =>
-                entry.location.type ===
-                  "BASE" &&
-                entry.location.baseIndex ===
-                  baseIndex,
-            );
-
-          const detectedCapacity =
-            baseEntities.find(
-              (entry) =>
-                typeof entry.location
-                  .capacity ===
-                  "number",
-            )?.location.capacity;
-
-          return {
-            baseIndex,
-            count:
-              baseEntities.length,
-            capacity:
-              detectedCapacity ??
-              26,
-          };
-        },
-      );
-
-    const unknownCount =
-      entities.filter(
-        (entry) =>
-          entry.location.type ===
-            "UNKNOWN" ||
-          entry.location.type ===
-            "OTHER",
-      ).length;
+      derivedCache = {
+        key: cacheKey,
+        value: derived,
+      };
+    }
 
     return NextResponse.json(
       {
@@ -204,51 +332,14 @@ export async function GET() {
               : null,
         },
 
-        collection: {
-          ownedPals:
-            rankings.summary
-              .totalPals,
+        collection:
+          derived.collection,
 
-          capturedHumans:
-            rankings.summary
-              .capturedHumans,
+        locations:
+          derived.locations,
 
-          unknownEntities:
-            rankings.summary
-              .unknownEntities,
-
-          species:
-            rankings.summary.species,
-
-          coreKeep:
-            rankings.coreKeep.length,
-
-          usefulBackup:
-            rankings.usefulBackup.length,
-
-          borderlineCleanup:
-            rankings.borderlineCleanup
-              .length,
-
-          safeCleanup:
-            rankings.safeCleanup.length,
-
-          unknown:
-            unknownCount,
-        },
-
-        locations: {
-          partyCount:
-            party.length,
-          partyCapacity:
-            5,
-          palboxCount,
-          palboxCapacity:
-            960,
-          bases,
-        },
-
-        party,
+        party:
+          derived.party,
       },
       {
         headers: {
@@ -268,6 +359,9 @@ export async function GET() {
       {
         status: 500,
       },
+    );
+  }
+}
     );
   }
 }
