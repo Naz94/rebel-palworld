@@ -42,18 +42,17 @@ const OwnedBreedingCombos = dynamic(
   },
 );
 
-// Shape returned by rankRealPals() — kept as a type alias so the
-// precomputed-vs-client-computed paths can share one variable type.
-type Rankings = ReturnType<
-  typeof rankRealPals
->;
-
 type PalSnapshotResponse = {
   source: "local" | "cloud";
   entities: RealOwnedPal[];
   // Precomputed server-side at snapshot-upload time. Null for local
   // mode or older snapshots — falls back to client-side computation.
-  rankings: Rankings | null;
+  // (Rankings type is declared further down in this file, next to
+  // the components that consume it — reused here rather than
+  // redeclared to avoid a duplicate identifier.)
+  rankings: ReturnType<
+    typeof rankRealPals
+  > | null;
   syncedAt: string | null;
   error?: string;
 };
