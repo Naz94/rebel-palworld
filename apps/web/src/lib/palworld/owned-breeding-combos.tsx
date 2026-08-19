@@ -19,25 +19,56 @@ function normalize(value: string) {
   return value.toLocaleLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
+// Precomputed once (module load), not per-render: normalized name -> id.
+// ownedSpeciesId used to do a full breedingPals.find() scan (with a
+// fresh .toLocaleLowerCase()/.replace() per candidate) for every
+// single owned pal, every time it was called. That lookup was then
+// happening millions of times inside a sort comparator (see
+// ownedBySpecies below), which is what froze the tab on the Breeding
+// tab. This index turns that scan into an O(1) map lookup.
+const speciesIdByNormalizedName = new Map<string, string>();
+for (const candidate of breedingPals) {
+  speciesIdByNormalizedName.set(normalize(candidate.name), candidate.id);
+}
+
 function ownedSpeciesId(pal: RankedRealPal) {
   const names = [
     pal.pal.referenceIdentity?.canonicalName,
     pal.pal.species,
   ].filter((value): value is string => Boolean(value));
-  return breedingPals.find((candidate) =>
-    names.some((name) => normalize(name) === normalize(candidate.name)),
-  )?.id ?? null;
+  for (const name of names) {
+    const id = speciesIdByNormalizedName.get(normalize(name));
+    if (id) return id;
+  }
+  return null;
 }
 
-function ownedCopies(pals: RankedRealPal[], speciesId: string) {
+// Map<speciesId, ownedCopies sorted by breeding score desc>, built ONCE
+// per `pals` change instead of re-filtering+re-scanning the full owned
+// list on every ownedCopies() call (which, inside a sort comparator
+// called ~650k times, is what caused the freeze).
+function buildOwnedBySpecies(pals: RankedRealPal[]) {
+  const map = new Map<string, RankedRealPal[]>();
+  for (const pal of pals) {
+    const speciesId = ownedSpeciesId(pal);
+    if (!speciesId) continue;
+    const bucket = map.get(speciesId);
+    if (bucket) bucket.push(pal);
+    else map.set(speciesId, [pal]);
+  }
+  for (const bucket of map.values()) {
+    bucket.sort((a, b) => b.score.breeding - a.score.breeding);
+  }
+  return map;
+}
+
+function ownedCopies(ownedBySpecies: Map<string, RankedRealPal[]>, speciesId: string) {
   if (!palById.has(speciesId)) return [];
-  return pals
-    .filter((pal) => ownedSpeciesId(pal) === speciesId)
-    .sort((a, b) => b.score.breeding - a.score.breeding);
+  return ownedBySpecies.get(speciesId) ?? [];
 }
 
-function bestOwnedCopy(pals: RankedRealPal[], speciesId: string) {
-  return ownedCopies(pals, speciesId)[0] ?? null;
+function bestOwnedCopy(ownedBySpecies: Map<string, RankedRealPal[]>, speciesId: string) {
+  return ownedCopies(ownedBySpecies, speciesId)[0] ?? null;
 }
 
 function oppositeGender(a: RankedRealPal, b: RankedRealPal) {
@@ -73,9 +104,12 @@ function inheritedIvProjection(
   };
 }
 
-function pairOwnedStatus(pair: ParentPair, pals: RankedRealPal[]) {
-  const copiesA = ownedCopies(pals, pair.a.id);
-  const copiesB = ownedCopies(pals, pair.b.id);
+function pairOwnedStatus(
+  pair: ParentPair,
+  ownedBySpecies: Map<string, RankedRealPal[]>,
+) {
+  const copiesA = ownedCopies(ownedBySpecies, pair.a.id);
+  const copiesB = ownedCopies(ownedBySpecies, pair.b.id);
   let compatible:
     | { a: RankedRealPal; b: RankedRealPal; score: number }
     | null = null;
@@ -134,6 +168,16 @@ export function OwnedBreedingCombos({
   );
   const ownedSet = useMemo(() => new Set(ownedIds), [ownedIds]);
 
+  // Built once per `pals` change (not per sort-comparator-call, which
+  // is what previously made this recompute ownership from scratch
+  // ~1.3 million times when opening this tab). Every ownedCopies/
+  // pairOwnedStatus call below is now an O(1)/small-nested-loop
+  // lookup against this instead of a fresh linear scan.
+  const ownedBySpecies = useMemo(
+    () => buildOwnedBySpecies(pals),
+    [pals],
+  );
+
   const [parentA, setParentA] = useState(ownedIds[0] ?? breedingPals[0]?.id ?? "");
   const [parentB, setParentB] = useState(ownedIds[1] ?? ownedIds[0] ?? breedingPals[1]?.id ?? "");
   const [targetId, setTargetId] = useState(
@@ -149,22 +193,30 @@ export function OwnedBreedingCombos({
     [parentA, parentB],
   );
   const target = palById.get(targetId) ?? null;
-  const targetPairs = useMemo(
-    () =>
-      targetId
-        ? parentsFor(targetId).sort((left, right) => {
-            const l = pairOwnedStatus(left, pals);
-            const r = pairOwnedStatus(right, pals);
-            if (l.ready !== r.ready) return Number(r.ready) - Number(l.ready);
-            const lCount = Number(Boolean(l.a)) + Number(Boolean(l.b));
-            const rCount = Number(Boolean(r.a)) + Number(Boolean(r.b));
-            return rCount - lCount || left.a.name.localeCompare(right.a.name);
-          })
-        : [],
-    [targetId, pals],
-  );
 
-  const readyPairs = targetPairs.filter((pair) => pairOwnedStatus(pair, pals).ready);
+  // Compute each pair's ownership status ONCE per pair (not once per
+  // sort comparison), then sort using those already-computed values.
+  const targetPairs = useMemo(() => {
+    if (!targetId) return [];
+    const withStatus = parentsFor(targetId).map((pair) => ({
+      pair,
+      status: pairOwnedStatus(pair, ownedBySpecies),
+    }));
+    withStatus.sort((left, right) => {
+      if (left.status.ready !== right.status.ready) {
+        return Number(right.status.ready) - Number(left.status.ready);
+      }
+      const lCount = Number(Boolean(left.status.a)) + Number(Boolean(left.status.b));
+      const rCount = Number(Boolean(right.status.a)) + Number(Boolean(right.status.b));
+      return rCount - lCount || left.pair.a.name.localeCompare(right.pair.a.name);
+    });
+    return withStatus;
+  }, [targetId, ownedBySpecies]);
+
+  const readyPairs = useMemo(
+    () => targetPairs.filter((entry) => entry.status.ready),
+    [targetPairs],
+  );
   const visiblePairs = showAllParents ? targetPairs : targetPairs.slice(0, 20);
 
   const ownedOpportunities = useMemo(() => {
@@ -186,8 +238,8 @@ export function OwnedBreedingCombos({
     );
   }, [ownedIds, ownedSet]);
 
-  const selectedA = bestOwnedCopy(pals, parentA);
-  const selectedB = bestOwnedCopy(pals, parentB);
+  const selectedA = bestOwnedCopy(ownedBySpecies, parentA);
+  const selectedB = bestOwnedCopy(ownedBySpecies, parentB);
   const mutationRate = mutationCake === "extravagant" ? 0.03 : 0.01;
   const eggsPerBatch = mutationCake === "vegetable" ? 2 : 1;
   const totalEggs = mutationAttempts * eggsPerBatch;
@@ -347,8 +399,7 @@ export function OwnedBreedingCombos({
           )}
         </div>
         <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {visiblePairs.map((pair) => {
-            const status = pairOwnedStatus(pair, pals);
+          {visiblePairs.map(({ pair, status }) => {
             return (
               <div key={`${pair.a.id}:${pair.b.id}:${pair.genderNote ?? "any"}`} className="rounded-xl border border-white/10 bg-black/20 p-4">
                 <p className="text-base font-semibold">{pair.a.name} + {pair.b.name}</p>
