@@ -77,8 +77,17 @@ function optionalString(
 // on large collections — if it's implausibly huge or scoring throws,
 // skip storing it rather than fail the whole sync. The connector's
 // heartbeat must never break just because scoring had a bad day.
+//
+// NOTE: the original 3MB limit here was too tight — rankRealPals()
+// produces several sorted/grouped views over the same pals (coreKeep,
+// usefulBackup, species groups, etc.), so its JSON is naturally a few
+// times larger than the raw entities payload. A real ~800-pal
+// collection was hitting this every single sync, meaning precompute
+// was silently never actually happening. jsonb columns comfortably
+// hold tens of MB, so 20MB gives real headroom while still catching
+// a truly pathological result.
 const MAX_RANKINGS_BYTES =
-  3_000_000;
+  20_000_000;
 
 function computeRankingsSafely(
   entities: RealOwnedPal[],
@@ -101,8 +110,8 @@ function computeRankingsSafely(
       ) >
       MAX_RANKINGS_BYTES
     ) {
-      console.error(
-        "RANKINGS TOO LARGE, skipping precompute for this snapshot",
+      console.warn(
+        `RANKINGS SKIPPED (too large): ${Buffer.byteLength(serialized, "utf8")} bytes`,
       );
 
       return null;
