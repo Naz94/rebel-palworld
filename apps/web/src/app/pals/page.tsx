@@ -12,6 +12,10 @@ import {
 import { getPassiveTraitIntelligence } from "@/lib/palworld/passive-intelligence";
 import { SkillFruitIntelligence } from "@/lib/palworld/skill-fruit-intelligence";
 import {
+  rankFightingCompanions,
+  rankExplorationCompanions,
+} from "@/lib/palworld/player-pals";
+import {
   auditPalCollection,
   type AuditSeverity,
 } from "@/lib/palworld/audit-pal-intelligence";
@@ -63,6 +67,7 @@ type View =
   | "base"
   | "farming"
   | "support"
+  | "player"
   | "breeding"
   | "skills"
   | "humans"
@@ -442,6 +447,13 @@ export default function PalsPage() {
               />
             )}
 
+            {view === "player" && (
+              <PlayerCompanionsView
+                all={rankings.all}
+                onSelect={setSelectedPal}
+              />
+            )}
+
             {view === "breeding" && (
               <BreedingView
                 pals={rankings.all}
@@ -757,6 +769,12 @@ function Sidebar({
         "Player & party buffs",
     },
     {
+      id: "player",
+      label: "Player Pals",
+      description:
+        "Take with you: fighting or exploring",
+    },
+    {
       id: "breeding",
       label: "Breeding",
       description:
@@ -913,6 +931,11 @@ function TopBar({
       title: "Best for Player Support",
       description:
         "Pals with traits that buff you or your party without treating those buffs as the Pal's own combat damage.",
+    },
+    player: {
+      title: "Player Pals",
+      description:
+        "Pals worth taking with you — into a fight, or out exploring the map.",
     },
     humans: {
       title: "Captured Humans",
@@ -2096,6 +2119,103 @@ function FarmingView({
   );
 }
 
+
+function PlayerCompanionsView({
+  all,
+  onSelect,
+}: {
+  all: RankedRealPal[];
+  onSelect: (
+    pal: RankedRealPal,
+  ) => void;
+}) {
+  const fighting = useMemo(
+    () => rankFightingCompanions(all),
+    [all],
+  );
+  const exploring = useMemo(
+    () => rankExplorationCompanions(all),
+    [all],
+  );
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-2">
+      <section>
+        <h3 className="text-lg font-semibold text-neutral-100">
+          Fighting companions
+        </h3>
+        <p className="mt-1 text-sm text-neutral-400">
+          Best pals to bring into a fight with you.
+        </p>
+        {fighting.length === 0 ? (
+          <p className="mt-4 text-sm text-neutral-500">
+            Nothing stands out yet — check the Combat tab for raw fighters.
+          </p>
+        ) : (
+          <div className="mt-4 flex flex-col gap-2">
+            {fighting.map(({ pal, score, reasons }) => (
+              <button
+                key={pal.pal.id ?? `${pal.pal.species}-${score}`}
+                type="button"
+                onClick={() => onSelect(pal)}
+                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-left hover:bg-white/[0.06]"
+              >
+                <div>
+                  <p className="font-semibold">
+                    {pal.pal.nickname || pal.pal.species}
+                  </p>
+                  <p className="mt-0.5 text-xs text-neutral-400">
+                    {reasons.join(" · ") || "Solid party pick"}
+                  </p>
+                </div>
+                <span className="text-sm font-semibold text-emerald-300">
+                  {Math.round(score)}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section>
+        <h3 className="text-lg font-semibold text-neutral-100">
+          Exploration companions
+        </h3>
+        <p className="mt-1 text-sm text-neutral-400">
+          Mounts and traversal pals for getting around the map.
+        </p>
+        {exploring.length === 0 ? (
+          <p className="mt-4 text-sm text-neutral-500">
+            No pals currently flagged for traversal in your collection.
+          </p>
+        ) : (
+          <div className="mt-4 flex flex-col gap-2">
+            {exploring.map(({ pal, score, reasons }) => (
+              <button
+                key={pal.pal.id ?? `${pal.pal.species}-${score}`}
+                type="button"
+                onClick={() => onSelect(pal)}
+                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-left hover:bg-white/[0.06]"
+              >
+                <div>
+                  <p className="font-semibold">
+                    {pal.pal.nickname || pal.pal.species}
+                  </p>
+                  <p className="mt-0.5 text-xs text-neutral-400">
+                    {reasons.join(" · ") || "Traversal pal"}
+                  </p>
+                </div>
+                <span className="text-sm font-semibold text-sky-300">
+                  Lv {pal.pal.level ?? "?"}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
 
 function SupportView({
   pals,
@@ -4794,6 +4914,31 @@ function PalDetailPanel({
               ? ` · Copy ${score.speciesRank} of ${score.speciesCopyCount}`
               : ""}
           </p>
+
+          {pal.dataQuality &&
+            pal.dataQuality
+              .referenceStatus !==
+              "COMPLETE" && (
+              <div className="mt-3 rounded-lg border border-amber-400/25 bg-amber-400/[0.07] px-3 py-2">
+                <p className="text-sm font-semibold text-amber-200">
+                  {pal.dataQuality
+                    .referenceStatus ===
+                  "NOT_APPLICABLE"
+                    ? "Some stats not applicable for this entry"
+                    : "Stats incomplete for this Pal"}
+                </p>
+                <p className="mt-1 text-xs leading-5 text-amber-100/80">
+                  {pal.dataQuality
+                    .issues
+                    .length >
+                  0
+                    ? pal.dataQuality.issues.join(
+                        " · ",
+                      )
+                    : "Some fields are estimated rather than sourced from your save data. Scores and recommendations here should be treated as a starting point, not exact."}
+                </p>
+              </div>
+            )}
 
           {pal.elements
             .length > 0 && (
