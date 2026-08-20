@@ -16,6 +16,10 @@ import {
   type RealOwnedPal,
 } from "@/lib/palworld/rank-pals";
 
+import {
+  compactStoredRankings,
+} from "@/lib/palworld/rankings-compact";
+
 export const dynamic =
   "force-dynamic";
 
@@ -73,21 +77,13 @@ function optionalString(
   return trimmed;
 }
 
-// Keep the stored rankings well clear of the 4MB snapshot cap even
-// on large collections — if it's implausibly huge or scoring throws,
-// skip storing it rather than fail the whole sync. The connector's
-// heartbeat must never break just because scoring had a bad day.
-//
-// NOTE: the original 3MB limit here was too tight — rankRealPals()
-// produces several sorted/grouped views over the same pals (coreKeep,
-// usefulBackup, species groups, etc.), so its JSON is naturally a few
-// times larger than the raw entities payload. A real ~800-pal
-// collection was hitting this every single sync, meaning precompute
-// was silently never actually happening. jsonb columns comfortably
-// hold tens of MB, so 20MB gives real headroom while still catching
-// a truly pathological result.
+// After compaction (see rankings-compact.ts) this only holds one
+// copy of each pal's score plus small reference stubs everywhere
+// else, so it should be a low single-digit MB even for a huge
+// collection. Kept generous purely as a sanity ceiling, not because
+// we expect to get near it.
 const MAX_RANKINGS_BYTES =
-  20_000_000;
+  8_000_000;
 
 function computeRankingsSafely(
   entities: RealOwnedPal[],
@@ -98,9 +94,19 @@ function computeRankingsSafely(
         entities,
       );
 
+    // Collapse the dozens of duplicate-heavy views down to one copy
+    // of each pal's score plus tiny {__ref: id} stubs everywhere
+    // else. This is what actually fixes the "125MB, too large to
+    // store" problem — dropping the cap wouldn't have, it would've
+    // just made /pals fetch 125MB on every load instead.
+    const compact =
+      compactStoredRankings(
+        rankings,
+      );
+
     const serialized =
       JSON.stringify(
-        rankings,
+        compact,
       );
 
     if (
@@ -111,13 +117,13 @@ function computeRankingsSafely(
       MAX_RANKINGS_BYTES
     ) {
       console.warn(
-        `RANKINGS SKIPPED (too large): ${Buffer.byteLength(serialized, "utf8")} bytes`,
+        `RANKINGS SKIPPED (too large even after compaction): ${Buffer.byteLength(serialized, "utf8")} bytes`,
       );
 
       return null;
     }
 
-    return rankings;
+    return compact;
   } catch (
     rankingError
   ) {
