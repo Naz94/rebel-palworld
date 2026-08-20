@@ -378,23 +378,69 @@ export default function WorldPage() {
       void fetchWorldState();
       void fetchWorldPreferences();
 
-      // Was 2000ms — that's 30 requests/min, each one re-running the
-      // full Pal ranking engine server-side if the cache missed, which
-      // pegged the Next.js dev server and made the tab unresponsive.
-      // 10s still feels live for a dashboard and cuts load ~5x, and
-      // the server-side cache in /api/world-state means most of these
-      // polls are now cheap anyway since they hit the same cache key.
-      const timer =
-        window.setInterval(
+      // Bumped 10s -> 30s: each poll is a full serverless invocation
+      // with Cache-Control: no-store on /api/world-state, so it
+      // always hits the origin (never the CDN edge cache). 30s still
+      // feels live for a dashboard and cuts Fast Origin Transfer
+      // roughly 3x on its own vs. the old 10s interval.
+      let timer: number | null = null;
+
+      const startPolling = () => {
+        if (timer !== null) return;
+
+        timer = window.setInterval(
           () => {
             void fetchWorldState();
           },
-          10000,
+          30000,
         );
+      };
+
+      const stopPolling = () => {
+        if (timer !== null) {
+          window.clearInterval(
+            timer,
+          );
+
+          timer = null;
+        }
+      };
+
+      // Pause polling entirely while the tab is backgrounded. A
+      // forgotten open tab was likely the single biggest source of
+      // origin traffic, since it would otherwise poll indefinitely
+      // regardless of whether anyone is actually looking at it.
+      const handleVisibilityChange =
+        () => {
+          if (
+            document.visibilityState ===
+            "visible"
+          ) {
+            void fetchWorldState();
+            startPolling();
+          } else {
+            stopPolling();
+          }
+        };
+
+      if (
+        document.visibilityState ===
+        "visible"
+      ) {
+        startPolling();
+      }
+
+      document.addEventListener(
+        "visibilitychange",
+        handleVisibilityChange,
+      );
 
       return () => {
-        window.clearInterval(
-          timer,
+        stopPolling();
+
+        document.removeEventListener(
+          "visibilitychange",
+          handleVisibilityChange,
         );
       };
     },
