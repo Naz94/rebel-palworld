@@ -9,6 +9,15 @@ import {
   createClient,
 } from "@/lib/supabase/server";
 
+import {
+  expandStoredRankings,
+  type CompactRankings,
+} from "@/lib/palworld/rankings-compact";
+
+import type {
+  RealOwnedPal,
+} from "@/lib/palworld/rank-pals";
+
 export const dynamic =
   "force-dynamic";
 
@@ -189,12 +198,21 @@ export async function GET() {
               watcher:
                 snapshot.watcher,
 
-              // Precomputed at snapshot-upload time by the connector
-              // route. Null on older snapshots or if scoring failed —
-              // callers should fall back to computing client-side.
+              // Stored compactly (rankings-compact.ts) to avoid
+              // shipping duplicate pal data across dozens of views.
+              // Expand it back into the full shape here, server-side,
+              // so pals/page.tsx needs no changes at all — it just
+              // reads `rankings` exactly like before. Cheap: this is
+              // reference lookups + object spreads, not rescoring.
               rankings:
-                snapshot.rankings ??
-                null,
+                snapshot.rankings
+                  ? expandStoredRankings(
+                      snapshot.rankings as
+                        CompactRankings,
+                      snapshot.entities as
+                        RealOwnedPal[],
+                    )
+                  : null,
 
               syncedAt:
                 snapshot.synced_at,
