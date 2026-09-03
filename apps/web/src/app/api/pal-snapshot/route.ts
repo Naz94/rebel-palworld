@@ -9,15 +9,6 @@ import {
   createClient,
 } from "@/lib/supabase/server";
 
-import {
-  expandStoredRankings,
-  type CompactRankings,
-} from "@/lib/palworld/rankings-compact";
-
-import type {
-  RealOwnedPal,
-} from "@/lib/palworld/rank-pals";
-
 export const dynamic =
   "force-dynamic";
 
@@ -93,8 +84,9 @@ function tryLocalSnapshot() {
 
     watcher,
 
-    // Local mode never gets a precomputed pass — there's no upload
-    // step to compute it at. Caller falls back to client-side scoring.
+    // Rankings are intentionally not sent over the network. The client
+    // already falls back to calculating them from entities, which avoids
+    // transferring a much larger expanded rankings payload.
     rankings:
       null,
 
@@ -146,7 +138,6 @@ export async function GET() {
               `
                 entities,
                 watcher,
-                rankings,
                 pal_count,
                 world_id,
                 save_modified_at,
@@ -198,21 +189,12 @@ export async function GET() {
               watcher:
                 snapshot.watcher,
 
-              // Stored compactly (rankings-compact.ts) to avoid
-              // shipping duplicate pal data across dozens of views.
-              // Expand it back into the full shape here, server-side,
-              // so pals/page.tsx needs no changes at all — it just
-              // reads `rankings` exactly like before. Cheap: this is
-              // reference lookups + object spreads, not rescoring.
+              // Do not expand and transmit stored rankings. They duplicate
+              // Pal objects across many ranking views and dramatically grow
+              // the response. pals/page.tsx already computes rankings from
+              // entities when this field is null.
               rankings:
-                snapshot.rankings
-                  ? expandStoredRankings(
-                      snapshot.rankings as
-                        CompactRankings,
-                      snapshot.entities as
-                        RealOwnedPal[],
-                    )
-                  : null,
+                null,
 
               syncedAt:
                 snapshot.synced_at,
